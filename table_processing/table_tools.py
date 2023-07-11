@@ -1,0 +1,30 @@
+
+
+from transformers import DetrFeatureExtractor
+import torch
+import os
+import pandas as pd
+
+def get_bounding_boxes(image, model):
+    width, height = image.size
+    image.resize((int(width*0.5), int(height*0.5)))
+    feature_extractor = DetrFeatureExtractor()
+    encoding = feature_extractor(image, return_tensors="pt")
+    encoding.keys()
+    with torch.no_grad():
+        outputs = model(**encoding)
+    width, height = image.size
+    results = feature_extractor.post_process_object_detection(outputs, threshold=0.7, target_sizes=[(height, width)])#[0]
+    return results, model
+
+def calculate_intersection(box1, box2):
+    x1 = max(box1[0], box2[0])
+    y1 = max(box1[1], box2[1])
+    x2 = min(box1[2], box2[2])
+    y2 = min(box1[3], box2[3])
+
+    if x2 < x1 or y2 < y1:
+        return None
+    else:
+        return [x1, y1, x2, y2]
+    
