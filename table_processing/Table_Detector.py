@@ -90,15 +90,7 @@ class Table_Detector:
                     sheet_name =  'Page' + str(page_num) + ' ' + str(table.getBBox()[-1]).replace('[','').replace(']','') 
                     df = table.get_as_dataframe()
                     df.to_excel(writer, sheet_name=sheet_name, index=False) #Write it to a sheet in the output excel
-                   
-
-
-
-
-filename = "resources/multipletab.pdf"
-table_detector = Table_Detector(file = filename)
-table_data = table_detector.get_page_data()
-table_detector.to_excel()
+                    
 
 # Other todo 
 # - Set up a benchmark test to assess performance

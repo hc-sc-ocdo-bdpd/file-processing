@@ -14,3 +14,17 @@ def test_data_frame_exists():
     table_image.resize((int(width*0.5), int(height*0.5)))
     table = Table(image = table_image)
     assert type(table.get_as_dataframe()) == type(pd.DataFrame())
+
+
+def test_to_excel():
+    from table_processing.Table_Detector import Table_Detector
+    import os
+    if os.path.exists("demofile.txt"):
+        os.remove("all_excel.xlsx")
+
+    table_detector = Table_Detector(file = "resources/multipletab.pdf")
+    table_detector.to_excel()
+    assert os.path.exists("all_excel.xlsx")
+    os.remove("all_excel.xlsx")
+    assert not os.path.exists("all_excel.xlsx")
+
