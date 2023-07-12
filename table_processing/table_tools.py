@@ -1,6 +1,6 @@
 
 
-from transformers import DetrFeatureExtractor
+from transformers import DetrImageProcessor
 import torch
 import os
 import pandas as pd
@@ -8,7 +8,7 @@ import pandas as pd
 def get_bounding_boxes(image, model):
     width, height = image.size
     image.resize((int(width*0.5), int(height*0.5)))
-    feature_extractor = DetrFeatureExtractor()
+    feature_extractor = DetrImageProcessor()
     encoding = feature_extractor(image, return_tensors="pt")
     encoding.keys()
     with torch.no_grad():
