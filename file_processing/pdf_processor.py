@@ -9,11 +9,11 @@ class PdfFileProcessor(FileProcessorStrategy):
     def process(self, startPage=None, endPage=None):
         self.startPage=startPage
         self.endPage=endPage
-        text = self.extract_text_from_pdf()
+        text = self.extract_text_from_pdf(self)
         if text is not None:
             self.metadata.update({'text': text})
     
-    #@staticmethod
+    @staticmethod
     def extract_text_from_pdf(self):
         try:
             pdfFileObj = open(self.file_path, 'rb')
