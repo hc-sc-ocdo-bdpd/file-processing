@@ -2,6 +2,11 @@
 
 This library processes various file types, extracts metadata, and provides utility functions for calculating metrics between files. Currently, it supports processing of .txt and .pdf files and can calculate cosine similarity and Levenshtein distance.
 
+## Dependencies
+This project has dependencies defined in `requirements.txt`. These dependencies should be installed using `pip3 install -r depencencies.txt`. Older versions of pip may result in an error.
+
+Additionally, this project uses tesseract for OCR. This must be installed at: `C:/Users/USERNAME/AppData/Local/Programs/Tesseract-OCR/tesseract.exe`. See https://github.com/UB-Mannheim/tesseract/wiki.
+
 ## Structure
 
 The main classes in this library are:
