@@ -2,8 +2,7 @@ import pydbgen
 import pylatex as pl
 import shortuuid as sd
 from pydbgen import pydbgen as dbgen
-import os
-import pdflatex
+
 
 myDB= dbgen.pydb()
 
@@ -35,9 +34,8 @@ class GeneratedTable:
 
         self.filename = sd.uuid()
 
-        doc.generate_tex(self.filename)
-        self.filename +='.tex'
-        os.system('pdflatex ' + self.filename)
+        doc.generate_pdf(self.filename, compiler='pdflatex')
+        
 
 
 t1 = GeneratedTable()
