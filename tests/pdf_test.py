@@ -12,20 +12,14 @@ def test_pdfTextFound_pagespec():
     doc.process(startPage=0,endPage=1)
     assert len(doc.metadata['text']) > 0
 
-
-'''
 def test_pdfOcrTextFound():
-    doc = Document('resources/SampleReportScreenShot.pdf')
-    text = doc.text.strip()
-    assert len(text) == 0
-    assert len(doc.ocrText) > 0
+    doc = File('resources/SampleReportScreenShot.pdf')
+    assert len(doc.metadata['ocrText']) > 0
 
 def test_pdfOcrTextFound_pagespec():
-    doc = Document(startPage=4,endPage=5,path='resources/ArtificialNeuralNetworksForBeginners.pdf')
-    text = doc.text.strip()
-    assert len(text) == 0
-    assert len(doc.ocrText) > 0
-'''
+    doc = File(path='resources/ArtificialNeuralNetworksForBeginners.pdf').processor
+    doc.process(startPage=4,endPage=5)
+    assert len(doc.metadata['ocrText']) > 0
 
 def test_invalid_page(capsys):
     File(path='resources/ArtificialNeuralNetworksForBeginners.pdf').processor.process(startPage=3,endPage=2)

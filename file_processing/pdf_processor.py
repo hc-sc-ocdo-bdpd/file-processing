@@ -1,5 +1,12 @@
 from file_processor_strategy import FileProcessorStrategy
 from PyPDF2 import PdfReader
+import pytesseract
+from PIL import Image
+import getpass
+import io, os
+
+# Init for tesseract
+pytesseract.pytesseract.tesseract_cmd = os.path.join('C:/Users',getpass.getuser(),'AppData/Local/Programs/Tesseract-OCR/tesseract.exe')
 
 class PdfFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path):
@@ -9,9 +16,9 @@ class PdfFileProcessor(FileProcessorStrategy):
     def process(self, startPage=None, endPage=None):
         self.startPage=startPage
         self.endPage=endPage
-        text = self.extract_text_from_pdf(self)
-        if text is not None:
-            self.metadata.update({'text': text})
+        extracts = self.extract_text_from_pdf(self)
+        if extracts is not None:
+            self.metadata.update({'text': extracts['text'], 'ocrText': extracts['ocrText']})
     
     @staticmethod
     def extract_text_from_pdf(self):
@@ -35,13 +42,18 @@ class PdfFileProcessor(FileProcessorStrategy):
                 raise Exception("Invalid page specification.")
             
             text = ""
+            ocrText=""
             for i in range(self.startPage, self.endPage):
                 pageObj = reader.pages[i]
                 
                 text += pageObj.extract_text() #extract the text of the page
-            
+
+                for image in pageObj.images: #extract the images of the page
+                    ocrText += pytesseract.image_to_string(Image.open(io.BytesIO(image.data)))
+                
             pdfFileObj.close()
-            return text
+            return {"text": text, "ocrText": ocrText}
+        
         except Exception as e:
             print(f"Error encountered while opening or processing {self.file_path}: {e}")
             return None
