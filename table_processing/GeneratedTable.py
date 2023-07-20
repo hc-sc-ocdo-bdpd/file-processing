@@ -19,8 +19,9 @@ class GeneratedTable:
             self.table_spec = 'c|c|c|c|c'
         else:
             self.table_spec = 'ccccc'
-           
+        
         self.generate_df(rows)
+        
 
 
     def generate_df(self,rows):
@@ -37,7 +38,7 @@ class GeneratedTable:
 
         if self.row_lines == True:
             with doc.create(pl.Section('Table')):
-                with doc.create(pl.Tabular(self.table_spec, row_height=self.row_height)) as table:
+                with doc.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
                     #table.add_hline()
                     table.add_row(list(self.df.columns))
                     table.add_hline()
@@ -55,7 +56,7 @@ class GeneratedTable:
                 self.path += '.pdf'
         else:
             with doc.create(pl.Section('Table')):
-                with doc.create(pl.Tabular(self.table_spec, row_height=self.row_height)) as table:
+                with doc.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
                     table.add_hline()
                     table.add_row(list(self.df.columns))
                     table.add_hline()
@@ -70,52 +71,6 @@ class GeneratedTable:
 
             doc.generate_pdf(self.path, compiler='pdflatex')
             self.path += '.pdf'
-
-    def to_pdf_longtable(self):
-            doc = pl.Document(geometry_options=geometry_options)
-
-            if self.row_lines == True:
-                with doc.create(pl.Section('Longtable')):
-                    with doc.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
-                        #table.add_hline()
-                        table.add_row(list(self.df.columns))
-                        table.add_hline()
-                        for row in self.df.index:
-                            print(row)
-                            table.add_row(list(self.df.loc[row,:]))
-                            table.add_hline()
-                        #table.add_hline()
-
-                    self.filename = sd.uuid()
-
-                    self.path = './generated_tables/' + self.filename 
-
-                    doc.generate_pdf(self.path, compiler='pdflatex', clean_tex=False)
-                    self.path += '.pdf'
-            else:
-                with doc.create(pl.Section('Longtable')):
-                    with doc.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
-                        table.add_hline()
-                        table.add_row(list(self.df.columns))
-                        table.add_hline()
-                        table.end_table_header()
-                        
-                        table.add_hline()
-                        table.add_row((pl.MultiColumn(len(self.df.columns), align='r', data='Continued on Next Page'),))
-                        table.add_hline()
-                        table.end_table_footer()
-                        for row in self.df.index:
-                            print(row)
-                            table.add_row(list(self.df.loc[row,:]))
-                        table.add_hline()
-
-
-                self.filename = sd.uuid()
-
-                self.path = './generated_tables/' + self.filename 
-
-                doc.generate_pdf(self.path, compiler='pdflatex', clean_tex=False)
-                self.path += '.pdf'
 
     def get_path(self):
         return self.path
