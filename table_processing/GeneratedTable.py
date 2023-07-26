@@ -2,6 +2,7 @@ import pydbgen
 import pylatex as pl
 import shortuuid as sd
 from pydbgen import pydbgen as dbgen
+import os
 
 
 myDB= dbgen.pydb()
@@ -50,6 +51,9 @@ class GeneratedTable:
                 self.filename = sd.uuid()
 
                 self.path = './generated_tables/' + self.filename 
+
+                if not os.path.exists(self.path):
+                    os.makedirs(self.path)
 
                 doc.generate_pdf(self.path, compiler='pdflatex')
                 self.path += '.pdf'
