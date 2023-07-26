@@ -19,6 +19,8 @@ for i in range(0,1):
     try:
         detc_table = Table_Detector(genr_table.get_path())
         xlsx_path = genr_table.get_path().split('.pdf')[0]+'.xlsx'
+        table = page_data = detc_table.get_page_data()[0]['tables'][0]['table_content']
+        boxes_image = table.plot_bounding_boxes(file_name = genr_table.get_path().split('.pdf')[0] + "_boxes")
         detc_table.to_excel(xlsx_path)
         read_table = pd.read_excel(xlsx_path)
         # Store true and read tables
