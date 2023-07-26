@@ -6,6 +6,8 @@ from pydbgen import pydbgen as dbgen
 
 myDB= dbgen.pydb()
 
+geomtry_options = { 'margin': '0.7in'}
+
 class GeneratedTable:
     def __init__(self,rows=10,columns=5,row_lines = None, vertical_lines = None): 
         self.rows = rows
@@ -30,13 +32,13 @@ class GeneratedTable:
           
 
     def to_pdf(self):
-        doc = pl.Document()
+        doc = pl.Document(geometry_options=geomtry_options)
 
 
         if self.row_lines == True:
             with doc.create(pl.Section('Table')):
                 with doc.create(pl.Tabular(self.table_spec)) as table:
-                    #table.add_hline()
+                    table.add_hline()
                     table.add_row(list(self.df.columns))
                     table.add_hline()
                     for row in self.df.index:
