@@ -8,8 +8,9 @@ import numpy as np
 
 myDB= dbgen.pydb()
 
+geometry_options = {'margin': '0.7in'}
 class GeneratedTable:
-    def __init__(self,rows=10,columns=5,row_lines = None, vertical_lines = None, margin='0.7in', multi_row = None): 
+    def __init__(self,rows=10,columns=5,row_lines = None, vertical_lines = None, margin='0.7in', multi_row = None, row_height = None): 
         self.rows = rows
         self.columns = columns 
         self.row_lines = row_lines
@@ -18,16 +19,18 @@ class GeneratedTable:
             'vmargin':margin
         }
         self.multi_row = multi_row
+        self.row_height = row_height
 
         if self.vertical_lines ==  True:
             self.table_spec = 'c|c|c|c|c'
         else:
             self.table_spec = 'ccccc'
-
+            
         if self.multi_row == True and (self.row_lines == False or self.vertical_lines == False):
             raise Exception('Cannot create table with multi-rows with no vertical and horizantal lines')
-  
+
         self.generate_df(rows)
+        
 
 
     def generate_df(self,rows):
@@ -40,16 +43,15 @@ class GeneratedTable:
             for row in self.df.index:
                 if row % 3 ==0:
                     self.df.loc[row,self.df.columns[0]] = ''
-
-
         
     def to_pdf(self):
         doc = pl.Document(geometry_options=self.geometry_options)  
 
+
         if self.row_lines == True and self.multi_row == False:
             
             with doc.create(pl.Center()) as centered:
-                with centered.create(pl.LongTable(self.table_spec)) as table:
+                with centered.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
                     table.add_row(list(self.df.columns))
                     table.add_hline()
                     for row in self.df.index:
@@ -103,8 +105,10 @@ class GeneratedTable:
                 doc.generate_pdf(self.path, compiler='pdflatex')
                 self.path += '.pdf'
         else:
+
             with doc.create(pl.Center()) as centered:
-                with centered.create(pl.LongTable(self.table_spec)) as table:
+                with centered.create(pl.LongTable(self.table_spec,row_height=self.row_height)) as table:
+
                     table.add_hline()
                     table.add_row(list(self.df.columns))
                     table.add_hline()

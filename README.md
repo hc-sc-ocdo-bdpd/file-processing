@@ -28,4 +28,14 @@ The main classes in this library are:
 - [ ] Add support for more file types (.docx, .xlsx, .pptx, etc.)
 - [ ] Add more metrics for comparison between files (ex. jaccard)
 
-
+## Steps to setup testing Table Extraction features
+- Download `Tesseract` and `MikTex` on laptop using the following links respectfully: https://github.com/UB-Mannheim/tesseract/wiki & https://miktex.org/download
+- Search for `Environment Variable for your account` from the windows search bar
+    - Select `Path` and then Edit
+    - When the `Edit Environment variable` appears, select `New` and then paste the following line and replacing `USERNAME` with your personal username: C:\Users\USERNAME\AppData\Local\Programs\MiKTeX\miktex\bin\x64\pdflatex.exe
+    - Select Ok on both the `Edit Environment variable` and the `Environment variable` windows;
+- (Re)Create a new Environment for the File-Processing Tools on your local device:
+    - Open `Command Palette` (under the View Tab);
+    - Search and select `Python: Create Environment`;
+    - Select `Venv` option;
+- After completing Steps, close and re-open VScode and run `benchmark_pipeline.py` file
