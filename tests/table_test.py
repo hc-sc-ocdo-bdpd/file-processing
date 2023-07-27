@@ -28,15 +28,29 @@ def test_to_excel():
     os.remove("all_excel.xlsx")
     assert not os.path.exists("all_excel.xlsx")
 
-def test_correct_structure():
+def test_calculate_row_column_limits():
+    # TODO: Make a test for calculate_row_column_limits
+    assert False
+
+def test_get_cropped_rows():
+    # TODO: Make a test case for get_cropped_rows
+    assert False
+
+def test_get_cropped_columns():
+    # TODO: Make a test case for get_cropped_columns
+    assert False
+
+def test_extract_table_content():
     from PIL import Image
     import pandas as pd
     from table_processing.Table import Table
-    
+
     file_path = "./tests/resources/simple_table.PNG"
     table_image = Image.open(file_path).convert("RGB")
     width, height = table_image.size
     table_image.resize((int(width*0.5), int(height*0.5)))
     table = Table(image = table_image)
-    assert type(table.get_as_dataframe()) == type(pd.DataFrame())
+
+    # TODO: Correct this test case to check the table contents
+    assert False
 
