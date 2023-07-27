@@ -110,12 +110,14 @@ class Table:
             cells = self.get_cropped_columns(row)
             for cell in cells:
                 if 0 in cell.size:
-                    row_cell_text.append("")
+                    row_cell_text.append(None)
                 else:
                     #self.plot_image(cell)
                     row_cell_text.append(pytesseract.image_to_string(cell))
             rows.append(row_cell_text)
         self.table_data = pd.DataFrame.from_records(rows, columns=rows[0])
+
+        # TODO: remove empty rows and columns from self.table_data
 
 
     def plot_bounding_boxes(self, file_name):
