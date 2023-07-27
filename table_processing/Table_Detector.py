@@ -84,12 +84,14 @@ class Table_Detector:
     def to_excel(self, filename='all_excel.xlsx'):
         with pd.ExcelWriter(filename) as writer:
             for page_dict in self.page_data: #For each page
+                counter = 1
                 for table_dict in page_dict['tables']:
                     table = table_dict['table_content']
                     page_num = page_dict['pageNum']
-                    sheet_name =  'Page' + str(page_num) + ' ' + str(table.getBBox()[-1]).replace('[','').replace(']','') 
+                    sheet_name =  'Page' + str(page_num) + '_' + str(counter) 
                     df = table.get_as_dataframe()
                     df.to_excel(writer, sheet_name=sheet_name, index=False) #Write it to a sheet in the output excel
+                    counter += 1
                     
 
 # Other todo 

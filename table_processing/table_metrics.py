@@ -12,7 +12,7 @@ def overlap(df1, df2):
     union = xmax*ymax - (xmax-xmin)*(ymax-ymin)
     # Calc
     overlap_pct = intersection / union
-    return round(overlap_pct, 4)
+    return round(overlap_pct, 3)
 
 def string_similarity(df1, df2):
     # Transform tables to strings
@@ -20,7 +20,7 @@ def string_similarity(df1, df2):
     str2 = df2.to_string()
     # Calc
     edits_per_char = lev_dist(str1, str2) / max(len(str1), len(str2))
-    return round(1-edits_per_char, 4)
+    return round(1-edits_per_char, 3)
 
 def completeness(df1, df2):
     # Transform tables to lists of lists
@@ -43,7 +43,7 @@ def completeness(df1, df2):
                 pass
     # Calc
     completeness_score = compl_count / real_total
-    return round(completeness_score, 4)
+    return round(completeness_score, 3)
 
 def purity(df1, df2):
     # Transform tables to lists of lists
@@ -66,7 +66,7 @@ def purity(df1, df2):
                 pass
     # Calc
     purity_score = pure_count / detected_total
-    return round(purity_score, 4)
+    return round(purity_score, 3)
 
 def precision(df1, df2):
     # Transform tables to lists of lists
@@ -104,7 +104,7 @@ def precision(df1, df2):
                 pass
     # Calc
     precision_score = correct_pl / detected_pl
-    return round(precision_score, 4)
+    return round(precision_score, 3)
 
 def recall(df1, df2):
     # Transform tables to lists of lists
@@ -142,7 +142,7 @@ def recall(df1, df2):
                 pass
     # Calc
     recall_score = correct_pl / total_pl
-    return round(recall_score, 4)
+    return round(recall_score, 3)
 
 def all_metrics(df1, df2):
     # Clean & format dataframes

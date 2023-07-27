@@ -50,10 +50,10 @@ class GeneratedTable:
 
                 self.filename = sd.uuid()
 
-                self.path = './generated_tables/' + self.filename 
+                self.path = './generated_tables/' + self.filename + '/' + self.filename
 
                 if not os.path.exists(self.path):
-                    os.makedirs(self.path)
+                    os.makedirs('./generated_tables/' + self.filename)
 
                 doc.generate_pdf(self.path, compiler='pdflatex')
                 self.path += '.pdf'
@@ -70,7 +70,7 @@ class GeneratedTable:
 
             self.filename = sd.uuid()
 
-            self.path = './generated_tables/' + self.filename 
+            self.path = './generated_tables/' + self.filename + '/' + self.filename
 
             doc.generate_pdf(self.path, compiler='pdflatex')
             self.path += '.pdf'
