@@ -67,13 +67,13 @@ class Table:
         self.table_data = pd.DataFrame.from_records(tableData, columns=tableData[0])
         self.table_data = self.table_data.drop(0)
 
-    def plot_bounding_boxes(self):
+    def plot_bounding_boxes(self, file_name):
         # colors for visualization
         COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
                   [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
         
         plt.figure(figsize=(16,10))
-        plt.imshow(self.image)
+        #plt.imshow(self.image)
         ax = plt.gca()
         colors = COLORS * 100
         boxes = self.getBBox()
@@ -86,7 +86,8 @@ class Table:
             ax.text(xmin, ymin, text, fontsize=15,
                     bbox=dict(facecolor='yellow', alpha=0.5))
         plt.axis('off')
-        plt.show()
+        plt.savefig(file_name + ".jpg")
+
 
     def get_as_dataframe(self):
         return self.table_data

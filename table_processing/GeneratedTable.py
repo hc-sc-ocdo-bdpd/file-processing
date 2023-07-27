@@ -2,13 +2,14 @@ import pydbgen
 import pylatex as pl
 import shortuuid as sd
 from pydbgen import pydbgen as dbgen
+import os
 import pandas as pd
 import numpy as np
-
 
 myDB= dbgen.pydb()
 
 geometry_options = {'margin': '0.7in'}
+
 class GeneratedTable:
     def __init__(self,rows=10,columns=5,row_lines = None, vertical_lines = None, margin='0.7in', multi_row = None, row_height = None): 
         self.rows = rows
@@ -46,10 +47,7 @@ class GeneratedTable:
         
     def to_pdf(self):
         doc = pl.Document(geometry_options=self.geometry_options)  
-
-
         if self.row_lines == True and self.multi_row == False:
-            
             with doc.create(pl.Center()) as centered:
                 with centered.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
                     table.add_row(list(self.df.columns))
@@ -100,7 +98,10 @@ class GeneratedTable:
 
                 self.filename = sd.uuid()
 
-                self.path = './generated_tables/' + self.filename 
+                self.path = './generated_tables/' + self.filename + '/' + self.filename
+
+                if not os.path.exists(self.path):
+                    os.makedirs('./generated_tables/' + self.filename)
 
                 doc.generate_pdf(self.path, compiler='pdflatex')
                 self.path += '.pdf'
@@ -118,7 +119,7 @@ class GeneratedTable:
 
             self.filename = sd.uuid()
 
-            self.path = './generated_tables/' + self.filename 
+            self.path = './generated_tables/' + self.filename + '/' + self.filename
 
             doc.generate_pdf(self.path, compiler='pdflatex')
             self.path += '.pdf'
