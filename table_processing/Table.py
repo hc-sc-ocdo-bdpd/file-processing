@@ -112,6 +112,8 @@ class Table:
                 if 0 in cell.size:
                     row_cell_text.append(None)
                 else:
+                    width, height = cell.size
+                    cell = cell.resize((int(width*2.5), int(height*2.5)))
                     #self.plot_image(cell)
                     row_cell_text.append(pytesseract.image_to_string(cell))
             rows.append(row_cell_text)
