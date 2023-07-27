@@ -24,48 +24,99 @@ class Table:
     def __init__(self, image = None):
         if image != None:
             self.image = image
-            self.rowSorted = []
-            self.colSorted = []
-            self.sortBBox()
+            self.row_limits = []
+            self.column_limits = []
+            self.calculate_row_column_limits()
             self.extract_table_content()
 
-    def sortBBox(self):
+    def calculate_row_column_limits(self):
         self.model = TableTransformerForObjectDetection.from_pretrained("microsoft/table-transformer-structure-recognition")
-        self.table_structure = get_bounding_boxes(self.image, self.model)[0][0]
+        self.table_structure, self.model = get_bounding_boxes(self.image, self.model)
+        self.table_structure = self.table_structure[0] #[0] as the boxes are returns a list of table structures of length 1
 
+        # Add image boundaries to the row and column limits
+        '''
+        width, height = self.image.size
+        self.row_limits.append(0)
+        self.row_limits.append(height)
+        self.column_limits.append(0)
+        self.column_limits.append(width)
+        '''
 
-        tmpBox = self.getBBox()
-        tmpLabel = self.getLabels()
-        for i in range(len(tmpBox)):
-            if tmpLabel[i] == 2:
-                self.rowSorted.append(tmpBox[i])
+        # Use boundaries of bounding boxes to set row and column limits
+        for box in self.get_bounding_box_list():
+            x1,y1,x2,y2 = box
+            self.row_limits.append(y1)
+            self.row_limits.append(y2)
+            self.column_limits.append(x1)
+            self.column_limits.append(x2)
+        
+        self.row_limits.sort()
+        self.column_limits.sort()
 
-        self.rowSorted = sorted(self.rowSorted, key=lambda x: x[1])
+    def get_cropped_rows(self):
+        y2 = 0
+        cropped_rows = []
+        width, height = self.image.size
+        for limit in self.row_limits:
+            y1 = y2
+            y2 = limit
+            x1 = 0
+            x2 = width
+            cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
+        
+        # Do the last row to the end of the image
+        y1 = y2
+        y2 = height
+        x1 = 0
+        x2 = width
+        cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
+        return cropped_rows
+    
+    ## TODO: refactor to eliminate code duplication between this method and get_cropped_rows()
+    ## TODO: Need to consider that the left most and right most box seems to crop some of the cell
+    def get_cropped_columns(self, image):
+        x2 = 0
+        cropped_columns = []
+        width, height = image.size
+        for limit in self.column_limits:
+            x1 = x2
+            x2 = limit
+            y1 = 0
+            y2 = height
+            cropped_columns.append(self.image.crop([x1,y1,x2,y2]))
+        
+        # Do the last row to the end of the image
+        x1 = x2
+        x2 = limit
+        y1 = 0
+        y2 = height
+        cropped_columns.append(self.image.crop([x1,y1,x2,y2]))
+        return cropped_columns
 
-        for i in range(len(tmpBox)):
-            if tmpLabel[i] == 1:
-                self.colSorted.append(tmpBox[i])
-
-
-        self.colSorted = sorted(self.colSorted, key=lambda x: x[0])
+    def plot_image(self, image):
+        plt.figure()
+        plt.imshow(image)
+        plt.show()
 
 
     def extract_table_content(self):
-        # OCR all box content
-        tableData=[]
-        for row in self.rowSorted:
-            text_buffer = []
+        row_images = self.get_cropped_rows()
 
-            for col in self.colSorted:   
-                res = calculate_intersection(row, col)
-                cropped_image = self.image.crop(res)
-                text = pytesseract.image_to_string(cropped_image)
-                text_buffer.append(text)
-            tableData.append(text_buffer) 
+        table_text = []
+        for row in row_images:
+            cell_text = []
+            cells = self.get_cropped_columns(row)
+            for cell in cells:
+                if 0 in cell.size:
+                    cell_text.append("")
+                else:
+                    #self.plot_image(cell)
+                    cell_text.append(str(pytesseract.image_to_string(cell)))
+            table_text.append(cell_text)
+        self.table_data = pd.DataFrame(table_text)
+        a = 1
 
-        # Make a table structure - likely a dataframe
-        self.table_data = pd.DataFrame.from_records(tableData, columns=tableData[0])
-        self.table_data = self.table_data.drop(0)
 
     def plot_bounding_boxes(self, file_name):
         # colors for visualization
@@ -73,11 +124,11 @@ class Table:
                   [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
         
         plt.figure(figsize=(16,10))
-        #plt.imshow(self.image)
+        plt.imshow(self.image)
         ax = plt.gca()
         colors = COLORS * 100
-        boxes = self.getBBox()
-        labels = self.getLabels()
+        boxes = self.get_bounding_box_list()
+        labels = self.get_labels()
         scores = self.get_scores()
         for score, label, (xmin, ymin, xmax, ymax), c in zip(scores, labels, boxes, colors):
             ax.add_patch(plt.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin,
@@ -92,10 +143,10 @@ class Table:
     def get_as_dataframe(self):
         return self.table_data
     
-    def getBBox(self):
+    def get_bounding_box_list(self):
         return self.table_structure['boxes'].tolist()
     
-    def getLabels(self):
+    def get_labels(self):
         return self.table_structure['labels'].tolist()
     
     def get_scores(self):

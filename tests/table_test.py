@@ -28,3 +28,15 @@ def test_to_excel():
     os.remove("all_excel.xlsx")
     assert not os.path.exists("all_excel.xlsx")
 
+def test_correct_structure():
+    from PIL import Image
+    import pandas as pd
+    from table_processing.Table import Table
+    
+    file_path = "./tests/resources/simple_table.PNG"
+    table_image = Image.open(file_path).convert("RGB")
+    width, height = table_image.size
+    table_image.resize((int(width*0.5), int(height*0.5)))
+    table = Table(image = table_image)
+    assert type(table.get_as_dataframe()) == type(pd.DataFrame())
+
