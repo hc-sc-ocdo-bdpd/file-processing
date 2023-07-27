@@ -103,19 +103,19 @@ class Table:
     def extract_table_content(self):
         row_images = self.get_cropped_rows()
 
-        table_text = []
+        self.table_data = pd.DataFrame()
+        rows = []
         for row in row_images:
-            cell_text = []
+            row_cell_text = []
             cells = self.get_cropped_columns(row)
             for cell in cells:
                 if 0 in cell.size:
-                    cell_text.append("")
+                    row_cell_text.append("")
                 else:
                     #self.plot_image(cell)
-                    cell_text.append(str(pytesseract.image_to_string(cell)))
-            table_text.append(cell_text)
-        self.table_data = pd.DataFrame(table_text)
-        a = 1
+                    row_cell_text.append(pytesseract.image_to_string(cell))
+            rows.append(row_cell_text)
+        self.table_data = pd.DataFrame.from_records(rows, columns=rows[0])
 
 
     def plot_bounding_boxes(self, file_name):
