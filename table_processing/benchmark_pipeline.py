@@ -9,7 +9,7 @@ tables = {}
 failed_tables = []
 
 # Loop for n # of tables
-for i in range(0,1):
+for i in range(0,10):
     # Generate, store, and export to pdf true table
     genr_table = GeneratedTable(5, row_lines=True, vertical_lines=True)
     true_table = genr_table.df
@@ -32,12 +32,12 @@ for i in range(0,1):
 # Calculate table extraction performance metrics
 metrics_df = test_tables(tables)
 metrics_df.loc[metrics_df.index.isin(failed_tables), list(metrics_df.columns.values)] = 0
-summary_df = metrics_df.astype(float).describe().apply(lambda s: s.apply('{0:.4f}'.format))
-print(metrics_df)
-#print(summary_df)
+summary_df = metrics_df.astype(float).describe().fillna(0).apply(lambda s: s.apply('{0:.4f}'.format))
+#print(metrics_df)
+print(summary_df)
 
 # Export metrics
-sheet_dfs = {'All Table Metrics':metrics_df, 'Metric Summaries':summary_df}
+sheet_dfs = {'All Tables':metrics_df, 'Metric Summaries':summary_df}
 with pd.ExcelWriter('table_metrics.xlsx') as writer:
     for sheet in sheet_dfs:
         sheet_dfs[sheet].to_excel(writer, sheet)
