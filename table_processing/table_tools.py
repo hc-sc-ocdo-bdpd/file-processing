@@ -34,6 +34,7 @@ def remove_duplicate_limits(limit_list, threshold):
     for limit in limit_list:
         if not True in [within_threshold(limit, x, threshold) for x in unique]:
             unique.append(limit)
+    unique.sort()
     return unique
 
 

@@ -61,7 +61,9 @@ def test_remove_duplicate_limits():
     threshold = 2
     unique = remove_duplicate_limits(limit_list, threshold)
     expected = [-50, 0, 50, 52, 60]
-    assert expected.sort() == unique.sort()
+    expected.sort()
+    unique.sort()
+    assert expected == unique
 
 
 def test_within_threshold():
@@ -70,4 +72,3 @@ def test_within_threshold():
     assert within_threshold(1, 5, 1) == False
     assert within_threshold(1.3, 1.4, 1) == True
     assert within_threshold(1.3, 1.4, 0.01) == False
-    
