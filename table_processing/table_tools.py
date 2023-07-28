@@ -28,11 +28,14 @@ def calculate_intersection(box1, box2):
     else:
         return [x1, y1, x2, y2]
     
+
 def remove_duplicate_limits(limit_list, threshold):
     unique = []
-#   for limit in limit_list:
+    for limit in limit_list:
+        if not True in [within_threshold(limit, x, threshold) for x in unique]:
+            unique.append(limit)
+    return unique
 
 
-            
 def within_threshold(a, b, threshold):
     return abs(b - a) < abs(threshold)
