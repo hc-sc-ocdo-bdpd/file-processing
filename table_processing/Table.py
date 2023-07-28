@@ -13,7 +13,7 @@ import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from table_tools import get_bounding_boxes, calculate_intersection
+from table_tools import get_bounding_boxes, remove_duplicate_limits
 pytesseract.pytesseract.tesseract_cmd = os.path.join('C:/Users',getpass.getuser(),'AppData/Local/Programs/Tesseract-OCR/tesseract.exe')
 
 
@@ -51,10 +51,20 @@ class Table:
             self.column_limits.append(x1)
             self.column_limits.append(x2)
         
+        threshold = 2  # no row or column can be only 2 pixels wide
+        self.row_limits = remove_duplicate_limits(self.row_limits, threshold)
+        self.column_limits = remove_duplicate_limits(self.column_limits, threshold)
+
         self.row_limits.sort()
         self.column_limits.sort()
 
+        # Remove left-most and right most column limits to handle clipping issue (temporary fix)
+        self.column_limits.pop(0)
+        self.column_limits.pop()
+
+
     def get_cropped_rows(self):
+        self.row_limits.sort()
         y2 = 0
         cropped_rows = []
         width, height = self.image.size
@@ -76,6 +86,7 @@ class Table:
     ## TODO: refactor to eliminate code duplication between this method and get_cropped_rows()
     ## TODO: Need to consider that the left most and right most box seems to crop some of the cell
     def get_cropped_columns(self, image):
+        self.column_limits.sort()
         x2 = 0
         cropped_columns = []
         width, height = image.size
