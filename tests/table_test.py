@@ -54,6 +54,17 @@ def test_extract_table_content():
     # TODO: Correct this test case to check the table contents
     assert False
 
+
+def test_remove_duplicate_limits():
+    from table_processing.table_tools import remove_duplicate_limits
+    limit_list = [0, 0.1, 0.1, 50, 60, 0, 51, 52, -50]
+    threshold = 2
+    unique = remove_duplicate_limits(limit_list, threshold)
+    expected = [-50, 0, 50, 52, 60]
+    assert expected.sort() == unique.sort()
+
+
+
 def test_within_threshold():
     from table_processing.table_tools import within_threshold
     assert within_threshold(1, 1, 1) == True
