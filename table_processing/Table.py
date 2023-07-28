@@ -54,7 +54,7 @@ class Table:
         
 
     def _calculate_row_column_limits(self):
-        self.calculate_raw_row_column_limits()
+        self._calculate_raw_row_column_limits()
         threshold = 2  # no row or column can be only 2 pixels wide
         self.row_limits = remove_duplicate_limits(self.row_limits, threshold)
         self.column_limits = remove_duplicate_limits(self.column_limits, threshold)
