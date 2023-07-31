@@ -3,18 +3,23 @@ from GeneratedTable import GeneratedTable
 from Table_Detector import Table_Detector
 from table_metrics import test_tables
 import pandas as pd
+import numpy as np
+import logging
+logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
+                    level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
 # Initialize table dict
 tables = {}
 failed_tables = []
 
 # Loop for n # of tables
-for i in range(0,3):
+for i in range(0,1):
     # Generate, store, and export to pdf true table
     genr_table = GeneratedTable(rows=5, columns=5, row_lines=True, vertical_lines=True)
     true_table = genr_table.df
     genr_table.to_pdf()
     t_name = genr_table.get_filename()
+    logging.warning('Generated table ' + t_name)
     file_path = 'generated_tables/' + t_name + '/'  + t_name
     # Detect from pdf, export to and read from excel processed table
     try:
@@ -36,8 +41,8 @@ summary_df = metrics_df.astype(float).describe().fillna(0).apply(lambda s: s.app
 summary_df.loc[summary_df.index == 'count'] = summary_df.loc[summary_df.index == 'count'].astype(float).astype(int).astype(str)
 summary_df = summary_df.reset_index().rename(columns={'index':''})
 metrics_df = metrics_df.apply(lambda s: s.apply('{0:.3f}'.format)).reset_index().rename(columns={'index':''})
-#print(metrics_df)
-print(summary_df)
+logging.warning(pd.DataFrame(np.row_stack((summary_df.columns, summary_df.to_numpy())), 
+                columns=['']*len(summary_df.columns), index=['']*(1+len(summary_df))))
 
 # Export metrics
 def write_report(exported_df, exported_dfName):
@@ -52,4 +57,4 @@ try:
     write_report(metrics_df, 'All Tables'), write_report(summary_df, 'Metrics Summary')
     writerFinal.close()
 except PermissionError:
-    print('\nError: Metrics sheet could not be exported due to excel file already being open.\n')
+    logging.error('Metrics sheet could not be exported due to excel file already being open.')
