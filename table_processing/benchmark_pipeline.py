@@ -9,12 +9,13 @@ tables = {}
 failed_tables = []
 
 # Loop for n # of tables
-for i in range(0,3):
+for i in range(0,1):
     # Generate, store, and export to pdf true table
     genr_table = GeneratedTable(rows=5, columns=5, row_lines=True, vertical_lines=True)
     true_table = genr_table.df
     genr_table.to_pdf()
     t_name = genr_table.get_filename()
+    print(t_name)
     file_path = 'generated_tables/' + t_name + '/'  + t_name
     # Detect from pdf, export to and read from excel processed table
     try:
