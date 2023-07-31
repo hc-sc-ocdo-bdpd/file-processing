@@ -40,3 +40,44 @@ def remove_duplicate_limits(limit_list, threshold):
 
 def within_threshold(a, b, threshold):
     return abs(b - a) < abs(threshold)
+
+
+def _calculate_raw_row_column_limits(bbox_list):
+    # Use boundaries of bounding boxes to set row and column limits
+    row_limits = []
+    column_limits = []
+    for box in bbox_list:
+        x1,y1,x2,y2 = box
+        row_limits.append(y1)
+        row_limits.append(y2)
+        column_limits.append(x1)
+        column_limits.append(x2)
+    row_limits.sort()
+    column_limits.sort()
+
+    return(column_limits,row_limits)
+    
+
+def _calculate_row_column_limits(image_dim, bbox_list):
+    column_limits, row_limits =_calculate_raw_row_column_limits(bbox_list)
+    row_thresh, col_thresh = 4, 4
+    row_limits = remove_duplicate_limits(row_limits, row_thresh)
+    column_limits = remove_duplicate_limits(column_limits, col_thresh)
+
+    # Remove left-most and right most column limits to handle clipping issue (temporary fix) and replace them with the image limits
+    column_limits.sort()
+    column_limits.pop(0)
+    column_limits.pop()
+
+    # Add image boundaries to the row and column limits
+    width, height = image_dim
+    row_limits.append(0)
+    row_limits.append(height)
+    column_limits.append(0)
+    column_limits.append(width)      
+    
+    # Make sure that adding the new limits didn't add dubplicates
+    row_limits = remove_duplicate_limits(row_limits, row_thresh)
+    column_limits = remove_duplicate_limits(column_limits, col_thresh)
+
+    return(column_limits, row_limits)  

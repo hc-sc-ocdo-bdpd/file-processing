@@ -29,8 +29,44 @@ def test_to_excel():
     assert not os.path.exists("all_excel.xlsx")
 
 def test_calculate_row_column_limits():
+    from table_processing.table_tools import _calculate_row_column_limits,remove_duplicate_limits
+    expected_row_limit=[]
+    expected_col_limit=[]
+    img_dim = (730,250)
+    test_bbox = [[122,122.7,133,42],[50,40,123,100],[26,107,108.2,111]]
+    for box in test_bbox:
+        x1,y1,x2,y2 = box
+        expected_row_limit.append(y1)
+        expected_row_limit.append(y2)
+        expected_col_limit.append(x1)
+        expected_col_limit.append(x2)
+    
+    expected_col_limit.sort()
+    expected_row_limit.sort()
+
+    expected_col_limit = remove_duplicate_limits(expected_col_limit,4)
+    expected_row_limit = remove_duplicate_limits(expected_row_limit,4)
+
+    expected_col_limit.pop(0)
+    expected_col_limit.pop()
+
+
+    expected_col_limit.append(0)
+    expected_col_limit.append(img_dim[0])
+    expected_row_limit.append(0)
+    expected_row_limit.append(img_dim[1])
+
+    expected_col_limit.sort()
+    expected_row_limit.sort()
+
+    returned_col_limit, returned_row_limit = _calculate_row_column_limits(img_dim,test_bbox)
+
+
+    assert expected_col_limit == returned_col_limit and expected_row_limit == returned_row_limit
+
+    
+
     # TODO: Make a test for calculate_row_column_limits
-    assert False
 
 def test_get_cropped_rows():
     # TODO: Make a test case for get_cropped_rows
