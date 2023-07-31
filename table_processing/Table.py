@@ -55,9 +55,9 @@ class Table:
 
     def _calculate_row_column_limits(self):
         self._calculate_raw_row_column_limits()
-        threshold = 2  # no row or column can be only 2 pixels wide
-        self.row_limits = remove_duplicate_limits(self.row_limits, threshold)
-        self.column_limits = remove_duplicate_limits(self.column_limits, threshold)
+        row_thresh, col_thresh = 4, 4
+        self.row_limits = remove_duplicate_limits(self.row_limits, row_thresh)  # threshold is in pixels
+        self.column_limits = remove_duplicate_limits(self.column_limits, col_thresh)
 
         # Remove left-most and right most column limits to handle clipping issue (temporary fix) and replace them with the image limits
         self.column_limits.sort()
@@ -72,27 +72,25 @@ class Table:
         self.column_limits.append(width)     
         
         # Make sure that adding the new limits didn't add dubplicates
-        self.row_limits = remove_duplicate_limits(self.row_limits, threshold)
-        self.column_limits = remove_duplicate_limits(self.column_limits, threshold)  
+        self.row_limits = remove_duplicate_limits(self.row_limits, row_thresh)
+        self.column_limits = remove_duplicate_limits(self.column_limits, col_thresh)  
 
 
     def get_cropped_rows(self):
         self.row_limits.sort()
-        y2 = 0
         cropped_rows = []
         width, height = self.image.size
+        x1 = 0
+        x2 = width
+        y2 = 0
         for limit in self.row_limits:
             y1 = y2
             y2 = limit
-            x1 = 0
-            x2 = width
             cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
         
         # Do the last row to the end of the image
         y1 = y2
         y2 = height
-        x1 = 0
-        x2 = width
         cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
         return cropped_rows
     
@@ -103,19 +101,17 @@ class Table:
         x2 = 0
         cropped_columns = []
         width, height = image.size
+        y1 = 0
+        y2 = height
         for limit in self.column_limits:
             x1 = x2
             x2 = limit
-            y1 = 0
-            y2 = height
-            cropped_columns.append(self.image.crop([x1,y1,x2,y2]))
+            cropped_columns.append(image.crop([x1,y1,x2,y2]))
         
         # Do the last column to the end of the image
-        # x1 = x2
-        # x2 = width
-        # y1 = 0
-        # y2 = height
-        cropped_columns.append(self.image.crop([x1,y1,x2,y2]))
+        x1 = x2
+        x2 = width
+        cropped_columns.append(image.crop([x1,y1,x2,y2]))
         return cropped_columns
 
     def plot_image(self, image):
@@ -126,24 +122,23 @@ class Table:
 
     def extract_table_content(self):
         row_images = self.get_cropped_rows()
-
-        self.table_data = pd.DataFrame()
         rows = []
         for row in row_images:
             row_cell_text = []
-            cells = self.get_cropped_columns(row)
-            for cell in cells:
-                if 0 in cell.size:
-                    row_cell_text.append(None)
-                else:
+            #row.show()
+            if row.size[1] > 0:
+                cells = self.get_cropped_columns(row)
+                for cell in cells:
                     width, height = cell.size
-                    cell = cell.resize((int(width*2.5), int(height*2.5)))
-                    #self.plot_image(cell)
-                    row_cell_text.append(pytesseract.image_to_string(cell))
-            rows.append(row_cell_text)
-        self.table_data = pd.DataFrame.from_records(rows, columns=rows[0])
-
-        # TODO: remove empty rows and columns from self.table_data
+                    if width > 0:
+                        cell = cell.resize((int(width*2.5), int(height*2.5)))
+                        #self.plot_image(cell)
+                        row_cell_text.append(pytesseract.image_to_string(cell))
+                        #print(row_cell_text[-1])
+                rows.append(row_cell_text)
+        if len(rows) < 1:  # if read table is only one row
+            rows[1] = ['']*len(rows[0])
+        self.table_data = pd.DataFrame.from_records(rows[1:], columns=rows[0])
 
 
     def plot_bounding_boxes(self, file_name):
