@@ -69,7 +69,7 @@ class Table:
         self.row_limits.append(0)
         self.row_limits.append(height)
         self.column_limits.append(0)
-        self.column_limits.append(width)      
+        self.column_limits.append(width)     
         
         # Make sure that adding the new limits didn't add dubplicates
         self.row_limits = remove_duplicate_limits(self.row_limits, threshold)
@@ -110,11 +110,11 @@ class Table:
             y2 = height
             cropped_columns.append(self.image.crop([x1,y1,x2,y2]))
         
-        # Do the last row to the end of the image
-        x1 = x2
-        x2 = limit
-        y1 = 0
-        y2 = height
+        # Do the last column to the end of the image
+        # x1 = x2
+        # x2 = width
+        # y1 = 0
+        # y2 = height
         cropped_columns.append(self.image.crop([x1,y1,x2,y2]))
         return cropped_columns
 

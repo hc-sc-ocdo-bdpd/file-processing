@@ -11,7 +11,7 @@ myDB= dbgen.pydb()
 geometry_options = {'margin': '0.7in'}
 
 class GeneratedTable:
-    def __init__(self,rows=10,columns=5,row_lines = None, vertical_lines = None, margin='0.7in', multi_row = None, row_height = None): 
+    def __init__(self,rows=10,columns=5,row_lines = None, vertical_lines = None, margin='0.7in', multi_row = False, row_height = None): 
         self.rows = rows
         self.columns = columns 
         self.row_lines = row_lines
@@ -46,7 +46,12 @@ class GeneratedTable:
                     self.df.loc[row,self.df.columns[0]] = ''
         
     def to_pdf(self):
-        doc = pl.Document(geometry_options=self.geometry_options)  
+        doc = pl.Document(geometry_options=self.geometry_options)
+        self.filename = sd.uuid()
+        self.path = './generated_tables/' + self.filename + '/' + self.filename
+        if not os.path.exists(self.path):
+            os.makedirs('./generated_tables/' + self.filename) 
+
         if self.row_lines == True and self.multi_row == False:
             with doc.create(pl.Center()) as centered:
                 with centered.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
@@ -55,12 +60,7 @@ class GeneratedTable:
                     for row in self.df.index:
                         table.add_row(list(self.df.loc[row,:]))
                         table.add_hline()
-   
-
-                self.filename = sd.uuid()
-
-                self.path = './generated_tables/' + self.filename 
-
+                    
                 doc.generate_pdf(self.path, compiler='pdflatex')
                 self.path += '.pdf'
 
@@ -86,7 +86,7 @@ class GeneratedTable:
                             try: 
                             #   look at next row if first for first cell empty
                                 if self.df.loc[row+1,self.df.columns[0]] == '':
-                         
+                        
                                     table.add_row(list(self.df.loc[row,:]))
                                     table.add_hline(start=2)
                                     continue
@@ -95,14 +95,7 @@ class GeneratedTable:
                             except Exception as e: #case runs if row is last row
                                 table.add_row(list(self.df.loc[row,:]))
                                 table.add_hline()
-
-                self.filename = sd.uuid()
-
-                self.path = './generated_tables/' + self.filename + '/' + self.filename
-
-                if not os.path.exists(self.path):
-                    os.makedirs('./generated_tables/' + self.filename)
-
+                                
                 doc.generate_pdf(self.path, compiler='pdflatex')
                 self.path += '.pdf'
         else:
@@ -116,11 +109,7 @@ class GeneratedTable:
                     for row in self.df.index:
                         table.add_row(list(self.df.loc[row,:]))
                     table.add_hline()
-
-            self.filename = sd.uuid()
-
-            self.path = './generated_tables/' + self.filename + '/' + self.filename
-
+                    
             doc.generate_pdf(self.path, compiler='pdflatex')
             self.path += '.pdf'
 
