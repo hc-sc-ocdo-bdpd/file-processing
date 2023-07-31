@@ -137,7 +137,7 @@ class Table:
                         #print(row_cell_text[-1])
                 rows.append(row_cell_text)
         if len(rows) < 1:  # if read table is only one row
-            rows[1] = ['']*len(rows[0])
+            rows.append(['']*len(rows[0]))
         self.table_data = pd.DataFrame.from_records(rows[1:], columns=rows[0])
 
 
