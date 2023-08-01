@@ -38,7 +38,6 @@ class Table:
         self.table_structure, self.model = get_bounding_boxes(self.image, self.model)
         self.table_structure = self.table_structure[0]  #[0] as the boxes are returns a list of table structures of length 1
 
-
     def _calculate_raw_row_column_limits(self):
         # Use boundaries of bounding boxes to set row and column limits
         self.row_limits = []
@@ -71,7 +70,6 @@ class Table:
         self.column_limits.append(0)
         self.column_limits.append(width)     
         
-        # Make sure that adding the new limits didn't add dubplicates
         self.row_limits = remove_duplicate_limits(self.row_limits, row_thresh)
         self.column_limits = remove_duplicate_limits(self.column_limits, col_thresh)  
 
