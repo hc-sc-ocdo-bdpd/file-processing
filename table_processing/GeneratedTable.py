@@ -84,7 +84,7 @@ class GeneratedTable:
                             try: 
                             #   look at next row if first for first cell empty
                                 if self.df.loc[row+1,self.df.columns[0]] == '':
-                         
+                        
                                     table.add_row(list(self.df.loc[row,:]))
                                     table.add_hline(start=2)
                                     continue

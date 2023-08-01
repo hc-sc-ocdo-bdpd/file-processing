@@ -6,16 +6,16 @@ import os
 import pandas as pd
 
 def get_bounding_boxes(image, model):
-    width, height = image.size
-    image.resize((int(width*0.5), int(height*0.5)))
+#    width, height = image.size
+#    image.resize((int(width*0.5), int(height*0.5)))
     feature_extractor = DetrImageProcessor()
     encoding = feature_extractor(image, return_tensors="pt")
-    encoding.keys()
+#    encoding.keys()
     with torch.no_grad():
         outputs = model(**encoding)
     width, height = image.size
-    results = feature_extractor.post_process_object_detection(outputs, threshold=0.7, target_sizes=[(height, width)])#[0]
-    return results, model
+    bounding_boxes = feature_extractor.post_process_object_detection(outputs, threshold=0.7, target_sizes=[(height, width)])
+    return bounding_boxes, model
 
 def calculate_intersection(box1, box2):
     x1 = max(box1[0], box2[0])
@@ -28,3 +28,15 @@ def calculate_intersection(box1, box2):
     else:
         return [x1, y1, x2, y2]
     
+
+def remove_duplicate_limits(limit_list, threshold):
+    unique = []
+    for limit in limit_list:
+        if not True in [within_threshold(limit, x, threshold) for x in unique]:
+            unique.append(limit)
+    unique.sort()
+    return unique
+
+
+def within_threshold(a, b, threshold):
+    return abs(b - a) < abs(threshold)
