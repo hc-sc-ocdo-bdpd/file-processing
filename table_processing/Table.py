@@ -39,21 +39,19 @@ class Table:
         self.table_structure = self.table_structure[0]  #[0] as the boxes are returns a list of table structures of length 1
 
 
-    def _calculate_raw_row_column_limits(self,bbox_list):
+    def _calculate_raw_row_column_limits(self):
         # Use boundaries of bounding boxes to set row and column limits
-        row_limits = []
-        column_limits = []
-        for box in bbox_list:
+        self.row_limits = []
+        self.column_limits = []
+        for box in self.get_bounding_box_list():
             x1,y1,x2,y2 = box
-            row_limits.append(y1)
-            row_limits.append(y2)
-            column_limits.append(x1)
-            column_limits.append(x2)
-        row_limits.sort()
-        column_limits.sort()
+            self.row_limits.append(y1)
+            self.row_limits.append(y2)
+            self.column_limits.append(x1)
+            self.column_limits.append(x2)
+        self.row_limits.sort()
+        self.column_limits.sort()
 
-        return(column_limits,row_limits)
-        
 
     def _calculate_row_column_limits(self):
         self._calculate_raw_row_column_limits()
@@ -62,9 +60,9 @@ class Table:
         self.column_limits = remove_duplicate_limits(self.column_limits, col_thresh)
 
         # Remove left-most and right most column limits to handle clipping issue (temporary fix) and replace them with the image limits
-        column_limits.sort()
-        column_limits.pop(0)
-        column_limits.pop()
+        self.column_limits.sort()
+        self.column_limits.pop(0)
+        self.column_limits.pop()
 
         # Add image boundaries to the row and column limits
         width, height = self.image.size
