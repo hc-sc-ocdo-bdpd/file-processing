@@ -54,9 +54,9 @@ class Table:
 
     def _calculate_row_column_limits(self):
         self._calculate_raw_row_column_limits()
-        threshold = 2  # no row or column can be only 2 pixels wide
-        self.row_limits = remove_duplicate_limits(self.row_limits, threshold)
-        self.column_limits = remove_duplicate_limits(self.column_limits, threshold)
+        row_thresh, col_thresh = 4, 4
+        self.row_limits = remove_duplicate_limits(self.row_limits, row_thresh)  # threshold is in pixels
+        self.column_limits = remove_duplicate_limits(self.column_limits, col_thresh)
 
         # Remove left-most and right most column limits to handle clipping issue (temporary fix) and replace them with the image limits
         self.column_limits.sort()
@@ -70,9 +70,8 @@ class Table:
         self.column_limits.append(0)
         self.column_limits.append(width)     
         
-        # Make sure that adding the new limits didn't add dubplicates
-        self.row_limits = remove_duplicate_limits(self.row_limits, threshold)
-        self.column_limits = remove_duplicate_limits(self.column_limits, threshold)  
+        self.row_limits = remove_duplicate_limits(self.row_limits, row_thresh)
+        self.column_limits = remove_duplicate_limits(self.column_limits, col_thresh)  
 
 
     def get_cropped_rows(self):
