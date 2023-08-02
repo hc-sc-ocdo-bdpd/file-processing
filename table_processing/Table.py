@@ -87,9 +87,9 @@ class Table:
             cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
         
         # Do the last row to the end of the image
-        y1 = y2
-        y2 = height
-        cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
+        # y1 = y2
+        # y2 = height
+        # cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
         return cropped_rows
     
     ## TODO: refactor to eliminate code duplication between this method and get_cropped_rows()
@@ -107,9 +107,9 @@ class Table:
             cropped_columns.append(image.crop([x1,y1,x2,y2]))
         
         # Do the last column to the end of the image
-        x1 = x2
-        x2 = width
-        cropped_columns.append(image.crop([x1,y1,x2,y2]))
+        # x1 = x2
+        # x2 = width
+        # cropped_columns.append(image.crop([x1,y1,x2,y2]))
         return cropped_columns
 
     def plot_image(self, image):

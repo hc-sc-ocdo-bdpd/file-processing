@@ -70,11 +70,43 @@ def test_calculate_row_column_limits():
 
 def test_get_cropped_rows():
     # TODO: Make a test case for get_cropped_rows
-    assert False
+    from PIL import Image
+    from table_processing.Table import Table
+
+    file_path = "./tests/resources/simple_table.PNG"
+    table_image = Image.open(file_path).convert("RGB")
+    width, height = table_image.size
+    table_image.resize((int(width*1.75), int(height*1.75)))
+    table = Table(image = table_image)
+    expected_len = len(table.row_limits)
+    assert  expected_len == len(table.get_cropped_rows())
+    counter = 0
+    for row in table.get_cropped_rows():
+        if counter > 0:
+            assert row.size[1] == round(table.row_limits[counter] - table.row_limits[counter-1])
+        else:
+            assert row.size[1] == round(table.row_limits[counter])
+        counter+=1
 
 def test_get_cropped_columns():
     # TODO: Make a test case for get_cropped_columns
-    assert False
+    from PIL import Image
+    from table_processing.Table import Table
+
+    file_path = "./tests/resources/simple_table.PNG"
+    table_image = Image.open(file_path).convert("RGB")
+    width, height = table_image.size
+    table_image.resize((int(width*1.75), int(height*1.75)))
+    table = Table(image = table_image)
+    expected_len = (len(table.column_limits))
+    assert  expected_len == len(table.get_cropped_columns(table_image))
+    counter = 0
+    for column in table.get_cropped_columns(table_image):
+        if counter > 0:
+            assert column.size[0] == round(table.column_limits[counter] - table.column_limits[counter-1])
+        else:
+            assert column.size[0] == round(table.column_limits[counter])
+        counter+=1
 
 def test_extract_table_content():
     from PIL import Image
@@ -108,3 +140,20 @@ def test_within_threshold():
     assert within_threshold(1, 5, 1) == False
     assert within_threshold(1.3, 1.4, 1) == True
     assert within_threshold(1.3, 1.4, 0.01) == False
+
+def test_MultiPage():
+    import PyPDF2
+    #One page pdf file
+    doc1 = open('tests/resources/DmZUHweaZfPcMjTCAySRtp.pdf', 'rb')
+    #Four page pdf file
+    doc2 = open('tests/resources/GBnzszrSV2sAXLEH5k7SFz.pdf', 'rb')
+    
+    pdfReader1 = PyPDF2.PdfReader(doc1)
+    pdfReader2 = PyPDF2.PdfReader(doc2)
+
+    # count number of pages
+    totalPages1 = len(pdfReader1.pages)
+    totalPages2 = len(pdfReader2.pages)
+    
+    assert totalPages1 == 1
+    assert totalPages2 > 1
