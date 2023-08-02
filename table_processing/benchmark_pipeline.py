@@ -60,4 +60,6 @@ try:
     write_report(metrics_df, 'All Tables'), write_report(summary_df, 'Metrics Summary')
     writerFinal.close()
 except PermissionError:
-    logging.error('Metrics sheet could not be exported due to excel file already being open.')
+    logging.error('Metrics sheet could not be exported due to excel file already being open')
+except AttributeError:
+    logging.error('Metrics sheet could not be exported due to the "xlsxwriter" package not being downloaded in the environment')
