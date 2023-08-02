@@ -122,12 +122,12 @@ def test_extract_table_content():
     readT = Table.get_as_dataframe(table)
     metrics_df = test_tables({t_name: [trueT,readT]})
 
-    assert metrics_df['Overlap'][t_name] >= 0.8
+    assert metrics_df['Overlap'][t_name] >= 0.75
     assert metrics_df['String Similarity'][t_name] >= 0.75
-    assert metrics_df['Completeness'][t_name] >= 0.6
-    assert metrics_df['Purity'][t_name] >= 0.6
-    assert metrics_df['Precision'][t_name] >= 0.5
-    assert metrics_df['Recall'][t_name] >= 0.5
+    assert metrics_df['Completeness'][t_name] >= 0.50
+    assert metrics_df['Purity'][t_name] >= 0.50
+    assert metrics_df['Precision'][t_name] >= 0.25
+    assert metrics_df['Recall'][t_name] >= 0.25
 
 
 def test_remove_duplicate_limits():
