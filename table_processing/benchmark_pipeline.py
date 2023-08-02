@@ -24,7 +24,7 @@ for i in range(0,1):
     # Detect from pdf, export to and read from excel processed table
     try:
         detc_table = Table_Detector(file_path+'.pdf')
-        table = page_data = detc_table.get_page_data()[0]['tables'][0]['table_content']
+        table = detc_table.get_page_data()[0]['tables'][0]['table_content']
         boxes_image = table.plot_bounding_boxes(file_name = file_path+'_boxes')
         detc_table.to_excel(file_path+'.xlsx')
         read_table = pd.read_excel(file_path+'.xlsx')

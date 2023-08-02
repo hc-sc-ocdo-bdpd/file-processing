@@ -41,18 +41,25 @@ def test_get_cropped_columns():
     assert False
 
 def test_extract_table_content():
-    from PIL import Image
     import pandas as pd
     from table_processing.Table import Table
+    from table_processing.Table_Detector import Table_Detector
+    from table_processing.table_metrics import test_tables
 
-    file_path = "./tests/resources/simple_table.PNG"
-    table_image = Image.open(file_path).convert("RGB")
-    width, height = table_image.size
-    table_image.resize((int(width*0.5), int(height*0.5)))
-    table = Table(image = table_image)
+    t_name = 'MknamLBhTbMkiPABhMhN5V'
+    file_path = './tests/resources/' + t_name + '/'  + t_name
+    trueT = pd.read_excel(file_path+'_true.xlsx')
+    detc_table = Table_Detector(file_path+'.pdf')
+    table = detc_table.get_page_data()[0]['tables'][0]['table_content']
+    readT = Table.get_as_dataframe(table)
+    metrics_df = test_tables({t_name: [trueT,readT]})
 
-    # TODO: Correct this test case to check the table contents
-    assert False
+    assert metrics_df['Overlap'][t_name] >= 0.8
+    assert metrics_df['String Similarity'][t_name] >= 0.75
+    assert metrics_df['Completeness'][t_name] >= 0.6
+    assert metrics_df['Purity'][t_name] >= 0.6
+    assert metrics_df['Precision'][t_name] >= 0.5
+    assert metrics_df['Recall'][t_name] >= 0.5
 
 
 def test_remove_duplicate_limits():
