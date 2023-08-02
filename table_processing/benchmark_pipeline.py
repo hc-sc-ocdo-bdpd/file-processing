@@ -4,6 +4,7 @@ from Table_Detector import Table_Detector
 from table_metrics import test_tables
 import pandas as pd
 import numpy as np
+# xlsxwriter not imported, but needs to be downloaded in environment
 import logging
 logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
