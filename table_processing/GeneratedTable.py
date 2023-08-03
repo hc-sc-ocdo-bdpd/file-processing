@@ -8,23 +8,30 @@ import random
 
 myDB= dbgen.pydb()
 
-geometry_options = {'margin': '0.7in'}
 col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','Month', 'weekday', 'year', 'time', 'date', 'email','company', 'Job_title', 'phone number', 'license_plate'
-            
-]
+            ]
 
 class GeneratedTable:
-    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=None): 
+    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=1, font_size='normalsize', landscape=False): 
         self.rows = rows
         self.columns = columns 
         self.row_lines = row_lines
         self.vertical_lines = vertical_lines
+        self.font_size = font_size
         self.geometry_options = {
             'margin':margin,
-            'landscape':True
+            'landscape':landscape
         }
         self.multi_row = multi_row
         self.row_height = row_height
+
+        if self.multi_row == True and (self.row_lines == False or self.vertical_lines == False):
+            raise Exception('Cannot create table with multi-rows and with no vertical and horizontal lines')
+        
+        if self.columns > 15:
+            raise Exception('Cannot generate that may columns')
+
+        self.generate_df(rows)
 
         if self.vertical_lines ==  True:
             self.table_spec = '|c'
@@ -32,14 +39,6 @@ class GeneratedTable:
         else:
             self.table_spec = 'c'
             self.table_spec*self.columns
-            
-        if self.multi_row == True and (self.row_lines == False or self.vertical_lines == False):
-            raise Exception('Cannot create table with multi-rows with no vertical and horizantal lines')
-        
-        if self.columns > 15:
-            raise Exception('Cannot generate that may columns')
-
-        self.generate_df(rows)
 
 
     def generate_df(self,rows):
@@ -51,7 +50,22 @@ class GeneratedTable:
             for row in self.df.index:
                 if row % 3 ==0:
                     self.df.loc[row,self.df.columns[0]] = ''
-        
+
+        # Trim column amount if table overflows outside of page
+        landscape_mult = 1 if self.geometry_options['landscape']==True else 110/150
+        font_size_mult = {'normalsize':1}
+        # insert font_type and landscape dicts as well
+        char_thresh = 150 * landscape_mult * font_size_mult[self.font_size]
+        col_char_width = []
+        for col in list(self.df.columns.values):
+            col_char_width.append(max([len(str(col))] + self.df[col].astype(str).str.len().tolist()) + 2)  # max string length of column (or column name if bigger) plus 2 characters
+        while (sum(col_char_width) > char_thresh) & (len(col_char_width) > 1):
+            col_char_width = col_char_width[:-1]  # remove last column until table is below character threshold (or down to just 1 column)
+        self.df = self.df[list(self.df.columns.values)[:len(col_char_width)]]
+        self.columns = len(col_char_width)
+
+        # Keep 'None' input instead of missing value
+        self.df = self.df.astype(str)
 
     def to_pdf(self):
         self.filename = sd.uuid()
@@ -59,7 +73,8 @@ class GeneratedTable:
         if not os.path.exists(self.path):
             os.makedirs('./generated_tables/' + self.filename)
 
-        doc = pl.Document(geometry_options=self.geometry_options)
+        doc = pl.Document(geometry_options=self.geometry_options, font_size=self.font_size)
+        doc.preamble.append(pl.Command('usepackage', 'helvet'))
         if self.row_lines == True and self.multi_row == False:
             with doc.create(pl.Center()) as centered:
                 with centered.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
@@ -110,6 +125,9 @@ class GeneratedTable:
                 with centered.create(pl.LongTable(self.table_spec,row_height=self.row_height)) as table:
 
                     table.add_hline()
+                    print(self.df)
+                    print(self.columns)
+                    print(self.df.columns)
                     table.add_row(list(self.df.columns))
                     table.add_hline()
                     for row in self.df.index:

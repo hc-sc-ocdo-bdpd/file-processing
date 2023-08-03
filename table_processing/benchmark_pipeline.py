@@ -4,6 +4,7 @@ from Table_Detector import Table_Detector
 from table_metrics import test_tables
 import pandas as pd
 import numpy as np
+# xlsxwriter not imported, but needs to be downloaded in environment
 import logging
 logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
@@ -15,12 +16,13 @@ failed_tables = []
 # Loop for n # of tables
 for i in range(0,1):
     # Generate, store, and export to pdf true table
-    genr_table = GeneratedTable(rows=5, columns=5, row_lines=True, vertical_lines=True)
+    genr_table = GeneratedTable(rows=10, columns=15, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1, font_size='normalsize', landscape=False)
     true_table = genr_table.df
     genr_table.to_pdf()
     t_name = genr_table.get_filename()
     logging.warning('Generated table ' + t_name)
     file_path = 'generated_tables/' + t_name + '/'  + t_name
+    true_table.to_excel(file_path + '_true.xlsx', index = False)
     # Detect from pdf, export to and read from excel processed table
     try:
         detc_table = Table_Detector(file_path+'.pdf')
