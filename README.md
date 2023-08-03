@@ -1,17 +1,17 @@
 # File Processing Library
 
-This library contains tools for processing various file types for several purposes. This includes extracting metadata, calculating metrics between files such as cosine similarity and cosine similarity and Levenshtein distance, and table data extraction. This software is under active development.
+This library contains tools for processing various file types for several purposes. This includes extracting metadata, calculating metrics between files such as cosine similarity and Levenshtein distance, and table data extraction. This software is under active development.
 
 ## Dependencies
 This project has dependencies defined in `requirements.txt`. These dependencies should be installed using `pip3 install -r depencencies.txt`. Older versions of pip may result in an error.
 
 Additionally, this project uses tesseract for OCR. This must be installed at: `C:/Users/USERNAME/AppData/Local/Programs/Tesseract-OCR/tesseract.exe`. See https://github.com/UB-Mannheim/tesseract/wiki.
 
-The table detection performance tests use MikTex (https://miktex.org/download) for gernating artificial test case tables. This needs to be installed at it's default location (C:\Users\USERNAME\AppData\Local\Programs\MiKTeX\miktex\bin\x64\pdflatex.exe).
+The table detection performance tests use MikTex (https://miktex.org/download) for generating artificial test case tables. This needs to be installed at it's default location (C:\Users\USERNAME\AppData\Local\Programs\MiKTeX\miktex\bin\x64\pdflatex.exe).
 
 ## Structure
 
-This library contains seveal components in different directories:
+This library contains several components in different directories:
 
 - file_processing: Utilities for opening a variety of different file types.
 - utils: support functions for the file_processing components.
