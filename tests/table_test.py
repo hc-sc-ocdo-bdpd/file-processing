@@ -102,7 +102,7 @@ def test_get_cropped_rows():
         else:
             assert row.size[1] == round(row_limits[counter])
         #Test right color and pixel match
-        assert (row_list[counter].getcolors()[0][1] == dict_items_lst[counter][0]) & (row_list[counter].size == dict_items_lst[counter][1])
+        assert (row_list[counter].getcolors()[0][1] == dict_items_lst[counter][0]) & (row_list[counter].size == dict_items_lst[counter][1]) & len(row_list[counter].getcolors()) & (row_list[counter].getcolors()[0][0] == row.size[0]*row.size[1])
         counter+=1
 
 def test_get_cropped_columns():
@@ -139,7 +139,7 @@ def test_get_cropped_columns():
         else:
             assert column.size[0] == round(column_limits[counter])
         #Test right color and pixel match
-        assert (column_list[counter].getcolors()[0][1] == dict_items_lst[counter][0]) & (column_list[counter].size == dict_items_lst[counter][1])
+        assert (column_list[counter].getcolors()[0][1] == dict_items_lst[counter][0]) & (column_list[counter].size == dict_items_lst[counter][1]) & (len(column_list[counter].getcolors()) == 1) & (column_list[counter].getcolors()[0][0] == column.size[0]*column.size[1])
         counter+=1
 
 def test_extract_table_content():
