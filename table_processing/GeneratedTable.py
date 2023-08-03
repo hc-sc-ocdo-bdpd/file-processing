@@ -1,14 +1,17 @@
-import pydbgen
 import pylatex as pl
 import shortuuid as sd
 from pydbgen import pydbgen as dbgen
 import os
 import pandas as pd
 import numpy as np
+import random
 
 myDB= dbgen.pydb()
 
 geometry_options = {'margin': '0.7in'}
+col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','Month', 'weekday', 'year', 'time', 'date', 'email','company', 'Job_title', 'phone number', 'license_plate'
+            
+]
 
 class GeneratedTable:
     def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=None): 
@@ -23,20 +26,24 @@ class GeneratedTable:
         self.row_height = row_height
 
         if self.vertical_lines ==  True:
-            self.table_spec = 'c|c|c|c|c'
+            self.table_spec = '|c'
+            self.table_spec = self.table_spec*self.columns + '|'
         else:
-            self.table_spec = 'ccccc'
+            self.table_spec = 'c'
+            self.table_spec*self.columns
             
         if self.multi_row == True and (self.row_lines == False or self.vertical_lines == False):
             raise Exception('Cannot create table with multi-rows with no vertical and horizantal lines')
+        
+        if self.columns > 15:
+            raise Exception('Cannot generate that may columns')
 
         self.generate_df(rows)
 
 
     def generate_df(self,rows):
         self.df = myDB.gen_dataframe(
-        rows,fields=['name','city','phone',
-        'license_plate','email'],
+        rows,fields=self.generate_fields(),
         real_email=False,phone_simple=True)
 
         if self.multi_row == True:
@@ -55,6 +62,7 @@ class GeneratedTable:
         if self.row_lines == True and self.multi_row == False:
             with doc.create(pl.Center()) as centered:
                 with centered.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
+                    table.add_hline()
                     table.add_row(list(self.df.columns))
                     table.add_hline()
                     for row in self.df.index:
@@ -65,6 +73,7 @@ class GeneratedTable:
         elif self.row_lines == True and self.multi_row == True :
             with doc.create(pl.Center()) as centered:
                 with centered.create(pl.LongTable(self.table_spec)) as table:
+                    table.add_hline()
                     table.add_row(list(self.df.columns))
                     table.add_hline()
                     for row in self.df.index:
@@ -114,5 +123,13 @@ class GeneratedTable:
 
     def get_filename(self):
         return self.filename
-        
+    
+    def generate_fields(self):
+        fields = ['name']
+        tmp_list = random.sample(col_list, self.columns-1)
+        fields = fields + tmp_list
+
+        return fields
+
+
    
