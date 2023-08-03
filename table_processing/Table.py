@@ -74,34 +74,6 @@ class Table:
         self.column_limits = remove_duplicate_limits(self.column_limits, col_thresh)  
 
 
-    def get_cropped_rows(self):
-        self.row_limits.sort()
-        cropped_rows = []
-        width, height = self.image.size
-        x1 = 0
-        x2 = width
-        y2 = 0
-        for limit in self.row_limits:
-            y1 = y2
-            y2 = limit
-            cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
-        return cropped_rows
-    
-    ## TODO: refactor to eliminate code duplication between this method and get_cropped_rows()
-    ## TODO: Need to consider that the left most and right most box seems to crop some of the cell
-    def get_cropped_columns(self, image):
-        self.column_limits.sort()
-        x2 = 0
-        cropped_columns = []
-        width, height = image.size
-        y1 = 0
-        y2 = height
-        for limit in self.column_limits:
-            x1 = x2
-            x2 = limit
-            cropped_columns.append(image.crop([x1,y1,x2,y2]))
-        return cropped_columns
-
     def plot_image(self, image):
         plt.figure()
         plt.imshow(image)
@@ -109,13 +81,13 @@ class Table:
 
 
     def extract_table_content(self):
-        row_images = self.get_cropped_rows()
+        row_images = get_cropped_rows(self.image, self.row_limits)
         rows = []
         for row in row_images:
             row_cell_text = []
             #row.show()
             if row.size[1] > 0:
-                cells = self.get_cropped_columns(row)
+                cells = get_cropped_columns(row, self.column_limits)
                 for cell in cells:
                     width, height = cell.size
                     if width > 0:
@@ -166,3 +138,34 @@ class Table:
     # Extract the table in xlsx format (add other tools for exporting the table in excel format)
     def to_excel(self):
         self.table_data.to_excel(str(self.table_structure['boxes'][0]))         
+
+
+def get_cropped_rows(image, row_limits):
+    row_limits.sort()
+    cropped_rows = []
+    width, height = image.size
+    x1 = 0
+    x2 = width
+    y2 = 0
+    for limit in row_limits:
+        y1 = y2
+        y2 = limit
+        cropped_rows.append(image.crop([x1,y1,x2,y2]))
+
+    return cropped_rows
+
+## TODO: refactor to eliminate code duplication between this method and get_cropped_rows()
+## TODO: Need to consider that the left most and right most box seems to crop some of the cell
+def get_cropped_columns(image, column_limits):
+    column_limits.sort()
+    x2 = 0
+    cropped_columns = []
+    width, height = image.size
+    y1 = 0
+    y2 = height
+    for limit in column_limits:
+        x1 = x2
+        x2 = limit
+        cropped_columns.append(image.crop([x1,y1,x2,y2]))
+        
+    return cropped_columns
