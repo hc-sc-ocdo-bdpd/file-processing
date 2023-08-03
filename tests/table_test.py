@@ -70,7 +70,7 @@ def test_calculate_row_column_limits():
 
 def test_get_cropped_rows():
     from PIL import Image
-    from table_processing.Table import Table, get_cropped_columns, get_cropped_rows
+    from table_processing.Table import get_cropped_rows
 
     #Creating image
     row_height = 30
