@@ -12,7 +12,7 @@ col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','Month', 'week
             ]
 
 class GeneratedTable:
-    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=1, font_size='normalsize', landscape=False): 
+    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=1, font_size=12, landscape=False): 
         self.rows = rows
         self.columns = columns 
         self.row_lines = row_lines
@@ -53,9 +53,7 @@ class GeneratedTable:
 
         # Trim column amount if table overflows outside of page
         landscape_mult = 1 if self.geometry_options['landscape']==True else 110/150
-        font_size_mult = {'normalsize':1}
-        # insert font_type and landscape dicts as well
-        char_thresh = 150 * landscape_mult * font_size_mult[self.font_size]
+        char_thresh = 150 * landscape_mult * 12/self.font_size
         col_char_width = []
         for col in list(self.df.columns.values):
             col_char_width.append(max([len(str(col))] + self.df[col].astype(str).str.len().tolist()) + 2)  # max string length of column (or column name if bigger) plus 2 characters
@@ -73,8 +71,7 @@ class GeneratedTable:
         if not os.path.exists(self.path):
             os.makedirs('./generated_tables/' + self.filename)
 
-        doc = pl.Document(geometry_options=self.geometry_options, font_size=self.font_size)
-        doc.preamble.append(pl.Command('usepackage', 'helvet'))
+        doc = pl.Document(geometry_options=self.geometry_options, font_size='')
         if self.row_lines == True and self.multi_row == False:
             with doc.create(pl.Center()) as centered:
                 with centered.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:

@@ -16,7 +16,7 @@ failed_tables = []
 # Loop for n # of tables
 for i in range(0,1):
     # Generate, store, and export to pdf true table
-    genr_table = GeneratedTable(rows=10, columns=15, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1, font_size='normalsize', landscape=False)
+    genr_table = GeneratedTable(rows=10, columns=15, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1, font_size=24, landscape=False)
     true_table = genr_table.df
     genr_table.to_pdf()
     t_name = genr_table.get_filename()
