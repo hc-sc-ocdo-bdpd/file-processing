@@ -44,8 +44,8 @@ def test_calculate_row_column_limits():
     expected_col_limit.sort()
     expected_row_limit.sort()
 
-    expected_col_limit = remove_duplicate_limits(expected_col_limit,4)
-    expected_row_limit = remove_duplicate_limits(expected_row_limit,4)
+    expected_col_limit = remove_duplicate_limits(expected_col_limit,16)
+    expected_row_limit = remove_duplicate_limits(expected_row_limit,8)
 
     expected_col_limit.pop(0)
     expected_col_limit.pop()
@@ -154,14 +154,15 @@ def test_extract_table_content():
     detc_table = Table_Detector(file_path+'.pdf')
     table = detc_table.get_page_data()[0]['tables'][0]['table_content']
     readT = Table.get_as_dataframe(table)
-    metrics_df = test_tables({t_name: [trueT,readT]})
 
-    assert metrics_df['Overlap'][t_name] >= 0.8
-    assert metrics_df['String Similarity'][t_name] >= 0.75
-    assert metrics_df['Completeness'][t_name] >= 0.6
-    assert metrics_df['Purity'][t_name] >= 0.6
-    assert metrics_df['Precision'][t_name] >= 0.5
-    assert metrics_df['Recall'][t_name] >= 0.5
+    assert len(trueT) == len(readT)  # matching row amount
+    assert len(trueT.columns.values) == len(readT.columns.values)  # matching column amount
+
+    correct_cells = {0:[0,2], 1:[0,1,2], 2:[0,2,4], 3:[0,2,3], 4:[]}
+    for r in correct_cells.keys():
+        for c in correct_cells[r]:
+            assert trueT.iloc[r,c] == readT.iloc[r,c]  # matching cell contents
+
 
 
 def test_remove_duplicate_limits():
@@ -198,3 +199,22 @@ def test_MultiPage():
     
     assert totalPages1 == 1
     assert totalPages2 > 1
+
+
+def test_metrics():
+    import pandas as pd
+    from table_processing.table_metrics import test_tables
+
+    # Import true and processed tables
+    t_name = 'MknamLBhTbMkiPABhMhN5V'
+    file_path = './tests/resources/' + t_name + '/'  + t_name
+    trueT = pd.read_excel(file_path+'_true.xlsx')
+    readT = pd.read_excel(file_path+'.xlsx')
+    metrics_df = test_tables({t_name: [trueT,readT]})
+
+    assert metrics_df['Overlap'][t_name] == 1.000  # dimensions
+    assert metrics_df['String Similarity'][t_name] == 0.888  # overall contents
+    assert metrics_df['Completeness'][t_name] == 0.560  # cell content completeness
+    assert metrics_df['Purity'][t_name] == 0.440  # cell content purity
+    assert metrics_df['Precision'][t_name] == 0.225  # cell neighbours/location
+    assert metrics_df['Recall'][t_name] == 0.225  # cell neighbours/location
