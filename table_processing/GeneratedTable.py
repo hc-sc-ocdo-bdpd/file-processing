@@ -11,7 +11,7 @@ myDB= dbgen.pydb()
 geometry_options = {'margin': '0.7in'}
 
 class GeneratedTable:
-    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=None): 
+    def __init__(self, rows=5, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=1): 
         self.rows = rows
         self.columns = columns 
         self.row_lines = row_lines
