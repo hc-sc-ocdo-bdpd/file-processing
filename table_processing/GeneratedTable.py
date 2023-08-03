@@ -9,7 +9,7 @@ import random
 myDB= dbgen.pydb()
 
 geometry_options = {'margin': '0.7in'}
-col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','Month', 'weekday', 'year', 'time', 'date', 'email','company', 'Job_title', 'phone number', 'license_plate'
+col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','name_month', 'weekday', 'year', 'time', 'date', 'email','company', 'job_title', 'phone', 'license_plate'
             
 ]
 
