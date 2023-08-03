@@ -60,7 +60,7 @@ def _calculate_raw_row_column_limits(bbox_list):
 
 def _calculate_row_column_limits(image_dim, bbox_list):
     column_limits, row_limits =_calculate_raw_row_column_limits(bbox_list)
-    row_thresh, col_thresh = 4, 4
+    row_thresh, col_thresh = 8, 16
     row_limits = remove_duplicate_limits(row_limits, row_thresh)
     column_limits = remove_duplicate_limits(column_limits, col_thresh)
 

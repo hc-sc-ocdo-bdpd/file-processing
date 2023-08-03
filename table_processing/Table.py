@@ -54,8 +54,8 @@ class Table:
 
     def _calculate_row_column_limits(self):
         self._calculate_raw_row_column_limits()
-        row_thresh, col_thresh = 4, 4
-        self.row_limits = remove_duplicate_limits(self.row_limits, row_thresh)  # threshold is in pixels
+        row_thresh, col_thresh = 8, 16   # threshold is in pixels
+        self.row_limits = remove_duplicate_limits(self.row_limits, row_thresh)  
         self.column_limits = remove_duplicate_limits(self.column_limits, col_thresh)
 
         # Remove left-most and right most column limits to handle clipping issue (temporary fix) and replace them with the image limits
@@ -85,11 +85,6 @@ class Table:
             y1 = y2
             y2 = limit
             cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
-        
-        # Do the last row to the end of the image
-        # y1 = y2
-        # y2 = height
-        # cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
         return cropped_rows
     
     ## TODO: refactor to eliminate code duplication between this method and get_cropped_rows()
@@ -105,11 +100,6 @@ class Table:
             x1 = x2
             x2 = limit
             cropped_columns.append(image.crop([x1,y1,x2,y2]))
-        
-        # Do the last column to the end of the image
-        # x1 = x2
-        # x2 = width
-        # cropped_columns.append(image.crop([x1,y1,x2,y2]))
         return cropped_columns
 
     def plot_image(self, image):
@@ -131,7 +121,7 @@ class Table:
                     if width > 0:
                         cell = cell.resize((int(width*2.5), int(height*2.5)))
                         #self.plot_image(cell)
-                        row_cell_text.append(pytesseract.image_to_string(cell))
+                        row_cell_text.append((pytesseract.image_to_string(cell)).replace('\n',''))  # replace extra empty line characters added by the OCR
                         #print(row_cell_text[-1])
                 rows.append(row_cell_text)
         if len(rows) < 1:  # if read table is only one row
