@@ -82,13 +82,13 @@ class Table:
 
 
     def extract_table_content(self):
-        row_images = self.get_cropped_rows(self.image, self.row_limits)
+        row_images = get_cropped_rows(self.image, self.row_limits)
         rows = []
         for row in row_images:
             row_cell_text = []
             #row.show()
             if row.size[1] > 0:
-                cells = self.get_cropped_columns(row, self.column_limits)
+                cells = get_cropped_columns(row, self.column_limits)
                 for cell in cells:
                     width, height = cell.size
                     if width > 0:
