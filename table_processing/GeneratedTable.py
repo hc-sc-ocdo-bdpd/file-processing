@@ -20,7 +20,8 @@ class GeneratedTable:
         self.row_lines = row_lines
         self.vertical_lines = vertical_lines
         self.geometry_options = {
-            'vmargin':margin
+            'margin':margin,
+            'landscape':True
         }
         self.multi_row = multi_row
         self.row_height = row_height
