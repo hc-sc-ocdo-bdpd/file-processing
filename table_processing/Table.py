@@ -93,8 +93,11 @@ class Table:
                     if width > 0:
                         cell = cell.resize((int(width*2.5), int(height*2.5)))
                         #self.plot_image(cell)
-                        row_cell_text.append((pytesseract.image_to_string(cell)).replace('\n',''))  # replace extra empty line characters added by the OCR
-                        #print(row_cell_text[-1])
+                        ocr_text = pytesseract.image_to_string(cell).replace('\n','')  # replace extra empty line characters added by the OCR
+                        if ocr_text[len(ocr_text) - len(ocr_text.lstrip())] == '|':  # verify if separator character at start (ignoring whitespaces) of string
+                            ocr_text = ocr_text[len(ocr_text) - len(ocr_text.lstrip()) + 1:].lstrip()
+                        row_cell_text.append(ocr_text)
+                        #print(ocr_text)
                 rows.append(row_cell_text)
         if len(rows) < 1:  # if read table is only one row
             rows.append(['']*len(rows[0]))
