@@ -80,8 +80,11 @@ class GeneratedTable:
             os.makedirs('./generated_tables/' + self.filename)
 
         doc = pl.Document(geometry_options=self.geometry_options, font_size='')
+        font_size = '\\fontsize{{{x}pt}}{{{x}}}\selectfont'.format(x=self.font_size)
+
         if self.row_lines == True and self.multi_row == False:
             with doc.create(pl.Center()) as centered:
+                doc.append(pl.NoEscape(r'{font}'.format(font=font_size)))
                 with centered.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
                     table.add_hline()
                     table.add_row(list(self.df.columns))
@@ -89,10 +92,11 @@ class GeneratedTable:
                     for row in self.df.index:
                         table.add_row(list(self.df.loc[row,:]))
                         table.add_hline()
-                doc.generate_pdf(self.path, compiler='pdflatex')
+                doc.generate_pdf(self.path, compiler='pdflatex', clean_tex='False')
 
         elif self.row_lines == True and self.multi_row == True :
             with doc.create(pl.Center()) as centered:
+                doc.append(pl.NoEscape(r'{font}'.format(font=font_size)))
                 with centered.create(pl.LongTable(self.table_spec)) as table:
                     table.add_hline()
                     table.add_row(list(self.df.columns))
@@ -127,6 +131,7 @@ class GeneratedTable:
 
         else:
             with doc.create(pl.Center()) as centered:
+                doc.append(pl.NoEscape(r'{font}'.format(font=font_size)))
                 with centered.create(pl.LongTable(self.table_spec,row_height=self.row_height)) as table:
 
                     table.add_hline()
