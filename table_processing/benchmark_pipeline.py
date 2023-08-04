@@ -32,6 +32,7 @@ for i in range(0,1):
         read_table = pd.read_excel(file_path+'.xlsx')
         # Store true and read tables
     except IndexError:  # could not detect table from pdf
+        logging.error('Could not detect table from pdf ' + t_name)
         read_table = pd.DataFrame()
         failed_tables.append(t_name)
     tables[t_name] = [true_table, read_table]
