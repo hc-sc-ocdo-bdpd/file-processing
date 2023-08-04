@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import numpy as np
 import random
+import logging
 
 myDB= dbgen.pydb()
 col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','name_month', 'weekday', 'year', 'time', 'date', 'email','company', 'job_title', 'phone', 'license_plate'
@@ -28,9 +29,13 @@ class GeneratedTable:
             raise Exception('Cannot create table with multi-rows and with no vertical and horizontal lines')
         
         if self.columns > 15:
-            raise Exception('Cannot generate that may columns')
+            self.columns = 15
+            logging.warning('Cannot generate that many columns, shrunk down to 15')
 
         self.generate_df(rows)
+
+        if self.columns < columns:
+            logging.warning('Generated table shrunk from ' + str(columns) + ' columns to ' + str(self.columns) + ' due to it overflowing off the page')
 
         if self.vertical_lines ==  True:
             self.table_spec = '|c'
