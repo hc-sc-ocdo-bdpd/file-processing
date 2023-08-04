@@ -12,7 +12,7 @@ col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','name_month', 
            ]
             
 class GeneratedTable:
-    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=1, font_size=12, landscape=False): 
+    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=None, font_size=12, landscape=False): 
         self.rows = rows
         self.columns = columns 
         self.row_lines = row_lines
@@ -23,7 +23,11 @@ class GeneratedTable:
             'landscape':landscape
         }
         self.multi_row = multi_row
-        self.row_height = row_height
+        
+        if row_height is None:
+            self.row_height = self.font_size/12
+        else:
+            self.row_height = row_height
 
         if self.multi_row == True and (self.row_lines == False or self.vertical_lines == False):
             raise Exception('Cannot create table with multi-rows and with no vertical and horizontal lines')
