@@ -12,7 +12,7 @@ col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','name_month', 
            ]
             
 class GeneratedTable:
-    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=None, font_size=12, landscape=False): 
+    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=1.25, font_size=12, landscape=False): 
         self.rows = rows
         self.columns = columns 
         self.row_lines = row_lines
@@ -23,11 +23,10 @@ class GeneratedTable:
             'landscape':landscape
         }
         self.multi_row = multi_row
-        
-        if row_height is None:
-            self.row_height = self.font_size/12
+        if row_height < 1.25:
+            self.row_height = 1.25
         else:
-            self.row_height = row_height
+            self.row_height = row_height  # row height value is relative to font size (so automatically adjusts with it)
 
         if self.multi_row == True and (self.row_lines == False or self.vertical_lines == False):
             raise Exception('Cannot create table with multi-rows and with no vertical and horizontal lines')
@@ -60,8 +59,9 @@ class GeneratedTable:
                     self.df.loc[row,self.df.columns[0]] = ''
 
         # Trim column amount if table overflows outside of page
-        landscape_mult = 1 if self.geometry_options['landscape']==True else 110/150
-        char_thresh = 150 * landscape_mult * 12/self.font_size
+        landscape_mult = 1 if self.geometry_options['landscape']==True else 100/150
+        font_mult = (12/self.font_size)**0.75
+        char_thresh = 150 * landscape_mult * font_mult
         col_char_width = []
         for col in list(self.df.columns.values):
             col_char_width.append(max([len(str(col))] + self.df[col].astype(str).str.len().tolist()) + 2)  # max string length of column (or column name if bigger) plus 2 characters
