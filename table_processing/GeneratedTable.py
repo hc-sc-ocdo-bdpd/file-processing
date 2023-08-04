@@ -7,10 +7,9 @@ import numpy as np
 import random
 
 myDB= dbgen.pydb()
-
-col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','Month', 'weekday', 'year', 'time', 'date', 'email','company', 'Job_title', 'phone number', 'license_plate'
-            ]
-
+col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','name_month', 'weekday', 'year', 'time', 'date', 'email','company', 'job_title', 'phone', 'license_plate'
+           ]
+            
 class GeneratedTable:
     def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=1, font_size=12, landscape=False): 
         self.rows = rows
