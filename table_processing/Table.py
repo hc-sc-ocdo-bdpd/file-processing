@@ -95,7 +95,10 @@ class Table:
                         #self.plot_image(cell)
                         ocr_text = pytesseract.image_to_string(cell).replace('\n','')  # replace extra empty line characters added by the OCR
                         if ocr_text[len(ocr_text) - len(ocr_text.lstrip())] == '|':  # verify if separator character at start (ignoring whitespaces) of string
-                            ocr_text = ocr_text[len(ocr_text) - len(ocr_text.lstrip()) + 1:].lstrip()
+                            ocr_text = ocr_text[len(ocr_text) - len(ocr_text.lstrip()) + 1:]             
+                        if ocr_text[-(len(ocr_text) - len(ocr_text.rstrip()) + 1)] == '|':  # verify if separator character at end (ignoring whitespaces) of string
+                            ocr_text = ocr_text[:-(len(ocr_text) - len(ocr_text.rstrip()) + 1)]
+                        ocr_text = ocr_text.strip()  # remove all leading and trailing whitespaces
                         row_cell_text.append(ocr_text)
                         #print(ocr_text)
                 rows.append(row_cell_text)
