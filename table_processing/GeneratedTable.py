@@ -80,7 +80,7 @@ class GeneratedTable:
             os.makedirs('./generated_tables/' + self.filename)
 
         doc = pl.Document(geometry_options=self.geometry_options, font_size='')
-        font_size = '\\fontsize{{{x}pt}}{{18}}\selectfont'.format(x=self.font_size)
+        font_size = '\\fontsize{{{x}pt}}{{{x}}}\selectfont'.format(x=self.font_size)
 
         if self.row_lines == True and self.multi_row == False:
             with doc.create(pl.Center()) as centered:
