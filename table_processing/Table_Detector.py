@@ -14,8 +14,8 @@ from Table import Table
 from table_tools import get_bounding_boxes
 
 import logging
-logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
-                    level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
+logging.basicConfig(filename='table_detector_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
+                    level="INFO", format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
 class Table_Detector:
 
@@ -102,11 +102,13 @@ def main():
     input_file = "input.pdf"
     output_file = "output.xlsx"
     logging.info("Started the table detector.")
-    logging.inofo("Input: " + input_file)
+    logging.info("Input: " + input_file)
     logging.info("Output: " + output_file)
     detector = Table_Detector(file = input_file)
     detector.to_excel(filename = output_file)
     logging.info("Table detector finished.")
 
+
 if __name__ == '__main__':
     main()
+    
