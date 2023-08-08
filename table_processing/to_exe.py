@@ -9,8 +9,8 @@ import pandas as pd
 import numpy as np
 # xlsxwriter not imported, but needs to be downloaded in environment
 import logging
-logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
-                    level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
+logging.basicConfig(filename='table_detection_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
+                    level=logging.INFO, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
 
 file_path = input('Please enter the path to the PDF to extract tables from: ')
