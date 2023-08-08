@@ -138,9 +138,6 @@ class GeneratedTable:
                 with centered.create(pl.LongTable(self.table_spec,row_height=self.row_height)) as table:
 
                     table.add_hline()
-                    print(self.df)
-                    print(self.columns)
-                    print(self.df.columns)
                     table.add_row(list(self.df.columns))
                     table.add_hline()
                     for row in self.df.index:
