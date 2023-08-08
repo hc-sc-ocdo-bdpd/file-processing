@@ -16,7 +16,7 @@ failed_tables = []
 # Loop for n # of tables
 for i in range(0,1):
     # Generate, store, and export to pdf true table
-    genr_table = GeneratedTable(rows=5, columns=5, row_lines=True, vertical_lines=True, multi_row=False, row_height=1)
+    genr_table = GeneratedTable(rows=10, columns=5, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1.25, font_size=12, landscape=False)
     true_table = genr_table.df
     genr_table.to_pdf()
     t_name = genr_table.get_filename()
@@ -32,6 +32,7 @@ for i in range(0,1):
         read_table = pd.read_excel(file_path+'.xlsx')
         # Store true and read tables
     except IndexError:  # could not detect table from pdf
+        logging.error('Could not detect table from pdf ' + t_name)
         read_table = pd.DataFrame()
         failed_tables.append(t_name)
         logging.error('Could not detect table ' + t_name + ' from pdf')

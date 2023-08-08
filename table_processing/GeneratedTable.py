@@ -1,49 +1,80 @@
-import pydbgen
 import pylatex as pl
 import shortuuid as sd
 from pydbgen import pydbgen as dbgen
 import os
 import pandas as pd
 import numpy as np
+import random
+import logging
 
 myDB= dbgen.pydb()
-
-geometry_options = {'margin': '0.7in'}
-
+col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','name_month', 'weekday', 'year', 'time', 'date', 'email','company', 'job_title', 'phone', 'license_plate'
+           ]
+            
 class GeneratedTable:
-    def __init__(self, rows=5, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=1): 
+    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=1.25, font_size=12, landscape=False): 
         self.rows = rows
         self.columns = columns 
         self.row_lines = row_lines
         self.vertical_lines = vertical_lines
+        self.font_size = font_size
         self.geometry_options = {
-            'vmargin':margin
+            'margin':margin,
+            'landscape':landscape
         }
         self.multi_row = multi_row
-        self.row_height = row_height
+        min_row_height = 1.25
+        max_columns = 15
 
-        if self.vertical_lines ==  True:
-            self.table_spec = 'c|c|c|c|c'
+        if row_height < min_row_height:
+            self.row_height = min_row_height
         else:
-            self.table_spec = 'ccccc'
-            
+            self.row_height = row_height  # row height value is relative to font size (so automatically adjusts with it)
+
         if self.multi_row == True and (self.row_lines == False or self.vertical_lines == False):
-            raise Exception('Cannot create table with multi-rows with no vertical and horizantal lines')
+            raise Exception('Cannot create table with multi-rows and with no vertical and horizontal lines')
+        
+        if self.columns > max_columns:
+            self.columns = max_columns
+            logging.warning('Cannot generate that many columns, shrunk down to ' + max_columns)
 
         self.generate_df(rows)
+
+        if self.columns < columns:
+            logging.warning('Generated table shrunk from ' + str(columns) + ' columns to ' + str(self.columns) + ' due to it overflowing off the page')
+
+        if self.vertical_lines ==  True:
+            self.table_spec = '|c'
+            self.table_spec = self.table_spec*self.columns + '|'
+        else:
+            self.table_spec = 'c'
+            self.table_spec*self.columns
 
 
     def generate_df(self,rows):
         self.df = myDB.gen_dataframe(
-        rows,fields=['name','city','phone',
-        'license_plate','email'],
+        rows,fields=self.generate_fields(),
         real_email=False,phone_simple=True)
 
         if self.multi_row == True:
             for row in self.df.index:
                 if row % 3 ==0:
                     self.df.loc[row,self.df.columns[0]] = ''
-        
+
+        # Trim column amount if table overflows outside of page
+        landscape_mult = 1 if self.geometry_options['landscape']==True else 100/140
+        font_mult = np.exp(-0.05*self.font_size + 0.5)
+        char_thresh = 140 * landscape_mult * font_mult
+        col_char_width = []
+        for col in list(self.df.columns.values):
+            col_char_width.append(max([len(str(col))] + self.df[col].astype(str).str.len().tolist()) + 2)  # max string length of column (or column name if bigger) plus 2 characters
+        while (sum(col_char_width) > char_thresh) & (len(col_char_width) > 1):
+            col_char_width = col_char_width[:-1]  # remove last column until table is below character threshold (or down to just 1 column)
+        self.df = self.df[list(self.df.columns.values)[:len(col_char_width)]]
+        self.columns = len(col_char_width)
+
+        # Keep 'None' input instead of missing value
+        self.df = self.df.astype(str)
 
     def to_pdf(self):
         self.filename = sd.uuid()
@@ -51,20 +82,26 @@ class GeneratedTable:
         if not os.path.exists(self.path):
             os.makedirs('./generated_tables/' + self.filename)
 
-        doc = pl.Document(geometry_options=self.geometry_options)
+        doc = pl.Document(geometry_options=self.geometry_options, font_size='')
+        font_size = '\\fontsize{{{x}pt}}{{{x}}}\selectfont'.format(x=self.font_size)
+
         if self.row_lines == True and self.multi_row == False:
             with doc.create(pl.Center()) as centered:
+                doc.append(pl.NoEscape(r'{font}'.format(font=font_size)))
                 with centered.create(pl.LongTable(self.table_spec, row_height=self.row_height)) as table:
+                    table.add_hline()
                     table.add_row(list(self.df.columns))
                     table.add_hline()
                     for row in self.df.index:
                         table.add_row(list(self.df.loc[row,:]))
                         table.add_hline()
-                doc.generate_pdf(self.path, compiler='pdflatex')
+                doc.generate_pdf(self.path, compiler='pdflatex', clean_tex='False')
 
         elif self.row_lines == True and self.multi_row == True :
             with doc.create(pl.Center()) as centered:
+                doc.append(pl.NoEscape(r'{font}'.format(font=font_size)))
                 with centered.create(pl.LongTable(self.table_spec)) as table:
+                    table.add_hline()
                     table.add_row(list(self.df.columns))
                     table.add_hline()
                     for row in self.df.index:
@@ -97,6 +134,7 @@ class GeneratedTable:
 
         else:
             with doc.create(pl.Center()) as centered:
+                doc.append(pl.NoEscape(r'{font}'.format(font=font_size)))
                 with centered.create(pl.LongTable(self.table_spec,row_height=self.row_height)) as table:
 
                     table.add_hline()
@@ -114,5 +152,13 @@ class GeneratedTable:
 
     def get_filename(self):
         return self.filename
-        
+    
+    def generate_fields(self):
+        fields = ['name']
+        tmp_list = random.sample(col_list, self.columns-1)
+        fields = fields + tmp_list
+
+        return fields
+
+
    

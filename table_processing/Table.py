@@ -85,8 +85,8 @@ class Table:
         rows = []
         for row in row_images:
             row_cell_text = []
-            #row.show()
             if row.size[1] > 0:
+                # row.show()
                 cells = get_cropped_columns(row, self.column_limits)
                 for cell in cells:
                     width, height = cell.size
