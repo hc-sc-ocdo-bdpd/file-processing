@@ -59,9 +59,9 @@ class GeneratedTable:
                     self.df.loc[row,self.df.columns[0]] = ''
 
         # Trim column amount if table overflows outside of page
-        landscape_mult = 1 if self.geometry_options['landscape']==True else 100/150
+        landscape_mult = 1 if self.geometry_options['landscape']==True else 100/140
         font_mult = np.exp(-0.05*self.font_size + 0.5)
-        char_thresh = 150 * landscape_mult * font_mult
+        char_thresh = 140 * landscape_mult * font_mult
         col_char_width = []
         for col in list(self.df.columns.values):
             col_char_width.append(max([len(str(col))] + self.df[col].astype(str).str.len().tolist()) + 2)  # max string length of column (or column name if bigger) plus 2 characters
