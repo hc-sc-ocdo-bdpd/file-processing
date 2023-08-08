@@ -35,6 +35,7 @@ for i in range(0,1):
         logging.error('Could not detect table from pdf ' + t_name)
         read_table = pd.DataFrame()
         failed_tables.append(t_name)
+        logging.error('Could not detect table ' + t_name + ' from pdf')
     tables[t_name] = [true_table, read_table]
 
 # Calculate table extraction performance metrics and format output dfs
@@ -43,7 +44,7 @@ metrics_df.loc[metrics_df.index.isin(failed_tables), list(metrics_df.columns.val
 summary_df = metrics_df.astype(float).describe().fillna(0).apply(lambda s: s.apply('{0:.3f}'.format))
 summary_df.loc[summary_df.index == 'count'] = summary_df.loc[summary_df.index == 'count'].astype(float).astype(int).astype(str)
 summary_df = summary_df.reset_index().rename(columns={'index':''})
-metrics_df = metrics_df.apply(lambda s: s.apply('{0:.3f}'.format)).reset_index().rename(columns={'index':''})
+metrics_df = metrics_df.apply(lambda s: s.apply('{0:.3f}'.format)).reset_index().rename(columns={'index':'ID'})
 logging.warning(pd.DataFrame(np.row_stack((summary_df.columns, summary_df.to_numpy())), 
                 columns=['']*len(summary_df.columns), index=['']*(1+len(summary_df))))
 
@@ -60,4 +61,6 @@ try:
     write_report(metrics_df, 'All Tables'), write_report(summary_df, 'Metrics Summary')
     writerFinal.close()
 except PermissionError:
-    logging.error('Metrics sheet could not be exported due to excel file already being open.')
+    logging.error('Metrics sheet could not be exported due to excel file already being open')
+except AttributeError:
+    logging.error('Metrics sheet could not be exported due to the "xlsxwriter" package not being downloaded in the environment')

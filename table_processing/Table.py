@@ -54,8 +54,8 @@ class Table:
 
     def _calculate_row_column_limits(self):
         self._calculate_raw_row_column_limits()
-        row_thresh, col_thresh = 4, 4
-        self.row_limits = remove_duplicate_limits(self.row_limits, row_thresh)  # threshold is in pixels
+        row_thresh, col_thresh = 8, 16   # threshold is in pixels
+        self.row_limits = remove_duplicate_limits(self.row_limits, row_thresh)  
         self.column_limits = remove_duplicate_limits(self.column_limits, col_thresh)
 
         # Remove left-most and right most column limits to handle clipping issue (temporary fix) and replace them with the image limits
@@ -74,44 +74,6 @@ class Table:
         self.column_limits = remove_duplicate_limits(self.column_limits, col_thresh)  
 
 
-    def get_cropped_rows(self):
-        self.row_limits.sort()
-        cropped_rows = []
-        width, height = self.image.size
-        x1 = 0
-        x2 = width
-        y2 = 0
-        for limit in self.row_limits:
-            y1 = y2
-            y2 = limit
-            cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
-        
-        # Do the last row to the end of the image
-        y1 = y2
-        y2 = height
-        cropped_rows.append(self.image.crop([x1,y1,x2,y2]))
-        return cropped_rows
-    
-    ## TODO: refactor to eliminate code duplication between this method and get_cropped_rows()
-    ## TODO: Need to consider that the left most and right most box seems to crop some of the cell
-    def get_cropped_columns(self, image):
-        self.column_limits.sort()
-        x2 = 0
-        cropped_columns = []
-        width, height = image.size
-        y1 = 0
-        y2 = height
-        for limit in self.column_limits:
-            x1 = x2
-            x2 = limit
-            cropped_columns.append(image.crop([x1,y1,x2,y2]))
-        
-        # Do the last column to the end of the image
-        x1 = x2
-        x2 = width
-        cropped_columns.append(image.crop([x1,y1,x2,y2]))
-        return cropped_columns
-
     def plot_image(self, image):
         plt.figure()
         plt.imshow(image)
@@ -119,20 +81,27 @@ class Table:
 
 
     def extract_table_content(self):
-        row_images = self.get_cropped_rows()
+        row_images = get_cropped_rows(self.image, self.row_limits)
         rows = []
         for row in row_images:
             row_cell_text = []
             if row.size[1] > 0:
                 # row.show()
-                cells = self.get_cropped_columns(row)
+                cells = get_cropped_columns(row, self.column_limits)
                 for cell in cells:
                     width, height = cell.size
                     if width > 0:
                         cell = cell.resize((int(width*2.5), int(height*2.5)))
                         #self.plot_image(cell)
-                        row_cell_text.append(pytesseract.image_to_string(cell))
-                        #print(row_cell_text[-1])
+                        ocr_text = pytesseract.image_to_string(cell).replace('\n','')  # replace extra empty line characters added by the OCR
+                        if ocr_text != '':
+                            if ocr_text[len(ocr_text) - len(ocr_text.lstrip())] == '|':  # verify if separator character at start (ignoring whitespaces) of string
+                                ocr_text = ocr_text[len(ocr_text) - len(ocr_text.lstrip()) + 1:]             
+                            if ocr_text[-(len(ocr_text) - len(ocr_text.rstrip()) + 1)] == '|':  # verify if separator character at end (ignoring whitespaces) of string
+                                ocr_text = ocr_text[:-(len(ocr_text) - len(ocr_text.rstrip()) + 1)]
+                        ocr_text = ocr_text.strip()  # remove all leading and trailing whitespaces
+                        row_cell_text.append(ocr_text)
+                        #print(ocr_text)
                 rows.append(row_cell_text)
         if len(rows) < 1:  # if read table is only one row
             rows.append(['']*len(rows[0]))
@@ -176,3 +145,34 @@ class Table:
     # Extract the table in xlsx format (add other tools for exporting the table in excel format)
     def to_excel(self):
         self.table_data.to_excel(str(self.table_structure['boxes'][0]))         
+
+
+def get_cropped_rows(image, row_limits):
+    row_limits.sort()
+    cropped_rows = []
+    width, height = image.size
+    x1 = 0
+    x2 = width
+    y2 = 0
+    for limit in row_limits:
+        y1 = y2
+        y2 = limit
+        cropped_rows.append(image.crop([x1,y1,x2,y2]))
+
+    return cropped_rows
+
+## TODO: refactor to eliminate code duplication between this method and get_cropped_rows()
+## TODO: Need to consider that the left most and right most box seems to crop some of the cell
+def get_cropped_columns(image, column_limits):
+    column_limits.sort()
+    x2 = 0
+    cropped_columns = []
+    width, height = image.size
+    y1 = 0
+    y2 = height
+    for limit in column_limits:
+        x1 = x2
+        x2 = limit
+        cropped_columns.append(image.crop([x1,y1,x2,y2]))
+        
+    return cropped_columns

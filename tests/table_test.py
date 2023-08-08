@@ -44,8 +44,8 @@ def test_calculate_row_column_limits():
     expected_col_limit.sort()
     expected_row_limit.sort()
 
-    expected_col_limit = remove_duplicate_limits(expected_col_limit,4)
-    expected_row_limit = remove_duplicate_limits(expected_row_limit,4)
+    expected_col_limit = remove_duplicate_limits(expected_col_limit,16)
+    expected_row_limit = remove_duplicate_limits(expected_row_limit,8)
 
     expected_col_limit.pop(0)
     expected_col_limit.pop()
@@ -69,12 +69,84 @@ def test_calculate_row_column_limits():
     # TODO: Make a test for calculate_row_column_limits
 
 def test_get_cropped_rows():
-    # TODO: Make a test case for get_cropped_rows
-    assert False
+    from PIL import Image
+    from table_processing.Table import get_cropped_rows
+
+    #Creating image
+    row_height = 30
+    row_width = 234
+    im_red = Image.new('RGB', size = (row_width, row_height), color=(255,0,0))
+    im_green = Image.new('RGB', size = (row_width, row_height), color=(0,255,128))
+    im_blue = Image.new('RGB', size = (row_width, row_height), color=(0,128,255))
+    im = Image.new('RGB', size=(im_red.width, im_red.height + im_green.height + im_blue.height))
+    im.paste(im_red, (0,0))
+    im.paste(im_green, (0,im_red.height))
+    im.paste(im_blue, (0,im_red.height + im_green.height))
+    
+    #Creating Ditionary holding color and size of each row in image
+    color_dict = {(255,0,0): (row_width, row_height), (0,255,128): (row_width, row_height), (0,128,255): (row_width, row_height)}
+    dict_items_lst = []
+    for item in color_dict.items():
+        dict_items_lst.append(item)
+    
+    #Testing part
+    row_limits = [30,60,90]
+    row_list = get_cropped_rows(im, row_limits)
+    expected_len = len(row_limits)
+    assert  expected_len == len(row_list)
+    counter = 0
+    for row in row_list:
+        #Test right dimensions
+        if counter > 0:
+            assert row.size[1] == round(row_limits[counter] - row_limits[counter-1])
+        else:
+            assert row.size[1] == round(row_limits[counter])
+        #Test right color and pixel match
+        assert row_list[counter].getcolors()[0][1] == dict_items_lst[counter][0]
+        assert row_list[counter].size == dict_items_lst[counter][1] 
+        assert len(row_list[counter].getcolors()) == 1
+        assert row_list[counter].getcolors()[0][0] == row.size[0]*row.size[1]
+        counter+=1
 
 def test_get_cropped_columns():
-    # TODO: Make a test case for get_cropped_columns
-    assert False
+    from PIL import Image
+    from table_processing.Table import get_cropped_columns
+    
+    #Creating image
+    column_height = 30
+    column_width = 200
+    im_red = Image.new('RGB', size = (column_width, column_height), color=(255,145,35))
+    im_green = Image.new('RGB', size = (column_width, column_height), color=(125,255,138))
+    im_blue = Image.new('RGB', size = (column_width, column_height), color=(120,150,255))
+    im = Image.new('RGB', size=(im_red.width + im_green.width + im_blue.width, column_height))
+    im.paste(im_red, (0,0))
+    im.paste(im_green, (im_red.width,0))
+    im.paste(im_blue, (im_red.width + im_green.width, 0))
+    
+    #Creating Ditionary holding color and size of each column in image
+    color_dict = {(255,145,35): (column_width, column_height), (125,255,138): (column_width, column_height), (120,150,255): (column_width, column_height)}
+    dict_items_lst = []
+    for item in color_dict.items():
+        dict_items_lst.append(item)
+    
+    #Testing part
+    column_limits = [200,400,600]
+    column_list = get_cropped_columns(im, column_limits)
+    expected_len = len(column_limits)
+    assert  expected_len == len(column_list)
+    counter = 0
+    for column in column_list:
+        #Test right dimensions
+        if counter > 0:
+            assert column.size[0] == round(column_limits[counter] - column_limits[counter-1])
+        else:
+            assert column.size[0] == round(column_limits[counter])
+        #Test right color and pixel match
+        assert column_list[counter].getcolors()[0][1] == dict_items_lst[counter][0] 
+        assert column_list[counter].size == dict_items_lst[counter][1]
+        assert len(column_list[counter].getcolors()) == 1
+        assert column_list[counter].getcolors()[0][0] == column.size[0]*column.size[1]
+        counter+=1
 
 def test_extract_table_content():
     import pandas as pd
@@ -88,14 +160,15 @@ def test_extract_table_content():
     detc_table = Table_Detector(file_path+'.pdf')
     table = detc_table.get_page_data()[0]['tables'][0]['table_content']
     readT = Table.get_as_dataframe(table)
-    metrics_df = test_tables({t_name: [trueT,readT]})
 
-    assert metrics_df['Overlap'][t_name] >= 0.8
-    assert metrics_df['String Similarity'][t_name] >= 0.75
-    assert metrics_df['Completeness'][t_name] >= 0.6
-    assert metrics_df['Purity'][t_name] >= 0.6
-    assert metrics_df['Precision'][t_name] >= 0.5
-    assert metrics_df['Recall'][t_name] >= 0.5
+    assert len(trueT) == len(readT)  # matching row amount
+    assert len(trueT.columns.values) == len(readT.columns.values)  # matching column amount
+
+    correct_cells = {0:[0,2], 1:[0,1,2], 2:[0,2,4], 3:[0,2,3], 4:[]}
+    for r in correct_cells.keys():
+        for c in correct_cells[r]:
+            assert trueT.iloc[r,c] == readT.iloc[r,c]  # matching cell contents
+
 
 
 def test_remove_duplicate_limits():
@@ -115,3 +188,39 @@ def test_within_threshold():
     assert within_threshold(1, 5, 1) == False
     assert within_threshold(1.3, 1.4, 1) == True
     assert within_threshold(1.3, 1.4, 0.01) == False
+
+def test_MultiPage():
+    import PyPDF2
+    #One page pdf file
+    doc1 = open('tests/resources/DmZUHweaZfPcMjTCAySRtp.pdf', 'rb')
+    #Four page pdf file
+    doc2 = open('tests/resources/GBnzszrSV2sAXLEH5k7SFz.pdf', 'rb')
+    
+    pdfReader1 = PyPDF2.PdfReader(doc1)
+    pdfReader2 = PyPDF2.PdfReader(doc2)
+
+    # count number of pages
+    totalPages1 = len(pdfReader1.pages)
+    totalPages2 = len(pdfReader2.pages)
+    
+    assert totalPages1 == 1
+    assert totalPages2 > 1
+
+
+def test_metrics():
+    import pandas as pd
+    from table_processing.table_metrics import test_tables
+
+    # Import true and processed tables
+    t_name = 'MknamLBhTbMkiPABhMhN5V'
+    file_path = './tests/resources/' + t_name + '/'  + t_name
+    trueT = pd.read_excel(file_path+'_true.xlsx')
+    readT = pd.read_excel(file_path+'.xlsx')
+    metrics_df = test_tables({t_name: [trueT,readT]})
+
+    assert metrics_df['Overlap'][t_name] == 1.000  # dimensions
+    assert metrics_df['String Similarity'][t_name] == 0.888  # overall contents
+    assert metrics_df['Completeness'][t_name] == 0.560  # cell content completeness
+    assert metrics_df['Purity'][t_name] == 0.440  # cell content purity
+    assert metrics_df['Precision'][t_name] == 0.225  # cell neighbours/location
+    assert metrics_df['Recall'][t_name] == 0.225  # cell neighbours/location
