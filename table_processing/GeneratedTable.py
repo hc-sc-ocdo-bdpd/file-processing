@@ -23,17 +23,20 @@ class GeneratedTable:
             'landscape':landscape
         }
         self.multi_row = multi_row
-        if row_height < 1.25:
-            self.row_height = 1.25
+        min_row_height = 1.25
+        max_columns = 15
+
+        if row_height < min_row_height:
+            self.row_height = min_row_height
         else:
             self.row_height = row_height  # row height value is relative to font size (so automatically adjusts with it)
 
         if self.multi_row == True and (self.row_lines == False or self.vertical_lines == False):
             raise Exception('Cannot create table with multi-rows and with no vertical and horizontal lines')
         
-        if self.columns > 15:
-            self.columns = 15
-            logging.warning('Cannot generate that many columns, shrunk down to 15')
+        if self.columns > max_columns:
+            self.columns = max_columns
+            logging.warning('Cannot generate that many columns, shrunk down to ' + max_columns)
 
         self.generate_df(rows)
 
