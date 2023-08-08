@@ -60,7 +60,7 @@ class GeneratedTable:
 
         # Trim column amount if table overflows outside of page
         landscape_mult = 1 if self.geometry_options['landscape']==True else 100/150
-        font_mult = (12/self.font_size)**0.75
+        font_mult = np.exp(-0.05*self.font_size + 0.5)
         char_thresh = 150 * landscape_mult * font_mult
         col_char_width = []
         for col in list(self.df.columns.values):
