@@ -35,5 +35,4 @@ for i in range(0,1):
         logging.error('Could not detect table ' + file_path + ' from pdf')
 
 # terminal command to run
-# currently resulting in import error for timm once user enters path to PDF file
 # pyinstaller --onefile --hidden-import=pytorch --hidden-import=timm --collect-data timm --collect-data torch --copy-metadata torch --copy-metadata tqdm --copy-metadata regex --copy-metadata requests --copy-metadata packaging --copy-metadata filelock --copy-metadata numpy --copy-metadata tokenizers --copy-metadata huggingface_hub --copy-metadata safetensors --copy-metadata pyyaml --copy-metadata transformers --hidden-import=transformers --collect-all timm --paths ./.venv/Lib/site-packages ./table_processing/to_exe.py   
