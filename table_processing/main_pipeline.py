@@ -27,5 +27,6 @@ def read_pdf(filepath):
 
     except Exception as e:  # could not detect table from pdf
         logging.error('Could not detect table ' + filepath + ' from pdf')
+        logging.error(e)
 
 main()
