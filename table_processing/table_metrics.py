@@ -163,6 +163,11 @@ def test_tables(tables):
     # Run all metrics for each table
     for t in tables:
         df1, df2 = tables[t]
-        results_lst.append(all_metrics(df1, df2))
+        # Skip metrics if table has 0x0 dimensions
+        if (df1.shape == (0,0)) | (df2.shape == (0,0)):  
+            results_lst.append({'Overlap':0, 'String Similarity':0, 'Completeness':0, 
+                                'Purity':0, 'Precision':0, 'Recall':0})
+        else:
+            results_lst.append(all_metrics(df1, df2))
     # Return dataframe with all metrics (columns) for each table (rows)
     return pd.DataFrame(results_lst, index=tables.keys())

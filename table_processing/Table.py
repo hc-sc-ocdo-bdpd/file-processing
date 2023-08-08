@@ -123,8 +123,8 @@ class Table:
         rows = []
         for row in row_images:
             row_cell_text = []
-            #row.show()
             if row.size[1] > 0:
+                # row.show()
                 cells = self.get_cropped_columns(row)
                 for cell in cells:
                     width, height = cell.size
