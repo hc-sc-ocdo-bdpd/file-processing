@@ -13,6 +13,10 @@ import pandas as pd
 from Table import Table
 from table_tools import get_bounding_boxes
 
+import logging
+logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
+                    level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
+
 class Table_Detector:
 
     # Requires EITHER an image of a page or a path to a pdf file.
@@ -94,17 +98,15 @@ class Table_Detector:
                     counter += 1
                     
 
-# Other todo 
-# - Set up a benchmark test to assess performance
+def main():
+    input_file = "input.pdf"
+    output_file = "output.xlsx"
+    logging.info("Started the table detector.")
+    logging.inofo("Input: " + input_file)
+    logging.info("Output: " + output_file)
+    detector = Table_Detector(file = input_file)
+    detector.to_excel(filename = output_file)
+    logging.info("Table detector finished.")
 
-'''
-for page_data in page_table_results:
-    table_data_list = page_data['tables']
-
-    (image, cropped_image, table_bounds, model) = result
-    for table in table_bounds:
-        plot_table_results(image, table['scores'], table['labels'], table['boxes'], model)
-        score = table['scores'].tolist()
-        label = table['labels'].tolist()
-        (xmin, ymin, xmax, ymax) = table['boxes'].tolist()
-'''
+if __name__ == '__main__':
+    main()
