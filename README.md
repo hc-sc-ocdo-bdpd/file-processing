@@ -43,4 +43,4 @@ These include file processing tools (in the file_processing directory). This cod
 - [ ] Add more metrics for comparison between files (ex. jaccard)
 
 ## Build table processing tools executable
-Run the table_processing/build.py script. The output will be in the build directory.
+Run the `table_processing/build.py` script. The intermediate output will be in the `build` directory. The final executable will be in the `dist` directory.
