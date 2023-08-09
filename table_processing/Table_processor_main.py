@@ -5,27 +5,28 @@ logging.basicConfig(filename='table_detection.log', filemode='a', datefmt='%Y-%m
 logging.getLogger().addHandler(logging.StreamHandler())
 
 
-def process_pdf(file_path):
-    logging.info("Processing path provided: " + file_path)
-    file_path = file_path.replace('\"', '').replace('\\', '\\\\').split('.')[0]
-    pdf_input = file_path+'.pdf'
-    xlsx_output = file_path+'.xlsx'
-    logging.info("Processing file: " + pdf_input)
+def process_pdf(input_file_path, output_file_path = "output.xlsx"):
+    logging.info("Processing path provided: " + input_file_path)
+    input_file_path = input_file_path.replace('\"', '').replace('\\', '\\\\')
+    output_file_path = output_file_path.replace('\"', '').replace('\\', '\\\\')
+    logging.info("Processing file: " + input_file_path)
 
     try:
-        detector = Table_Detector(file = pdf_input)
-        logging.info("Saving output to: " + xlsx_output)
-        detector.to_excel(filename = xlsx_output)
-    except Exception as e:  # could not detect table from pdf
-        logging.error('An error occured while processing: ' + file_path + '.')
-        logging.error(e)
+        detector = Table_Detector(file = input_file_path)
+        logging.info("Saving output to: " + output_file_path)
+        detector.to_excel(filename = output_file_path)
+    except Exception as e:
+        logging.error('An error occured: ' + e)
+    
+    return output_file_path
 
 
 def console_main():
     logging.info("Table Processor started")
-    file_path = input('Please enter the path to the PDF to extract tables from: ')
-    process_pdf(file_path)
-    logging.info("Table Processor finished")
+    input_file_path = input('Enter the path to the inout PDF file: ')
+    output_file_path = input('Enter the path to the output xlsx file: ')
+    output_file_path = process_pdf(input_file_path, output_file_path)
+    logging.info("Table Processor finished. Results are in: " + output_file_path)
 
 
 if __name__ == '__main__':
