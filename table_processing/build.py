@@ -13,9 +13,27 @@ logging.info("Building console application.")
 PyInstaller.__main__.run([
     console_app_py,
     '--onefile',
-    '--windowed'
+    '--windowed',
+    '--hidden-import=pytorch',
+    '--hidden-import=timm',
+    '--collect-data timm',
+    '--collect-data torch',
+    '--copy-metadata torch',
+    '--copy-metadata tqdm',
+    '--copy-metadata regex',
+    '--copy-metadata requests',
+    '--copy-metadata packaging',
+    '--copy-metadata filelock',
+    '--copy-metadata numpy',
+    '--copy-metadata tokenizers',
+    '--copy-metadata huggingface_hub',
+    '--copy-metadata safetensors',
+    '--copy-metadata pyyaml',
+    '--copy-metadata transformers',
+    '--hidden-import=transformers'
+    '--collect-all timm',
+    '--paths ./.venv/Lib/site-packages'
 ])
-# pyinstaller --onefile --hidden-import=pytorch --hidden-import=timm --collect-data timm --collect-data torch --copy-metadata torch --copy-metadata tqdm --copy-metadata regex --copy-metadata requests --copy-metadata packaging --copy-metadata filelock --copy-metadata numpy --copy-metadata tokenizers --copy-metadata huggingface_hub --copy-metadata safetensors --copy-metadata pyyaml --copy-metadata transformers --hidden-import=transformers --collect-all timm --paths ./.venv/Lib/site-packages ./table_processing/Table_Processor_Main.py   
 logging.info("Console application build complete.")
 
 # TODO: Build the GUI application
