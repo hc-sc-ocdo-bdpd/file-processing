@@ -9,7 +9,7 @@ import logging
 logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
-# Initialize
+# Initialize variables
 tables = {}
 failed_tables = []
 gen_params = []
