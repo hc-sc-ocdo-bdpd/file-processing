@@ -9,7 +9,7 @@ default_output = "output.xlsx"
 
 
 def process_pdf(input_file_path, output_file_path = default_output):
-    logging.info("Processing path provided: " + input_file_path)
+    logging.info("Processing path provided: " + str(input_file_path))
     input_file_path = Path(input_file_path)
     output_file_path = Path(output_file_path)
 
@@ -29,7 +29,7 @@ def process_pdf(input_file_path, output_file_path = default_output):
         logging.info("Saving output to: " + str(output_file_path))
         detector.to_excel(filename = str(output_file_path))
     except Exception as e:
-        logging.error('An error occured: ' + e)
+        logging.error('An error occured: ' + str(e))
     
     return str(output_file_path)
 

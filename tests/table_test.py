@@ -224,3 +224,56 @@ def test_metrics():
     assert metrics_df['Purity'][t_name] == 0.440  # cell content purity
     assert metrics_df['Precision'][t_name] == 0.225  # cell neighbours/location
     assert metrics_df['Recall'][t_name] == 0.225  # cell neighbours/location
+
+
+# Test the input bulletproofing on process_pdf()
+def test_process_pdf():
+    from table_processing.table_processor_main import process_pdf, default_output
+    from pathlib import Path
+    import os
+
+    # Bad input path
+    input_path = "./tests/resources"
+    trigger = False
+    try:
+        process_pdf(input_path)
+    except:
+        trigger = True
+    assert(trigger)
+
+    # Good input path, good output path
+    input_path = "./tests/resources/DmZUHweaZfPcMjTCAySRtp.pdf"
+    output_path = "./tests/resources/out.xlsx"
+    if os.path.exists(output_path):
+        os.remove(output_path)
+    returned_path = process_pdf(input_path, output_path)
+    returned_path = Path(returned_path)
+    assert(returned_path.match(output_path))
+    assert os.path.exists(output_path)
+    os.remove(output_path)
+    assert not os.path.exists(output_path)
+
+    # Good input path, no provided output path
+    input_path = "./tests/resources/DmZUHweaZfPcMjTCAySRtp.pdf"
+    output_path = default_output
+    if os.path.exists(output_path):
+        os.remove(output_path)
+    returned_path = process_pdf(input_path)
+    returned_path = Path(returned_path)
+    assert(returned_path.match(output_path))
+    assert os.path.exists(output_path)
+    os.remove(output_path)
+    assert not os.path.exists(output_path)
+
+    # Good input path, bad output path
+    input_path = "./tests/resources/DmZUHweaZfPcMjTCAySRtp.pdf"
+    expected_output_path = default_output
+    output_path = "asdf"
+    if os.path.exists(output_path):
+        os.remove(output_path)
+    returned_path = process_pdf(input_path, output_path)
+    returned_path = Path(returned_path)
+    assert(returned_path.match(expected_output_path))
+    assert os.path.exists(expected_output_path)
+    os.remove(expected_output_path)
+    assert not os.path.exists(expected_output_path)
