@@ -12,7 +12,7 @@ col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','name_month', 
            ]
             
 class GeneratedTable:
-    def __init__(self, rows=10, columns=5, row_lines=None, vertical_lines=None, margin='0.7in', multi_row=False, row_height=1.25, font_size=12, landscape=False): 
+    def __init__(self, rows=10, columns=5, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1.25, font_size=12, landscape=False): 
         self.rows = rows
         self.columns = columns 
         self.row_lines = row_lines
