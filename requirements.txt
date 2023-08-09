@@ -37,3 +37,7 @@ xlsxwriter==3.1.2
 dash
 dash[diskcache]
 celery
+
+# for exe
+pyinstaller==5.13.0
+pyinstaller-hooks-contrib==2023.3
