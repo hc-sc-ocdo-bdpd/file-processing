@@ -153,7 +153,7 @@ def test_extract_table_content():
     from table_processing.Table import Table
     from table_processing.Table_Detector import Table_Detector
 
-    t_name = 'cb5qFbTVWrXYuh4j3pJNh2'
+    t_name = 'test_extract_table_content'
     file_path = './tests/resources/' + t_name + '/'  + t_name
     trueT = pd.read_excel(file_path+'_true.xlsx', dtype=str)
     detc_table = Table_Detector(file_path+'.pdf')
@@ -212,7 +212,7 @@ def test_metrics():
     from table_processing.table_metrics import test_tables
 
     # Import true and processed tables
-    t_name = 'MknamLBhTbMkiPABhMhN5V'
+    t_name = 'test_metrics'
     file_path = './tests/resources/' + t_name + '/'  + t_name
     trueT = pd.read_excel(file_path+'_true.xlsx')
     readT = pd.read_excel(file_path+'.xlsx')
