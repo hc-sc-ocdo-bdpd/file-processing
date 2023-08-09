@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 # xlsxwriter not imported, but needs to be downloaded in environment
 import logging
-logging.basicConfig(filename='table_detection_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
+logging.basicConfig(filename='table_detection.log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
 
