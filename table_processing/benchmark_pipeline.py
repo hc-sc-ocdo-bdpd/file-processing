@@ -29,7 +29,7 @@ for i in range(0,1):
         table = detc_table.get_page_data()[0]['tables'][0]['table_content']
         boxes_image = table.plot_bounding_boxes(file_name = file_path+'_boxes')
         detc_table.to_excel(file_path+'.xlsx')
-        read_table = pd.read_excel(file_path+'.xlsx')
+        read_table = pd.read_excel(file_path+'.xlsx', dtype=str)
         # Store true and read tables
     except IndexError:  # could not detect table from pdf
         logging.error('Could not detect table from pdf ' + t_name)

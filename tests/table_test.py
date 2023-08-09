@@ -152,11 +152,10 @@ def test_extract_table_content():
     import pandas as pd
     from table_processing.Table import Table
     from table_processing.Table_Detector import Table_Detector
-    from table_processing.table_metrics import test_tables
 
-    t_name = 'MknamLBhTbMkiPABhMhN5V'
+    t_name = 'test_extract_table_content'
     file_path = './tests/resources/' + t_name + '/'  + t_name
-    trueT = pd.read_excel(file_path+'_true.xlsx')
+    trueT = pd.read_excel(file_path+'_true.xlsx', dtype=str)
     detc_table = Table_Detector(file_path+'.pdf')
     table = detc_table.get_page_data()[0]['tables'][0]['table_content']
     readT = Table.get_as_dataframe(table)
@@ -164,10 +163,11 @@ def test_extract_table_content():
     assert len(trueT) == len(readT)  # matching row amount
     assert len(trueT.columns.values) == len(readT.columns.values)  # matching column amount
 
-    correct_cells = {0:[0,2], 1:[0,1,2], 2:[0,2,4], 3:[0,2,3], 4:[]}
-    for r in correct_cells.keys():
-        for c in correct_cells[r]:
-            assert trueT.iloc[r,c] == readT.iloc[r,c]  # matching cell contents
+    correct_cells = {0:list(range(0,10)), 1:list(range(0,10)), 2:list(range(0,10)), 
+                     3:list(range(0,10)), 4:[2,3,5,7,9]}
+    for c in correct_cells.keys():
+        for r in correct_cells[c]:
+            assert str(trueT.iloc[r,c]) == str(readT.iloc[r,c])  # matching cell contents
 
 
 
@@ -212,7 +212,7 @@ def test_metrics():
     from table_processing.table_metrics import test_tables
 
     # Import true and processed tables
-    t_name = 'MknamLBhTbMkiPABhMhN5V'
+    t_name = 'test_metrics'
     file_path = './tests/resources/' + t_name + '/'  + t_name
     trueT = pd.read_excel(file_path+'_true.xlsx')
     readT = pd.read_excel(file_path+'.xlsx')
