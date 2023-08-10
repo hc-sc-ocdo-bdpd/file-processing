@@ -1,6 +1,11 @@
 from dash import Dash, dcc, html, Input, Output, State, callback
 import datetime
-from Table_processor_main import process_pdf
+from Table_processor_main import process_content
+from pathlib import Path
+import logging
+
+logging.basicConfig(filename='table_detection_gui.log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
+                    level=logging.INFO, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -29,21 +34,17 @@ app.layout = html.Div([
     html.Div(id='output-result'),
 ])
 
-def parse_contents(contents, filename, date):
-    result = process_pdf()
-    return html.Div([
-        html.H5(filename),
-        html.H6(datetime.datetime.fromtimestamp(date)),
 
-        # HTML images accept base64 encoded strings in the same format
-        # that is supplied by the upload
-        html.Img(src=contents),
-        html.Hr()#,
-#        html.Div('Raw Content'),
-#        html.Pre(contents[0:200] + '...', style={
-#            'whiteSpace': 'pre-wrap',
-#            'wordBreak': 'break-all'
-#        })
+def parse_contents(contents, filename, date):
+    logging.info("Processing " + str(filename))
+    output_filename = process_content(contents)
+    output_filename = Path(output_filename)
+    logging.info("Output file: " + str(output_filename.absolute()))
+    logging.info("Processing complete. Updating GUI.")
+    return html.Div([
+        html.H5("Input filename: " + str(filename)),
+        html.H5("Output filename: " + str(output_filename.absolute())),
+        html.H6(datetime.datetime.fromtimestamp(date))
     ])
 
 @callback(Output('output-result', 'children'),
