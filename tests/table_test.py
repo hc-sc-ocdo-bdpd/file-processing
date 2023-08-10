@@ -277,3 +277,19 @@ def test_process_pdf():
     assert os.path.exists(expected_output_path)
     os.remove(expected_output_path)
     assert not os.path.exists(expected_output_path)
+
+
+def test_process_content():
+    from table_processing.Table_processor_main import process_content, default_output
+    from pathlib import Path
+    import os
+    input_path = "./tests/resources/DmZUHweaZfPcMjTCAySRtp.pdf"
+    content = open(input_path, "rb").read()
+    returned_path = process_content(content)
+    returned_path = Path(returned_path)
+    expected_output_path = default_output
+    assert(returned_path.match(expected_output_path))
+    assert os.path.exists(expected_output_path)
+    os.remove(expected_output_path)
+    assert not os.path.exists(expected_output_path)
+

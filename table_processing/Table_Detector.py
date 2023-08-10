@@ -21,10 +21,10 @@ class Table_Detector:
         self.page_data = None
         if filename != None:
             logging.info("Processing from filename: " + str(filename))
-            self.page_data = self.get_tables_from_pdf_filename(filename)
+            self.page_data = self.get_tables_from_pdf(self, filename = filename)
         elif filedata != None:
             logging.info("Processing from file content.")
-            self.page_data = self.get_tables_from_filedata(filedata)
+            self.page_data = self.get_tables_from_pdf(content = filedata)
         else:
             message = "Require filename or filedata parameters."
             logging.error(message)
@@ -58,13 +58,22 @@ class Table_Detector:
         model = TableTransformerForObjectDetection.from_pretrained("microsoft/table-transformer-detection")
         return get_bounding_boxes(image, model)
     
-    def get_tables_from_filedata(self, filedata):
-        logging.error("Function not yet implemented")
-        return None
 
+    def get_tables_from_pdf(self, filename = None, content = None):
+        if filename != None:
+            doc = fitz.open(filename)
+        elif content != None:
+            doc = fitz.Document(stream = content)
+        else:
+            message = "Either a PDF filename or content must be provided."
+            logging.error(message)
+            raise Exception(message)
+        
+        if not doc.is_pdf():
+            message = "Document is not a valid PDF."
+            logging.error(message)
+            raise Exception(message)
 
-    def get_tables_from_pdf_filename(self, filename):
-        doc = fitz.open(filename)
         results = []
         # To get better resolution
         zoom_x = 2.0  # horizontal zoom
