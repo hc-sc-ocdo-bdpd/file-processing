@@ -63,7 +63,7 @@ class Table_Detector:
         if filename != None:
             doc = fitz.open(filename)
         elif content != None:
-            doc = fitz.open(stream=content.read(), filetype="pdf")
+            doc = fitz.open(None, content, "pdf")
         else:
             message = "Either a PDF filename or content must be provided."
             logging.error(message)

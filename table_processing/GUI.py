@@ -3,6 +3,7 @@ import datetime
 from Table_processor_main import process_content
 from pathlib import Path
 import logging
+import base64
 
 
 logging.basicConfig(filename='table_detection_gui.log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
@@ -38,6 +39,9 @@ app.layout = html.Div([
 
 def parse_contents(contents, filename, date):
     logging.info("Processing " + str(filename))
+    logging.info("Contents type: " + str(type(contents)))
+    contents = base64.b64decode(contents, altchars=None, validate=True)
+    logging.info("Contents type: " + str(type(contents)))
     try:
         output_filename = process_content(contents)
     except Exception as e:
