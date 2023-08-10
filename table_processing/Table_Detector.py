@@ -16,10 +16,10 @@ from table_tools import get_bounding_boxes
 class Table_Detector:
 
     # Requires EITHER an image of a page or a path to a pdf file.
-    def __init__(self, file = None):
+    def __init__(self, filename = None, filedata = None):
         self.page_data = None
-        if file != None:
-            self.page_data = self.get_tables_from_pdf(file)
+        if filename != None:
+            self.page_data = self.get_tables_from_pdf_filename(filename)
 
     def get_page_data(self):
         return self.page_data
@@ -48,7 +48,7 @@ class Table_Detector:
         model = TableTransformerForObjectDetection.from_pretrained("microsoft/table-transformer-detection")
         return get_bounding_boxes(image, model)
 
-    def get_tables_from_pdf(self, filename):
+    def get_tables_from_pdf_filename(self, filename):
         doc = fitz.open(filename)
         results = []
         # To get better resolution

@@ -25,7 +25,7 @@ def process_pdf(input_file_path, output_file_path = default_output):
     logging.info("Processing file: " + str(input_file_path))
 
     try:
-        detector = Table_Detector(file = str(input_file_path))
+        detector = Table_Detector(filename = str(input_file_path))
         logging.info("Saving output to: " + str(output_file_path))
         detector.to_excel(filename = str(output_file_path))
     except Exception as e:
