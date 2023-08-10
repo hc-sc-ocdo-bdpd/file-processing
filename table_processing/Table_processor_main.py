@@ -8,6 +8,12 @@ logging.getLogger().addHandler(logging.StreamHandler())
 default_output = "output.xlsx"
 
 
+def process_content(content, output_file_path = default_output):
+    logging.error("Not yet implemented")
+    output_file_path = Path(output_file_path)
+    return str(output_file_path)
+
+
 def process_pdf(input_file_path, output_file_path = default_output):
     logging.info("Processing path provided: " + str(input_file_path))
     input_file_path = Path(input_file_path)

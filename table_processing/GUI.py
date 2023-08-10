@@ -1,6 +1,6 @@
 from dash import Dash, dcc, html, Input, Output, State, callback
-
 import datetime
+from Table_processor_main import process_pdf
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -8,10 +8,10 @@ app = Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div([
     dcc.Upload(
-        id='upload-image',
+        id='upload-file',
         children=html.Div([
-            'Drag and Drop or ',
-            html.A('Select Files')
+            'Drag and Drop a PDF file or ',
+            html.A('Select PDF Files')
         ]),
         style={
             'width': '100%',
@@ -26,10 +26,11 @@ app.layout = html.Div([
         # Allow multiple files to be uploaded
         multiple=True
     ),
-    html.Div(id='output-image-upload'),
+    html.Div(id='output-result'),
 ])
 
 def parse_contents(contents, filename, date):
+    result = process_pdf()
     return html.Div([
         html.H5(filename),
         html.H6(datetime.datetime.fromtimestamp(date)),
@@ -45,10 +46,10 @@ def parse_contents(contents, filename, date):
 #        })
     ])
 
-@callback(Output('output-image-upload', 'children'),
-              Input('upload-image', 'contents'),
-              State('upload-image', 'filename'),
-              State('upload-image', 'last_modified'))
+@callback(Output('output-result', 'children'),
+              Input('upload-file', 'contents'),
+              State('upload-file', 'filename'),
+              State('upload-file', 'last_modified'))
 def update_output(list_of_contents, list_of_names, list_of_dates):
     if list_of_contents is not None:
         children = [

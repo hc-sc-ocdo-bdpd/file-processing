@@ -9,6 +9,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import fitz
 import pandas as pd
+import logging
 
 from Table import Table
 from table_tools import get_bounding_boxes
@@ -19,7 +20,16 @@ class Table_Detector:
     def __init__(self, filename = None, filedata = None):
         self.page_data = None
         if filename != None:
+            logging.info("Processing from filename: " + str(filename))
             self.page_data = self.get_tables_from_pdf_filename(filename)
+        elif filedata != None:
+            logging.info("Processing from file content.")
+            self.page_data = self.get_tables_from_filedata(filedata)
+        else:
+            message = "Require filename or filedata parameters."
+            logging.error(message)
+            raise Exception(message)
+
 
     def get_page_data(self):
         return self.page_data
@@ -47,6 +57,11 @@ class Table_Detector:
     def find_tables(self, image):
         model = TableTransformerForObjectDetection.from_pretrained("microsoft/table-transformer-detection")
         return get_bounding_boxes(image, model)
+    
+    def get_tables_from_filedata(self, filedata):
+        logging.error("Function not yet implemented")
+        return None
+
 
     def get_tables_from_pdf_filename(self, filename):
         doc = fitz.open(filename)
@@ -85,8 +100,13 @@ class Table_Detector:
             pageCount +=1
         return results
 
-    # Todo: Implement this method    
+   
     def to_excel(self, filename='all_excel.xlsx'):
+        if self.page_data == None:
+            logging.warn("No page data to write to excel. No output file generated")
+            return
+
+        logging.info("Writing table data to excel.")
         with pd.ExcelWriter(filename) as writer:
             for page_dict in self.page_data: #For each page
                 counter = 1
@@ -97,19 +117,5 @@ class Table_Detector:
                     df = table.get_as_dataframe()
                     df.to_excel(writer, sheet_name=sheet_name, index=False) #Write it to a sheet in the output excel
                     counter += 1
-                    
-
-# Other todo 
-# - Set up a benchmark test to assess performance
-
-'''
-for page_data in page_table_results:
-    table_data_list = page_data['tables']
-
-    (image, cropped_image, table_bounds, model) = result
-    for table in table_bounds:
-        plot_table_results(image, table['scores'], table['labels'], table['boxes'], model)
-        score = table['scores'].tolist()
-        label = table['labels'].tolist()
-        (xmin, ymin, xmax, ymax) = table['boxes'].tolist()
-'''
+        logging.info("Finished writing table data to excel.")
+        return filename
