@@ -40,7 +40,7 @@ app.layout = html.Div([
 def parse_contents(contents, filename, date):
     logging.info("Processing " + str(filename))
     logging.info("Contents type: " + str(type(contents)))
-    contents = base64.b64decode(contents, altchars=None, validate=True)
+    contents = base64.b64decode(contents)#, altchars=None, validate=True)
     logging.info("Contents type: " + str(type(contents)))
     try:
         output_filename = process_content(contents)
