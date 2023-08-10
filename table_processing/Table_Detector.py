@@ -21,7 +21,7 @@ class Table_Detector:
         self.page_data = None
         if filename != None:
             logging.info("Processing from filename: " + str(filename))
-            self.page_data = self.get_tables_from_pdf(self, filename = filename)
+            self.page_data = self.get_tables_from_pdf(filename = filename)
         elif filedata != None:
             logging.info("Processing from file content.")
             self.page_data = self.get_tables_from_pdf(content = filedata)

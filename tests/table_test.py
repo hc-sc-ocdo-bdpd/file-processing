@@ -234,22 +234,22 @@ def test_process_pdf():
 
     # Bad input path
     input_path = "./tests/resources"
-    trigger = False
+    exception_happened = False
     try:
         process_pdf(input_path)
     except:
-        trigger = True
-    assert(trigger)
+        exception_happened = True
+    assert(exception_happened)
 
     # Good input path, good output path
     input_path = "./tests/resources/DmZUHweaZfPcMjTCAySRtp.pdf"
     output_path = "./tests/resources/out.xlsx"
     if os.path.exists(output_path):
         os.remove(output_path)
-    returned_path = process_pdf(input_path, output_path)
+    returned_path = process_pdf(input_path, output_file_path = output_path)
     returned_path = Path(returned_path)
     assert(returned_path.match(output_path))
-    assert os.path.exists(output_path)
+    assert(os.path.exists(output_path))
     os.remove(output_path)
     assert not os.path.exists(output_path)
 
@@ -271,7 +271,7 @@ def test_process_pdf():
     output_path = "asdf"
     if os.path.exists(output_path):
         os.remove(output_path)
-    returned_path = process_pdf(input_path, output_path)
+    returned_path = process_pdf(input_path, output_file_path = output_path)
     returned_path = Path(returned_path)
     assert(returned_path.match(expected_output_path))
     assert os.path.exists(expected_output_path)
