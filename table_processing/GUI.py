@@ -37,7 +37,16 @@ app.layout = html.Div([
 
 def parse_contents(contents, filename, date):
     logging.info("Processing " + str(filename))
-    output_filename = process_content(contents)
+    try:
+        output_filename = process_content(contents)
+    except Exception as e:
+        logging.error("Error occured: " + str(e))
+        return html.Div([
+            html.H5("Input filename: " + str(filename)),
+            html.H5("Error Occured: " + str(e)),
+            html.H6(datetime.datetime.fromtimestamp(date))
+    ])
+
     output_filename = Path(output_filename)
     logging.info("Output file: " + str(output_filename.absolute()))
     logging.info("Processing complete. Updating GUI.")
@@ -60,44 +69,3 @@ def update_output(list_of_contents, list_of_names, list_of_dates):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-'''
-from dash import Dash, dcc, html, Input, Output, callback
-from Table_processor_main import process_pdf
-from pathlib import Path
-
-external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
-
-app = Dash(__name__, external_stylesheets=external_stylesheets)
-
-app.layout = html.Div(
-    [
-        html.I("To extract tables from a file, please type in the file name and press Enter"),
-        html.Br(),
-        dcc.Input(id="filename", type="text", placeholder="", debounce=True),
-        html.Div(id="output"),
-    ]
-)
-
-
-@callback(
-    Output("output", "children"),
-    Input("filename", "value"),
-)
-def call_processing_fn(filename):
-    if type("asdf") == type(filename):
-        path = Path(filename)
-        if path.exists() and path.suffix == ".pdf":
-            output_file = process_pdf(filename)
-            return f'Processing completed.  Extracted tables can be found in {output_file}'
-        else:
-            return f''
-    else:
-        return f''
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
-'''
