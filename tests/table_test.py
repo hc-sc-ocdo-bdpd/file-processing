@@ -290,7 +290,7 @@ def test_process_content():
         os.remove(output_path)
     doc = fitz.open(input_path)
     content = doc.tobytes() 
-    content = open(input_path, "rb").read()
+    doc.close()
     returned_path = process_content(content, output_file_path = output_path)
     returned_path = Path(returned_path)
     expected_output_path = output_path

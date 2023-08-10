@@ -63,7 +63,7 @@ class Table_Detector:
         if filename != None:
             doc = fitz.open(filename)
         elif content != None:
-            doc = fitz.Document(stream = content)
+            doc = fitz.open(stream=content.read(), filetype="pdf")
         else:
             message = "Either a PDF filename or content must be provided."
             logging.error(message)
@@ -72,6 +72,7 @@ class Table_Detector:
         if not doc.is_pdf:
             message = "Document is not a valid PDF."
             logging.error(message)
+            doc.close()
             raise Exception(message)
 
         results = []
@@ -107,6 +108,7 @@ class Table_Detector:
             page_data['pageNum'] = pageCount
             results.append(page_data)
             pageCount +=1
+        doc.close()
         return results
 
    
