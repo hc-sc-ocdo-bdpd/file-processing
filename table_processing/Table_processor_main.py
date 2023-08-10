@@ -33,7 +33,7 @@ def process_content(content, output_file_path = default_output):
         logging.info("Saving output to: " + str(output_file_path))
         detector.to_excel(str(output_file_path))
     except Exception as e:
-        logging.error('An error occured: ' + str(e))
+        logging.error('process_content - An error occured: ' + str(e))
     
     logging.info("Processing complete")
     return str(output_file_path)

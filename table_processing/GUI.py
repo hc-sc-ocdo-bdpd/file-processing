@@ -3,6 +3,7 @@ import datetime
 from Table_processor_main import process_content
 from pathlib import Path
 import logging
+import base64
 
 logging.basicConfig(filename='table_detection_gui.log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO, format='[%(asctime)s][%(levelname)s] %(message)s\n')
@@ -37,6 +38,7 @@ app.layout = html.Div([
 
 def parse_contents(contents, filename, date):
     logging.info("Processing " + str(filename))
+    #decoded = base64.b64decode(contents)
     try:
         output_filename = process_content(contents)
     except Exception as e:
@@ -45,7 +47,7 @@ def parse_contents(contents, filename, date):
             html.H5("Input filename: " + str(filename)),
             html.H5("Error Occured: " + str(e)),
             html.H6(datetime.datetime.fromtimestamp(date))
-    ])
+        ])
 
     output_filename = Path(output_filename)
     logging.info("Output file: " + str(output_filename.absolute()))
