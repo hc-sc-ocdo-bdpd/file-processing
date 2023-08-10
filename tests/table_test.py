@@ -280,14 +280,20 @@ def test_process_pdf():
 
 
 def test_process_content():
-    from table_processing.Table_processor_main import process_content, default_output
+    from table_processing.Table_processor_main import process_content
     from pathlib import Path
     import os
+    import fitz
     input_path = "./tests/resources/DmZUHweaZfPcMjTCAySRtp.pdf"
+    output_path = "./tests/resources/out_test_process_content.xlsx"
+    if os.path.exists(output_path):
+        os.remove(output_path)
+    doc = fitz.open(input_path)
+    content = doc.tobytes() 
     content = open(input_path, "rb").read()
-    returned_path = process_content(content)
+    returned_path = process_content(content, output_file_path = output_path)
     returned_path = Path(returned_path)
-    expected_output_path = default_output
+    expected_output_path = output_path
     assert(returned_path.match(expected_output_path))
     assert os.path.exists(expected_output_path)
     os.remove(expected_output_path)

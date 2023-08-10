@@ -69,7 +69,7 @@ class Table_Detector:
             logging.error(message)
             raise Exception(message)
         
-        if not doc.is_pdf():
+        if not doc.is_pdf:
             message = "Document is not a valid PDF."
             logging.error(message)
             raise Exception(message)

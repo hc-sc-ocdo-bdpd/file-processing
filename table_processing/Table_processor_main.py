@@ -25,7 +25,7 @@ def validate_output_filename(filename):
 
 
 def process_content(content, output_file_path = default_output):
-    logging.error("Processing file content.")
+    logging.info("Processing file content.")
     output_file_path = validate_output_filename(output_file_path)
     
     try:
