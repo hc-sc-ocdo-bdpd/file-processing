@@ -25,10 +25,17 @@ def validate_output_filename(filename):
 
 
 def process_content(content, output_file_path = default_output):
-    logging.error("Not yet implemented")
+    logging.error("Processing file content.")
+    output_file_path = validate_output_filename(output_file_path)
     
-    detector = Table_Detector(filedata = content)
-    detector.to_excel(str(output_file_path))
+    try:
+        detector = Table_Detector(filedata = content)
+        logging.info("Saving output to: " + str(output_file_path))
+        detector.to_excel(str(output_file_path))
+    except Exception as e:
+        logging.error('An error occured: ' + str(e))
+    
+    logging.info("Processing complete")
     return str(output_file_path)
 
 
@@ -45,6 +52,7 @@ def process_pdf(input_file_path, output_file_path = default_output):
     except Exception as e:
         logging.error('An error occured: ' + str(e))
     
+    logging.info("Processing complete")
     return str(output_file_path)
 
 
