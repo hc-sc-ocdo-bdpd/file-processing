@@ -1,4 +1,5 @@
-from dash import Dash, dcc, html, Input, Output, State, callback
+from dash import Dash, DiskcacheManager, CeleryManager, Input, Output, html, callback, dcc, State 
+
 import datetime
 from Table_processor_main import process_content
 from pathlib import Path
@@ -8,6 +9,18 @@ import base64
 
 logging.basicConfig(filename='table_detection_gui.log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO, format='[%(asctime)s][%(levelname)s] %(message)s\n')
+
+if 'REDIS_URL' in os.environ:
+    # Use Redis & Celery if REDIS_URL set as an env variable
+    from celery import Celery
+    celery_app = Celery(__name__, broker=os.environ['REDIS_URL'], backend=os.environ['REDIS_URL'])
+    background_callback_manager = CeleryManager(celery_app)
+
+else:
+    # Diskcache for non-production apps when developing locally
+    import diskcache
+    cache = diskcache.Cache("./cache")
+    background_callback_manager = DiskcacheManager(cache)
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -63,10 +76,13 @@ def parse_contents(contents, filename, date):
         html.H6(datetime.datetime.fromtimestamp(date))
     ])
 
+
 @callback(Output('output-result', 'children'),
               Input('upload-file', 'contents'),
               State('upload-file', 'filename'),
-              State('upload-file', 'last_modified'))
+              State('upload-file', 'last_modified'),
+              background = True,
+              manager = background_callback_manager)
 def update_output(list_of_contents, list_of_names, list_of_dates):
     if isinstance(list_of_contents, list):
         children = [
