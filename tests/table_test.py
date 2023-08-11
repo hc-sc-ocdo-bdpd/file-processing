@@ -299,3 +299,29 @@ def test_process_content():
     os.remove(expected_output_path)
     assert not os.path.exists(expected_output_path)
 
+
+def test_base64_input():
+    from table_processing.Table_processor_main import process_content
+    from pathlib import Path
+    import os
+    import fitz
+    import base64    
+
+    input_path = "./tests/resources/DmZUHweaZfPcMjTCAySRtp.pdf"
+    output_path = "./tests/resources/test_base64_input.xlsx"
+    if os.path.exists(output_path):
+        os.remove(output_path)
+
+    input_file= open(input_path,"rb")
+    content_binary = input_file.read()
+    data = (base64.b64encode(content_binary))
+    content = base64.b64decode(data)
+
+    returned_path = process_content(content, output_file_path = output_path)
+    returned_path = Path(returned_path)
+    expected_output_path = output_path
+
+    assert(returned_path.match(expected_output_path))
+    assert os.path.exists(expected_output_path)
+    os.remove(expected_output_path)
+    assert not os.path.exists(expected_output_path)
