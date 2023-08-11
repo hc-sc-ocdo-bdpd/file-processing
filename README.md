@@ -3,6 +3,7 @@
 This library contains tools for processing various file types for several purposes. This includes extracting metadata, calculating metrics between files such as cosine similarity and Levenshtein distance, and table data extraction. This software is under active development.
 
 ## Dependencies
+
 This project has dependencies defined in `requirements.txt`. These dependencies should be installed using `pip3 install -r depencencies.txt`. Older versions of pip may result in an error.
 
 Additionally, this project uses tesseract for OCR. This must be installed at: `C:/Users/USERNAME/AppData/Local/Programs/Tesseract-OCR/tesseract.exe`. See https://github.com/UB-Mannheim/tesseract/wiki.
@@ -19,6 +20,7 @@ This library contains several components in different directories:
 - table_processing: Table extraction tools
 - tests: pytest test cases
 - src: contains deprecated software from an earlier version of this library. This directory is planned for removal as it is being replaced with file_processing tools
+- table_trials_results: Results in .xlsx format of the tests run on generated tables with a variety of randomized parameters including rows, columns, vertical/horizontal lines, font size, row height, margin, orientation, and special characters. Parameter values and performance metrics are tracked for each of the roughly 7000 generated tables along with overall summaries for each individual metric (mean, stdev, min, max, median, etc.).
 
 These include file processing tools (in the file_processing directory). This code is structured as follows:
 
