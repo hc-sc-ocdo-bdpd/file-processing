@@ -5,7 +5,11 @@ from Table_processor_main import process_content
 from pathlib import Path
 import logging
 import base64
+import webbrowser
+from threading import Timer
+import time
 
+port = 8050
 
 logging.basicConfig(filename='table_detection_gui.log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO, format='[%(asctime)s][%(levelname)s] %(message)s\n')
@@ -31,11 +35,13 @@ app.layout = html.Div([
         id='upload-file',
         children=html.Div([
             'Drag and Drop a PDF file or ',
-            html.A('Select PDF Files')
+            html.A('Select PDF Files'),
+            html.Br(),
+            'Note: Processing takes a while. Details for where to find the output will appear when finished.'
         ]),
         style={
             'width': '60%',
-            'height': '60px',
+            'height': '120px',
             'lineHeight': '60px',
             'borderWidth': '1px',
             'borderStyle': 'dashed',
@@ -96,3 +102,4 @@ def update_output(list_of_contents, list_of_names, list_of_dates):
 
 if __name__ == '__main__':
     app.run(debug=True)
+    

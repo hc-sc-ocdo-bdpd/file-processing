@@ -14,7 +14,7 @@ The table detection performance tests use MikTex (https://miktex.org/download) f
 There are two versions of the table extraction tool: a command line version and a graphical version which runs in a web browswer.
 
 - Command line version implementation: table_processing/Table_processor_main.py
-- GUI version: table_processing/GUI.py
+- GUI version: table_processing/GUI.py. Once running, point your browser to http://127.0.0.1:8050/ to see it.
 
 ## Structure
 
