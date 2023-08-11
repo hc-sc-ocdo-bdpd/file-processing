@@ -312,7 +312,7 @@ def test_base64_input():
     if os.path.exists(output_path):
         os.remove(output_path)
 
-    input_file= open(input_path,"rb")
+    input_file = open(input_path,"rb")
     content_binary = input_file.read()
     data = (base64.b64encode(content_binary))
     content = base64.b64decode(data)
