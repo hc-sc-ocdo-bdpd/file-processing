@@ -9,9 +9,10 @@ from PIL import Image
 import pytesseract
 import os
 import getpass
-import os
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from table_tools import get_bounding_boxes, remove_duplicate_limits
 pytesseract.pytesseract.tesseract_cmd = os.path.join('C:/Users',getpass.getuser(),'AppData/Local/Programs/Tesseract-OCR/tesseract.exe')
@@ -78,6 +79,7 @@ class Table:
         plt.figure()
         plt.imshow(image)
         plt.show()
+        plt.close()
 
 
     def extract_table_content(self):
@@ -128,6 +130,7 @@ class Table:
                     bbox=dict(facecolor='yellow', alpha=0.5))
         plt.axis('off')
         plt.savefig(file_name + ".jpg")
+        plt.close()
 
 
     def get_as_dataframe(self):

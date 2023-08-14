@@ -9,16 +9,19 @@ import logging
 logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
-# Initialize table dict
+# Initialize variables
 tables = {}
 failed_tables = []
+gen_params = []
+n = 1
 
 # Loop for n # of tables
-for i in range(0,1):
+for i in range(0,n):
     # Generate, store, and export to pdf true table
     genr_table = GeneratedTable(rows=10, columns=5, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1.25, font_size=12, landscape=False)
     true_table = genr_table.df
     genr_table.to_pdf()
+    gen_params.append(genr_table.get_params())
     t_name = genr_table.get_filename()
     logging.warning('Generated table ' + t_name)
     file_path = 'generated_tables/' + t_name + '/'  + t_name
@@ -44,9 +47,12 @@ metrics_df.loc[metrics_df.index.isin(failed_tables), list(metrics_df.columns.val
 summary_df = metrics_df.astype(float).describe().fillna(0).apply(lambda s: s.apply('{0:.3f}'.format))
 summary_df.loc[summary_df.index == 'count'] = summary_df.loc[summary_df.index == 'count'].astype(float).astype(int).astype(str)
 summary_df = summary_df.reset_index().rename(columns={'index':''})
-metrics_df = metrics_df.apply(lambda s: s.apply('{0:.3f}'.format)).reset_index().rename(columns={'index':'ID'})
+metrics_df = metrics_df.apply(lambda s: s.apply('{0:.3f}'.format)).reset_index().rename(columns={'index':'filename'})
 logging.warning(pd.DataFrame(np.row_stack((summary_df.columns, summary_df.to_numpy())), 
                 columns=['']*len(summary_df.columns), index=['']*(1+len(summary_df))))
+
+# Add generated parameters to metrics sheet to allow identification of well & poor performing tables by characteristics
+metrics_df = pd.merge(metrics_df, pd.DataFrame(gen_params), on = 'filename', how = 'left')
 
 # Export metrics
 def write_report(exported_df, exported_dfName):

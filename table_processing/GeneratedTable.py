@@ -12,7 +12,7 @@ col_list = ['country', 'city', 'zipcode', 'latitude', 'longitude','name_month', 
            ]
             
 class GeneratedTable:
-    def __init__(self, rows=10, columns=5, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1.25, font_size=12, landscape=False): 
+    def __init__(self, rows=10, columns=5, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1.25, font_size=10, landscape=False): 
         self.rows = rows
         self.columns = columns 
         self.row_lines = row_lines
@@ -48,7 +48,7 @@ class GeneratedTable:
             self.table_spec = self.table_spec*self.columns + '|'
         else:
             self.table_spec = 'c'
-            self.table_spec*self.columns
+            self.table_spec = self.table_spec*self.columns
 
 
     def generate_df(self,rows):
@@ -159,6 +159,14 @@ class GeneratedTable:
         fields = fields + tmp_list
 
         return fields
+    
+    def get_params(self):
+        param_dict = {'filename':self.filename, 'rows':self.rows, 'columns':self.columns, 'row_lines':self.row_lines, 
+                      'vertical_lines':self.vertical_lines, 'margin':self.geometry_options['margin'], 
+                      'multi_row':self.multi_row, 'row_height':self.row_height, 'font_size':self.font_size, 
+                      'landscape':self.geometry_options['landscape']}
+        return param_dict
+
 
 
    
