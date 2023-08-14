@@ -228,7 +228,7 @@ def test_metrics():
 
 # Test the input bulletproofing on process_pdf()
 def test_process_pdf():
-    from table_processing.table_processor_main import process_pdf, default_output
+    from table_processing.Table_processor_main import process_pdf, default_output
     from pathlib import Path
     import os
 
