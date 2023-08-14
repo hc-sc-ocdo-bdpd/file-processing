@@ -103,7 +103,10 @@ def precision(df1, df2):
             except IndexError:
                 pass
     # Calc
-    precision_score = correct_pl / detected_pl
+    if (df1.shape == (1,1)) | (df2.shape == (1,1)):
+        precision_score = 1
+    else:
+        precision_score = correct_pl / detected_pl
     return round(precision_score, 3)
 
 def recall(df1, df2):
@@ -141,7 +144,10 @@ def recall(df1, df2):
             except IndexError:
                 pass
     # Calc
-    recall_score = correct_pl / total_pl
+    if (df1.shape == (1,1)) | (df2.shape == (1,1)):
+        recall_score = 1
+    else:
+        recall_score = correct_pl / total_pl
     return round(recall_score, 3)
 
 def all_metrics(df1, df2):
