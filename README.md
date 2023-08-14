@@ -10,6 +10,12 @@ Additionally, this project uses tesseract for OCR. This must be installed at: `C
 
 The table detection performance tests use MikTex (https://miktex.org/download) for generating artificial test case tables. This needs to be installed at it's default location (C:\Users\USERNAME\AppData\Local\Programs\MiKTeX\miktex\bin\x64\pdflatex.exe).
 
+## Running the Table Extraction Tool
+There are two versions of the table extraction tool: a command line version and a graphical version which runs in a web browswer.
+
+- Command line version implementation: table_processing/Table_processor_main.py
+- GUI version: table_processing/GUI.py. Once running, point your browser to http://127.0.0.1:8050/ to see it.
+
 ## Structure
 
 This library contains several components in different directories:
