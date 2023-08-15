@@ -9,12 +9,14 @@ import logging
 logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
+# Manual setting variables
+n = 1  # number of tables to generate
+randomize_all_parameters = True  # if all generated table parameters should be randomized
+
 # Initialize variables
 tables = {}
 failed_tables = []
 gen_params = []
-n = 1
-randomize_all_parameters = True
 
 # Loop for n # of tables
 for i in range(0,n):
