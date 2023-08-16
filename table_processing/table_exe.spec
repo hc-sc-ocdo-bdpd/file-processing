@@ -19,7 +19,7 @@ binaries = []#[('path/to/your/env/files', '.')]
 
 # List of hidden imports that PyInstaller might not be able to detect automatically
 # Replace 'module_name' with the name of the module you want to include as a hidden import
-hiddenimports = []#['module_name']
+hiddenimports = ['transformers']
 
 # Specify any additional PyInstaller options you want to use
 # For example, you can set the windowed mode (no console window) using: console=False
