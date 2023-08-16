@@ -1,18 +1,50 @@
-
 import subprocess
 from pathlib import Path
+import logging
 
-def build_exe_from_spec(spec_path):
+logging.basicConfig(filename='build_log.log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
+                    level=logging.INFO, format='[%(asctime)s][%(levelname)s] %(message)s\n')
+logging.getLogger().addHandler(logging.StreamHandler())
+
+def build_exe():
+    command = ['pyinstaller',
+               './table_processing/Table_processor_main.py',
+               '--onefile',
+               '--hidden-import=Pillow',
+               '--hidden-import=PIL',
+               '--hidden-import=pytorch',
+               '--hidden-import=timm',
+               '--collect-data=timm',
+               '--collect-data=torch',
+               '--copy-metadata=torch',
+               '--copy-metadata=tqdm',
+               '--copy-metadata=regex',
+               '--copy-metadata=requests',
+               '--copy-metadata=packaging',
+               '--copy-metadata=filelock',
+               '--copy-metadata=numpy',
+               '--copy-metadata=tokenizers',
+               '--copy-metadata=huggingface_hub',
+               '--copy-metadata=safetensors',
+               '--copy-metadata=pyyaml',
+               '--copy-metadata=transformers',
+               '--hidden-import=transformers',
+               '--collect-all=timm',
+               '--collect-all=dash',
+               '--paths=./.venv/Lib/site-packages']
+    
+    # pyinstaller --onefile --hidden-import=pytorch --hidden-import=timm --collect-data timm --collect-data torch --copy-metadata torch --copy-metadata tqdm --copy-metadata regex --copy-metadata requests --copy-metadata packaging --copy-metadata filelock --copy-metadata numpy --copy-metadata tokenizers --copy-metadata huggingface_hub --copy-metadata safetensors --copy-metadata pyyaml --copy-metadata transformers --hidden-import=transformers --collect-all timm --paths ./.venv/Lib/site-packages ./table_processing/Table_processor_main.py
+    
     try:
-        subprocess.run(["pyinstaller", "--noconfirm", spec_path])
+        subprocess.run(command)
     except Exception as e:
-        print("Error building executable:", e)
+        logging.error("Error building executable:", e)
 
 # Specify the path to your .spec file
-spec_file_path = Path("./table_processing/table_exe.spec").absolute()
+#spec_file_path = Path("./table_processing/table_exe.spec").absolute()
 
 # Call the function to build the executable
-build_exe_from_spec(spec_file_path)
+build_exe()
 
 
 '''
@@ -22,9 +54,7 @@ import os
 import shutil
 from pathlib import Path
 
-logging.basicConfig(filename='build_log.log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
-                    level=logging.INFO, format='[%(asctime)s][%(levelname)s] %(message)s\n')
-logging.getLogger().addHandler(logging.StreamHandler())
+
 
 
 def delete_directory(directory_path):
