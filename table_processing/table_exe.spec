@@ -27,7 +27,7 @@ hiddenimports = []#['module_name']
 # Check PyInstaller documentation for more available options: https://pyinstaller.readthedocs.io/en/stable/spec-files.html
 a = Analysis(
     entry_point,
-    pathex=['table_processing'],  # Replace with the path to your script's directory
+    pathex=['../table_processing/'],  # Replace with the path to your script's directory
     binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
@@ -35,7 +35,7 @@ a = Analysis(
     runtime_hooks=[],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
-    cipher=block_cipher,
+    #cipher=block_cipher,
     noarchive=False
 )
 
