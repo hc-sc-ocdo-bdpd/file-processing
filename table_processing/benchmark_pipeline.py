@@ -4,13 +4,14 @@ from Table_Detector import Table_Detector
 from table_metrics import test_tables
 import pandas as pd
 import numpy as np
+import random
 # xlsxwriter not imported, but needs to be downloaded in environment
 import logging
 logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
 # Manual setting variables
-n = 1  # number of tables to generate
+n = 10  # number of tables to generate
 randomize_all_parameters = True  # if all generated table parameters should be randomized
 
 # Initialize variables
@@ -22,9 +23,9 @@ gen_params = []
 for i in range(0,n):
     # Generate table, store, and export to pdf true table
     if randomize_all_parameters:
-        genr_table = GeneratedTable(rows=5, columns=5, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1.25, font_size=10, landscape=False)
+        genr_table = GeneratedTable(rows=random.randint(1, 50), columns=random.randint(1, 20), row_lines=bool(random.getrandbits(1)), vertical_lines=bool(random.getrandbits(1)), margin=str(random.randint(0, 10)/10)+'in', multi_row=False, row_height=random.randint(125, 250)/100, font_size=random.randint(6, 20), landscape=bool(random.getrandbits(1)))
     else:
-        genr_table = GeneratedTable(rows=10, columns=5, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1.25, font_size=10, landscape=False)
+        genr_table = GeneratedTable(rows=10, columns=5, row_lines=True, vertical_lines=True, margin='1.0in', multi_row=False, row_height=2.5, font_size=20, landscape=True)
     # Store & export pdf and .xlsx versions of generated table
     true_table = genr_table.df
     genr_table.to_pdf()

@@ -18,14 +18,15 @@ class GeneratedTable:
         self.row_lines = row_lines
         self.vertical_lines = vertical_lines
         self.font_size = font_size
+        self.multi_row = multi_row
         self.geometry_options = {
             'margin':margin,
             'landscape':landscape
         }
-        self.multi_row = multi_row
+        # Set parameter mins & maxes
         min_row_height = 1.25
         max_columns = 15
-
+        
         if row_height < min_row_height:
             self.row_height = min_row_height
         else:
@@ -36,7 +37,18 @@ class GeneratedTable:
         
         if self.columns > max_columns:
             self.columns = max_columns
-            logging.warning('Cannot generate that many columns, shrunk down to ' + max_columns)
+            logging.warning('Cannot generate that many columns, shrunk down to ' + str(max_columns))
+
+        # Trim row amount to keep table on one page
+        landscape_mult = 0.7 if self.geometry_options['landscape'] else 1
+        font_mult = np.exp(-0.05*self.font_size + 0.5)
+        rheight_mult = 1 / self.row_height
+        max_rows = max(int(40 * landscape_mult * font_mult * rheight_mult), 1)
+        if self.rows > max_rows:
+            self.rows = max_rows
+            rows = max_rows
+            logging.warning('Cannot generate that many rows on one page given table parameters, shrunk down to ' + str(max_rows))
+
 
         self.generate_df(rows)
 
@@ -50,7 +62,6 @@ class GeneratedTable:
             self.table_spec = 'c'
             self.table_spec = self.table_spec*self.columns
 
-
     def generate_df(self,rows):
         self.df = myDB.gen_dataframe(
         rows,fields=self.generate_fields(),
@@ -62,9 +73,9 @@ class GeneratedTable:
                     self.df.loc[row,self.df.columns[0]] = ''
 
         # Trim column amount if table overflows outside of page
-        landscape_mult = 1 if self.geometry_options['landscape']==True else 100/140
+        landscape_mult = 1 if self.geometry_options['landscape'] else 0.7
         font_mult = np.exp(-0.05*self.font_size + 0.5)
-        char_thresh = 140 * landscape_mult * font_mult
+        char_thresh = max(135 * landscape_mult * font_mult, 1)
         col_char_width = []
         for col in list(self.df.columns.values):
             col_char_width.append(max([len(str(col))] + self.df[col].astype(str).str.len().tolist()) + 2)  # max string length of column (or column name if bigger) plus 2 characters
@@ -136,7 +147,6 @@ class GeneratedTable:
             with doc.create(pl.Center()) as centered:
                 doc.append(pl.NoEscape(r'{font}'.format(font=font_size)))
                 with centered.create(pl.LongTable(self.table_spec,row_height=self.row_height)) as table:
-
                     table.add_hline()
                     table.add_row(list(self.df.columns))
                     table.add_hline()
