@@ -10,7 +10,7 @@ def overlap(df1, df2):
     xmax = max(df1.shape[0], df2.shape[0])
     ymax = max(df1.shape[1], df2.shape[1])
     union = xmax*ymax - (xmax-xmin)*(ymax-ymin)
-    # Calc
+    # Calculate overlap
     overlap_pct = intersection / union
     return round(overlap_pct, 3)
 
@@ -18,7 +18,7 @@ def string_similarity(df1, df2):
     # Transform tables to strings
     str1 = df1.to_string()
     str2 = df2.to_string()
-    # Calc
+    # Calculate string similarity
     edits_per_char = lev_dist(str1, str2) / max(len(str1), len(str2))
     return round(1-edits_per_char, 3)
 
@@ -41,7 +41,7 @@ def completeness(df1, df2):
                     compl_count += 1
             except IndexError:
                 pass
-    # Calc
+    # Calculate completeness
     completeness_score = compl_count / real_total
     return round(completeness_score, 3)
 
@@ -64,7 +64,7 @@ def purity(df1, df2):
                     pure_count += 1
             except IndexError:
                 pass
-    # Calc
+    # Calculate purity
     purity_score = pure_count / detected_total
     return round(purity_score, 3)
 
@@ -102,8 +102,8 @@ def precision(df1, df2):
                     correct_pl += 1
             except IndexError:
                 pass
-    # Calc
-    if (df1.shape == (1,1)) | (df2.shape == (1,1)):
+    # Calculate precision
+    if df2.shape == (1,1):  # account for lack of neighbours in 1x1 dataframes (so zero proto-links)
         precision_score = 1
     else:
         precision_score = correct_pl / detected_pl
@@ -143,8 +143,8 @@ def recall(df1, df2):
                     correct_pl += 1
             except IndexError:
                 pass
-    # Calc
-    if (df1.shape == (1,1)) | (df2.shape == (1,1)):
+    # Calculate recall
+    if df1.shape == (1,1):  # account for lack of neighbours in 1x1 dataframes (so zero proto-links)
         recall_score = 1
     else:
         recall_score = correct_pl / total_pl

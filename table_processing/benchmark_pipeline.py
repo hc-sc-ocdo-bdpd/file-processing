@@ -11,7 +11,7 @@ logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d
                     level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
 # Manual setting variables
-n = 500  # number of tables to generate
+n = 10  # number of tables to generate
 randomize_all_parameters = True  # if all generated table parameters should be randomized
 
 # Initialize variables
