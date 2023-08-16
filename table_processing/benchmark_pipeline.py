@@ -11,7 +11,7 @@ logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d
                     level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
 # Manual setting variables
-n = 10  # number of tables to generate
+n = 500  # number of tables to generate
 randomize_all_parameters = True  # if all generated table parameters should be randomized
 
 # Initialize variables
@@ -25,7 +25,7 @@ for i in range(0,n):
     if randomize_all_parameters:
         genr_table = GeneratedTable(rows=random.randint(1, 50), columns=random.randint(1, 20), row_lines=bool(random.getrandbits(1)), vertical_lines=bool(random.getrandbits(1)), margin=str(random.randint(0, 10)/10)+'in', multi_row=False, row_height=random.randint(125, 250)/100, font_size=random.randint(6, 20), landscape=bool(random.getrandbits(1)))
     else:
-        genr_table = GeneratedTable(rows=10, columns=5, row_lines=True, vertical_lines=True, margin='1.0in', multi_row=False, row_height=2.5, font_size=20, landscape=True)
+        genr_table = GeneratedTable(rows=10, columns=5, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1.25, font_size=10, landscape=False)
     # Store & export pdf and .xlsx versions of generated table
     true_table = genr_table.df
     genr_table.to_pdf()

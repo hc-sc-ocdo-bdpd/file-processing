@@ -165,7 +165,6 @@ def get_cropped_rows(image, row_limits):
     return cropped_rows
 
 ## TODO: refactor to eliminate code duplication between this method and get_cropped_rows()
-## TODO: Need to consider that the left most and right most box seems to crop some of the cell
 def get_cropped_columns(image, column_limits):
     column_limits.sort()
     x2 = 0

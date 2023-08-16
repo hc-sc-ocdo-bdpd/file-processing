@@ -90,12 +90,14 @@ class Table_Detector:
             tables = []
             for table in table_bounds:
                 table_data = {}
-                # Enlarge box since default cuts it too close to the boundaries
+                
+                # Enlarge box since the default cuts it too close to the boundaries
                 expanded_box = table['boxes'].tolist()[0]
                 padding = [-10, -8, 12, 10]  # x1, y1, x2, y2
                 for i in range(0, len(padding)):
-                    expanded_box[i] += padding[i]
+                    expanded_box[i] += padding[i]  # add padding to assure all data is contained in the identified table box
                 table_data['box'] = tuple(expanded_box)
+
                 table_data['table_image'] = page_image.crop(table_data['box'])
                 table_data['table_content'] = Table(image = table_data['table_image'])
                 table_data['score'] = table['scores'][0]
