@@ -49,3 +49,6 @@ These include file processing tools (in the file_processing directory). This cod
 - [ ] Write tests to ensure the functionality of the library
 - [ ] Add support for more file types (.docx, .xlsx, .pptx, etc.)
 - [ ] Add more metrics for comparison between files (ex. jaccard)
+
+## Build table processing tools executable
+Run the `table_processing/build.py` script. The intermediate output will be in the `build` directory. The final executable will be in the `dist` directory.
