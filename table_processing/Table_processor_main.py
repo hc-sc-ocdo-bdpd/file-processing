@@ -2,11 +2,18 @@ from Table_Detector import Table_Detector
 import logging
 from pathlib import Path
 
+'''
+Main program for the console version of the table extraction tool.
+'''
+
+
 logging.basicConfig(filename='table_detection.log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 logging.getLogger().addHandler(logging.StreamHandler())
 default_output = "output.xlsx"
 
+
+# Validate the input filename, regect names that are not pdf files. 
 def validate_input_filename(filename):
     filename = Path(filename)
     if filename.suffix != ".pdf":
@@ -15,6 +22,7 @@ def validate_input_filename(filename):
     return filename
 
 
+# Validates the output filename. If it is no good, it reports the path of a new filename that will be used
 def validate_output_filename(filename):
     filename = Path(filename)
     if filename.suffix != ".xlsx":
@@ -24,6 +32,10 @@ def validate_output_filename(filename):
     return filename
 
 
+# Process the content of the input file.
+# Returns the path to the output file
+# This is the main method to call if you have file content instead of a file path
+# (Notably used by the GUI)
 def process_content(content, output_file_path = default_output):
     logging.info("Processing file content.")
     output_file_path = validate_output_filename(output_file_path)
@@ -39,6 +51,10 @@ def process_content(content, output_file_path = default_output):
     return str(output_file_path)
 
 
+# Process the input file from path
+# Returns the path to the output file
+# This is the main method to call if you have a path to an input file
+# (Notably used by the console application)
 def process_pdf(input_file_path, output_file_path = default_output):
     logging.info("Processing path provided: " + str(input_file_path))
     input_file_path = validate_input_filename(input_file_path)
@@ -56,6 +72,7 @@ def process_pdf(input_file_path, output_file_path = default_output):
     return str(output_file_path)
 
 
+# Main console application
 def console_main():
     logging.info("Table Processor started")
     input_file_path = input('Enter the path to the input PDF file: ')
