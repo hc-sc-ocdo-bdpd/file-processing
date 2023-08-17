@@ -23,7 +23,7 @@ gen_params = []
 for i in range(0,n):
     # Generate table, store, and export to pdf true table
     if randomize_all_parameters:
-        genr_table = GeneratedTable(rows=random.randint(1, 50), columns=random.randint(1, 20), row_lines=bool(random.getrandbits(1)), vertical_lines=bool(random.getrandbits(1)), margin=str(random.randint(0, 10)/10)+'in', multi_row=False, row_height=random.randint(125, 250)/100, font_size=random.randint(6, 20), landscape=bool(random.getrandbits(1)))
+        genr_table = GeneratedTable(rows=random.randint(1, 50), columns=random.randint(1, 20), row_lines=bool(random.getrandbits(1)), vertical_lines=bool(random.getrandbits(1)), margin=str(random.randint(0, 10)/10)+'in', multi_row=False, row_height=random.randint(25, 50)/20, font_size=random.randint(6, 20), landscape=bool(random.getrandbits(1)))
     else:
         genr_table = GeneratedTable(rows=10, columns=5, row_lines=True, vertical_lines=True, margin='0.7in', multi_row=False, row_height=1.25, font_size=10, landscape=False)
     # Store & export pdf and .xlsx versions of generated table
