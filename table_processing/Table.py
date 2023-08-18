@@ -14,7 +14,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
-from table_tools import get_bounding_boxes, remove_duplicate_limits
+from table_tools import get_bounding_boxes, remove_duplicate_limits, clean_cell_text
 pytesseract.pytesseract.tesseract_cmd = os.path.join('C:/Users',getpass.getuser(),'AppData/Local/Programs/Tesseract-OCR/tesseract.exe')
 
 
@@ -82,34 +82,42 @@ class Table:
         plt.close()
 
 
-    def extract_table_content(self):
+    # Transform the table into a list of lists representation
+    # Consists of images of the individual cells in the table  
+    # Generates self.table_pre_ocr  
+    def generate_table_pre_ocr(self):
         row_images = get_cropped_rows(self.image, self.row_limits)
-        rows = []
+        self.table_pre_ocr = []
         for row in row_images:
-            row_cell_text = []
             if row.size[1] > 0:
-                # row.show()
                 cells = get_cropped_columns(row, self.column_limits)
-                for cell in cells:
-                    width, height = cell.size
-                    if width > 0:
-                        cell = cell.resize((int(width*2.5), int(height*2.5)))
-                        #self.plot_image(cell)
-                        ocr_text = pytesseract.image_to_string(cell).replace('\n','')  # replace extra empty line characters added by the OCR
-                        if ocr_text != '':
-                            if ocr_text[len(ocr_text) - len(ocr_text.lstrip())] == '|':  # verify if separator character at start (ignoring whitespaces) of string
-                                ocr_text = ocr_text[len(ocr_text) - len(ocr_text.lstrip()) + 1:]             
-                            if ocr_text[-(len(ocr_text) - len(ocr_text.rstrip()) + 1)] == '|':  # verify if separator character at end (ignoring whitespaces) of string
-                                ocr_text = ocr_text[:-(len(ocr_text) - len(ocr_text.rstrip()) + 1)]
-                        ocr_text = ocr_text.strip()  # remove all leading and trailing whitespaces
-                        row_cell_text.append(ocr_text)
-                        #print(ocr_text)
-                rows.append(row_cell_text)
-        if len(rows) < 1:  # if read table is only one row
-            rows.append(['']*len(rows[0]))
-        self.table_data = pd.DataFrame.from_records(rows[1:], columns=rows[0])
+                self.table_pre_ocr.append(cells)
 
 
+    # Generates a datafram representation of the table contents using OCR
+    # No post OCR cleanup
+    # Generates self.raw_table_data
+    def generate_raw_table_text(self):
+        self.generate_table_pre_ocr()
+        raw_rows = []
+        for row in self.table_pre_ocr:
+            raw_cells = []
+            for cell in row:
+                width, height = cell.size
+                if width > 0:
+                    cell = cell.resize((int(width*2.5), int(height*2.5)))
+                    ocr_text = pytesseract.image_to_string(cell)
+                    raw_cells.append(ocr_text)
+            raw_rows.append(raw_cells)
+        self.raw_table_data = pd.DataFrame.from_records(raw_rows[1:], columns=raw_rows[0])
+
+
+
+    def extract_table_content(self):
+        self.generate_raw_table_text()
+        self.table_data = self.raw_table_data.applymap(clean_cell_text)
+
+    
     def plot_bounding_boxes(self, file_name):
         # colors for visualization
         COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],

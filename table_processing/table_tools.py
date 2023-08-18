@@ -81,3 +81,21 @@ def _calculate_row_column_limits(image_dim, bbox_list):
     column_limits = remove_duplicate_limits(column_limits, col_thresh)
 
     return(column_limits, row_limits)  
+
+
+# Map function for cleaning the text in a dataframe
+def clean_cell_text(raw_text):
+    processed_text = raw_text.replace('\n','')
+    if processed_text != '':
+
+        # verify if separator character at start (ignoring whitespaces) of string
+        if processed_text[len(processed_text) - len(processed_text.lstrip())] == '|':
+            processed_text = processed_text[len(processed_text) - len(processed_text.lstrip()) + 1:]             
+                
+            # verify if separator character at end (ignoring whitespaces) of string
+            if processed_text[-(len(processed_text) - len(processed_text.rstrip()) + 1)] == '|':
+                processed_text = processed_text[:-(len(processed_text) - len(processed_text.rstrip()) + 1)]
+
+    # remove all leading and trailing whitespaces
+    processed_text = processed_text.strip()
+    return processed_text

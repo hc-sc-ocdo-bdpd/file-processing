@@ -325,3 +325,14 @@ def test_base64_input():
     assert os.path.exists(expected_output_path)
     os.remove(expected_output_path)
     assert not os.path.exists(expected_output_path)
+
+
+def test_clean_cell_text():
+    import pandas as pd
+    from table_processing.table_tools import clean_cell_text
+    df_messy = pd.DataFrame([['asdf', '|   asdf', 'asdf'],['asdf', 'asdf', 'asdf        ']])
+    df_clean = df_messy.applymap(clean_cell_text)
+    df_expected = pd.DataFrame([['asdf', 'asdf', 'asdf'],['asdf', 'asdf', 'asdf']])
+    comparison = df_clean.compare(df_expected)
+    assert comparison.empty
+
