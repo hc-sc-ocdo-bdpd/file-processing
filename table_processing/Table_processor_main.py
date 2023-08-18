@@ -39,11 +39,15 @@ def validate_output_filename(filename):
 def process_content(content, output_file_path = default_output):
     logging.info("Processing file content.")
     output_file_path = validate_output_filename(output_file_path)
+    output_dir = Path(output_file_path).parents[0]
+    intermediate_output_path = str(output_dir) + '_intermediate_output/'
     
     try:
         detector = Table_Detector(filedata = content)
         logging.info("Saving output to: " + str(output_file_path))
         detector.to_excel(str(output_file_path))
+        logging.info("Saving intermediate steps to: " + str(output_file_path))
+        detector.output_table_steps(intermediate_output_path)
     except Exception as e:
         logging.error('process_content - An error occured: ' + str(e))
     
@@ -60,11 +64,15 @@ def process_pdf(input_file_path, output_file_path = default_output):
     input_file_path = validate_input_filename(input_file_path)
     output_file_path = validate_output_filename(output_file_path)
     logging.info("Processing file: " + str(input_file_path))
+    output_dir = Path(output_file_path).parents[0]
+    intermediate_output_path = str(output_dir) + '_intermediate_output/'
 
     try:
         detector = Table_Detector(filename = str(input_file_path))
         logging.info("Saving output to: " + str(output_file_path))
         detector.to_excel(filename = str(output_file_path))
+        logging.info("Saving intermediate steps to: " + str(output_file_path))
+        detector.output_table_steps(intermediate_output_path)
     except Exception as e:
         logging.error('An error occured: ' + str(e))
     

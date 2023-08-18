@@ -11,7 +11,7 @@ logging.basicConfig(filename='benchmarking_log', filemode='a', datefmt='%Y-%m-%d
                     level=logging.WARNING, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
 # Manual setting variables
-n = 10  # number of tables to generate
+n = 1  # number of tables to generate
 randomize_all_parameters = True  # if all generated table parameters should be randomized
 
 # Initialize variables
@@ -38,9 +38,9 @@ for i in range(0,n):
     try:
         detc_table = Table_Detector(file_path+'.pdf')  # run table detector model on pdf
         table = detc_table.get_page_data()[0]['tables'][0]['table_content']
-        #boxes_image = table.plot_bounding_boxes(file_name = file_path+'_boxes')
         detc_table.to_excel(file_path+'.xlsx')
         read_table = pd.read_excel(file_path+'.xlsx', dtype=str)  # force extract text as string (otherwise there may be errors with some numbers)
+        detc_table.output_table_steps(file_path+'_intermediate_output/')
     except IndexError:  # could not detect table from pdf
         logging.error('Could not detect table from pdf ' + t_name)
         read_table = pd.DataFrame()
