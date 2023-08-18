@@ -116,8 +116,7 @@ class Table:
 
     def extract_table_content(self):
         self.generate_raw_table_text()
-        self.table_data = self.raw_table_data
-        self.table_data.applymap(clean_cell_text)
+        self.table_data = self.raw_table_data.applymap(clean_cell_text)
 
     
     def plot_bounding_boxes(self, file_name):
