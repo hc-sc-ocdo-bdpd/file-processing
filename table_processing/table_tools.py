@@ -85,7 +85,7 @@ def _calculate_row_column_limits(image_dim, bbox_list):
 
 # Map function for cleaning the text in a dataframe
 def clean_cell_text(raw_text):
-    processed_text = raw_text
+    processed_text = raw_text.replace('\n','')
     if processed_text != '':
 
         # verify if separator character at start (ignoring whitespaces) of string
