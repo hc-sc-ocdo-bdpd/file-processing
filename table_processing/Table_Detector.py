@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import fitz
 import pandas as pd
 import logging
+import os
 
 from Table import Table
 from table_tools import get_bounding_boxes
@@ -97,7 +98,6 @@ class Table_Detector:
                 for i in range(0, len(padding)):
                     expanded_box[i] += padding[i]  # add padding to assure all data is contained in the identified table box
                 table_data['box'] = tuple(expanded_box)
-
                 table_data['table_image'] = page_image.crop(table_data['box'])
                 table_data['table_content'] = Table(image = table_data['table_image'])
                 table_data['score'] = table['scores'][0]
@@ -113,7 +113,22 @@ class Table_Detector:
         doc.close()
         return results
 
+
+    # Function to export intermediate outputs such as full page image, full table image, and table bounding boxes
+    def output_table_steps(self, folder_path):
+        p = 0
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        for page in self.page_data:
+            p += 1
+            page['image'].save(folder_path+'page_'+str(p)+'.jpg')
+            t = 0
+            for table in page['tables']:
+                t += 1
+                table['table_image'].save(folder_path+'table_'+str(p)+'-'+str(t)+'.jpg')
+                table['table_content'].plot_bounding_boxes(folder_path+'table_'+str(p)+'-'+str(t)+'_boxes')
    
+
     def to_excel(self, filename='all_excel.xlsx'):
         if self.page_data == None:
             logging.warn("No page data to write to excel. No output file generated")
