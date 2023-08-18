@@ -123,14 +123,14 @@ class Table_Detector:
             os.makedirs(str(folder_path))
 
         # Save the raw tables (post OCR, without cleaning)
-        raw_excel_filename = Path(str(folder_path) + '/raw_excel.xlsx')
+        raw_excel_filename = str(Path(str(folder_path) + '/raw_excel.xlsx'))
         self.to_excel(filename=raw_excel_filename, raw = True)
 
         # Iterate through the pages in the file
-        page = 0
+        page_id = 0
         for page in self.page_data:
-            page += 1
-            page['image'].save(folder_path+'page_'+str(page)+'.jpg')
+            page_id += 1
+            page['image'].save(str(folder_path) + '/page_'+str(page_id)+'.jpg')
             
             # Iterate through the tables on the page (may be more than one)
             table_id = 0
@@ -138,7 +138,7 @@ class Table_Detector:
                 table_id += 1
 
                 # Save the image of the table with the bounding box
-                table_id_string = 'table_' + str(page) + '-' + str(table_id)
+                table_id_string = 'table_' + str(page_id) + '-' + str(table_id)
                 table['table_image'].save(folder_path + "/" + table_id_string + '.jpg')
                 
                 # Save the bounding boxes for the table structure

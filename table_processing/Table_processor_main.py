@@ -40,7 +40,7 @@ def process_content(content, output_file_path = default_output):
     logging.info("Processing file content.")
     output_file_path = validate_output_filename(output_file_path)
     output_dir = Path(output_file_path).parents[0]
-    intermediate_output_path = str(output_dir) + '_intermediate_output/'
+    intermediate_output_path = str(output_dir) + '/intermediate_output/'
     
     try:
         detector = Table_Detector(filedata = content)
@@ -65,7 +65,7 @@ def process_pdf(input_file_path, output_file_path = default_output):
     output_file_path = validate_output_filename(output_file_path)
     logging.info("Processing file: " + str(input_file_path))
     output_dir = Path(output_file_path).parents[0]
-    intermediate_output_path = str(output_dir) + '_intermediate_output/'
+    intermediate_output_path = str(output_dir) + '/intermediate_output/'
 
     try:
         detector = Table_Detector(filename = str(input_file_path))
