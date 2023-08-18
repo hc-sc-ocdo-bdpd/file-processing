@@ -98,4 +98,4 @@ def clean_cell_text(raw_text):
 
     # remove all leading and trailing whitespaces
     processed_text = processed_text.strip()
-    raw_text.replace(processed_text)
+    return processed_text
