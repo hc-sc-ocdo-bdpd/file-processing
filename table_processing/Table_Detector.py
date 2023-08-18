@@ -130,7 +130,10 @@ class Table_Detector:
         page_id = 0
         for page in self.page_data:
             page_id += 1
+
+            # Save image of the page
             page['image'].save(str(folder_path) + '/page_'+str(page_id)+'.jpg')
+            self.plot_table_results(page['image'], page['scores'], page['labels'], page['boxes'], self.model)
             
             # Iterate through the tables on the page (may be more than one)
             table_id = 0
@@ -139,7 +142,7 @@ class Table_Detector:
 
                 # Save the image of the table with the bounding box
                 table_id_string = 'table_' + str(page_id) + '-' + str(table_id)
-                table['table_image'].save(folder_path + "/" + table_id_string + '.jpg')
+                table['table_image'].save(str(folder_path) + "/" + table_id_string + '.jpg')
                 
                 # Save the bounding boxes for the table structure
                 table['table_content'].plot_bounding_boxes(str(folder_path) + "/" + table_id_string + '_boxes')
