@@ -103,7 +103,6 @@ class Table:
         for row in self.table_pre_ocr:
             raw_cells = []
             for cell in row:
-                raw_cells.append(cell)
                 width, height = cell.size
                 if width > 0:
                     cell = cell.resize((int(width*2.5), int(height*2.5)))
