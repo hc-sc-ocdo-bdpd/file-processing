@@ -38,7 +38,6 @@ for i in range(0,n):
     try:
         detc_table = Table_Detector(file_path+'.pdf')  # run table detector model on pdf
         table = detc_table.get_page_data()[0]['tables'][0]['table_content']
-        #boxes_image = table.plot_bounding_boxes(file_name = file_path+'_boxes')
         detc_table.to_excel(file_path+'.xlsx')
         read_table = pd.read_excel(file_path+'.xlsx', dtype=str)  # force extract text as string (otherwise there may be errors with some numbers)
         detc_table.output_table_steps(file_path+'_intermediate_output/')
