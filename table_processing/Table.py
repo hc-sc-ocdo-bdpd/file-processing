@@ -141,6 +141,23 @@ class Table:
         plt.close()
 
 
+    # Return the raw ocr table content
+    def get_raw_dataframe(self):
+        return self.raw_table_data
+    
+
+    # Save intermediate steps steps
+    def save_pre_ocr_table(self, file_path):
+        row_id = 0
+        for row in self.save_pre_ocr_table:
+            column_id = 0
+            for cell in row:
+                file_name = file_path + "_row_" + str(row_id) + "_column_" + str(column_id) + ".jpg"
+                cell.save(file_name)
+                column_id += 1
+            row_id += 1
+
+
     def get_as_dataframe(self):
         return self.table_data
     
@@ -151,11 +168,7 @@ class Table:
         return self.table_structure['labels'].tolist()
     
     def get_scores(self):
-        return self.table_structure['scores'].tolist()
-
-    # Extract the table in xlsx format (add other tools for exporting the table in excel format)
-    def to_excel(self):
-        self.table_data.to_excel(str(self.table_structure['boxes'][0]))         
+        return self.table_structure['scores'].tolist()   
 
 
 def get_cropped_rows(image, row_limits):

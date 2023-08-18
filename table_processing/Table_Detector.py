@@ -11,6 +11,7 @@ import fitz
 import pandas as pd
 import logging
 import os
+from pathlib import Path
 
 from Table import Table
 from table_tools import get_bounding_boxes
@@ -116,20 +117,38 @@ class Table_Detector:
 
     # Function to export intermediate outputs such as full page image, full table image, and table bounding boxes
     def output_table_steps(self, folder_path):
-        p = 0
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
+        # Setup the output
+        folder_path = Path(folder_path)
+        if not os.path.exists(str(folder_path)):
+            os.makedirs(str(folder_path))
+
+        # Save the raw tables (post OCR, without cleaning)
+        raw_excel_filename = Path(str(folder_path) + '/raw_excel.xlsx')
+        self.to_excel(filename=raw_excel_filename, raw = True)
+
+        # Iterate through the pages in the file
+        page = 0
         for page in self.page_data:
-            p += 1
-            page['image'].save(folder_path+'page_'+str(p)+'.jpg')
-            t = 0
+            page += 1
+            page['image'].save(folder_path+'page_'+str(page)+'.jpg')
+            
+            # Iterate through the tables on the page (may be more than one)
+            table_id = 0
             for table in page['tables']:
-                t += 1
-                table['table_image'].save(folder_path+'table_'+str(p)+'-'+str(t)+'.jpg')
-                table['table_content'].plot_bounding_boxes(folder_path+'table_'+str(p)+'-'+str(t)+'_boxes')
+                table_id += 1
+
+                # Save the image of the table with the bounding box
+                table_id_string = 'table_' + str(page) + '-' + str(table_id)
+                table['table_image'].save(folder_path + "/" + table_id_string + '.jpg')
+                
+                # Save the bounding boxes for the table structure
+                table['table_content'].plot_bounding_boxes(str(folder_path) + "/" + table_id_string + '_boxes')
+
+                # Save the pre ocr table
+                table['table_content'].save_pre_ocr_table(str(folder_path) + "/" + table_id_string + "_pre_ocr_cells/")
    
 
-    def to_excel(self, filename='all_excel.xlsx'):
+    def to_excel(self, filename='all_excel.xlsx', raw = False):
         if self.page_data == None:
             logging.warn("No page data to write to excel. No output file generated")
             return
@@ -142,7 +161,10 @@ class Table_Detector:
                     table = table_dict['table_content']
                     page_num = page_dict['pageNum']
                     sheet_name =  'Page' + str(page_num) + '_' + str(counter) 
-                    df = table.get_as_dataframe()
+                    if raw:
+                        df = table.get_raw_dataframe()
+                    else:
+                        df = table.get_as_dataframe()
                     df.to_excel(writer, sheet_name=sheet_name, index=False) #Write it to a sheet in the output excel
                     counter += 1
         logging.info("Finished writing table data to excel.")
