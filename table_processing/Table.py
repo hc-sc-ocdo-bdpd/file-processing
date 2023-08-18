@@ -84,32 +84,39 @@ class Table:
 
     def extract_table_content(self):
         row_images = get_cropped_rows(self.image, self.row_limits)
+        self.table_pre_ocr = []
+        raw_rows = []
         rows = []
         for row in row_images:
+            raw_cells = []
+            raw_row_cell_text = []
             row_cell_text = []
             if row.size[1] > 0:
-                # row.show()
                 cells = get_cropped_columns(row, self.column_limits)
                 for cell in cells:
+                    raw_cells.append(cell)
                     width, height = cell.size
                     if width > 0:
                         cell = cell.resize((int(width*2.5), int(height*2.5)))
-                        #self.plot_image(cell)
                         ocr_text = pytesseract.image_to_string(cell).replace('\n','')  # replace extra empty line characters added by the OCR
-                        if ocr_text != '':
-                            if ocr_text[len(ocr_text) - len(ocr_text.lstrip())] == '|':  # verify if separator character at start (ignoring whitespaces) of string
-                                ocr_text = ocr_text[len(ocr_text) - len(ocr_text.lstrip()) + 1:]             
-                            if ocr_text[-(len(ocr_text) - len(ocr_text.rstrip()) + 1)] == '|':  # verify if separator character at end (ignoring whitespaces) of string
-                                ocr_text = ocr_text[:-(len(ocr_text) - len(ocr_text.rstrip()) + 1)]
-                        ocr_text = ocr_text.strip()  # remove all leading and trailing whitespaces
-                        row_cell_text.append(ocr_text)
-                        #print(ocr_text)
+                        processed_text = ocr_text
+                        if processed_text != '':
+                            if processed_text[len(processed_text) - len(processed_text.lstrip())] == '|':  # verify if separator character at start (ignoring whitespaces) of string
+                                processed_text = processed_text[len(processed_text) - len(processed_text.lstrip()) + 1:]             
+                            if processed_text[-(len(processed_text) - len(processed_text.rstrip()) + 1)] == '|':  # verify if separator character at end (ignoring whitespaces) of string
+                                processed_text = processed_text[:-(len(processed_text) - len(processed_text.rstrip()) + 1)]
+                        processed_text = processed_text.strip()  # remove all leading and trailing whitespaces
+                        raw_row_cell_text.append(ocr_text)
+                        row_cell_text.append(processed_text)
+                self.table_pre_ocr.append(cell)
+                raw_rows.append(raw_cells)
                 rows.append(row_cell_text)
         if len(rows) < 1:  # if read table is only one row
             rows.append(['']*len(rows[0]))
+        self.raw_table_data = pd.DataFrame.from_records(raw_rows[1:], columns=raw_rows[0])
         self.table_data = pd.DataFrame.from_records(rows[1:], columns=rows[0])
 
-
+    
     def plot_bounding_boxes(self, file_name):
         # colors for visualization
         COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
