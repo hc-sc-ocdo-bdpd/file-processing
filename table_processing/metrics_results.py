@@ -16,14 +16,13 @@ path = r'table_trials_results/'
 xlsx_sheets = os.listdir(path)
 xlsx_sheets = [x for x in xlsx_sheets if '.xlsx' in x]
 if 'table_metrics_ALL.xlsx' in xlsx_sheets: xlsx_sheets.remove('table_metrics_ALL.xlsx')
-special_char_sheets = ['table_metrics_special-characters.xlsx']  # set which sheets have an emphasis on special characters (and as a result already have a 'special_character_emphasis' column, should be the last col in the sheet)
 all_tables = pd.DataFrame()
 
 # Loop through sheets and add all to consolidated df
 for sheet in xlsx_sheets:
     df = pd.read_excel(path+sheet, 'All Tables')
-    if sheet not in special_char_sheets:
-        df['special_characters_emphasis'] = False
+    if 'special_characters_emphasis' not in df.columns.values:
+        df['special_characters_emphasis'] = False   # add special_characters_emphasis column if not already in df
     all_tables = pd.concat([all_tables, df])
 met_cols = all_tables.columns.values.tolist()[1:7]
 all_data = all_tables.drop(columns=['filename'])
