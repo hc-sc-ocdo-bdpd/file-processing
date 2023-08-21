@@ -88,8 +88,12 @@ def console_main():
     input_file_path = input('Enter the path to the input PDF file: ')
     output_file_path = input('Enter the path to the output xlsx file: ')
     try:
-        input_intermediate_output = eval(input('Would you like to see the intermediate outputs? Answer True or False: ').lower())
-        output_file_path = process_pdf(input_file_path, output_file_path, eval(input_intermediate_output))
+        input_intermediate_output = input('Would you like to see the intermediate outputs? (t/F): ').lower()
+        if input_intermediate_output == "t":
+            input_intermediate_output = True
+        else:
+            input_intermediate_output = False
+        output_file_path = process_pdf(input_file_path, output_file_path, input_intermediate_output)
     except NameError:
         print('NameError, spelt incorrectly, intermediate outputs running as False')
         output_file_path = process_pdf(input_file_path, output_file_path)
