@@ -110,10 +110,9 @@ class Table:
             raw_cells = []
             for cell in row:
                 width, height = cell.size
-                if width > 0:
-                    cell = cell.resize((int(width*2.5), int(height*2.5)))
-                    ocr_text = pytesseract.image_to_string(cell)
-                    raw_cells.append(ocr_text)
+                cell = cell.resize((int(width*2.5), int(height*2.5)))
+                ocr_text = pytesseract.image_to_string(cell)
+                raw_cells.append(ocr_text)
             raw_rows.append(raw_cells)
         self.raw_table_data = pd.DataFrame.from_records(raw_rows[1:], columns=raw_rows[0])
 
