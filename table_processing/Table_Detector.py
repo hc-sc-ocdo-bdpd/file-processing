@@ -37,7 +37,7 @@ class Table_Detector:
         return self.page_data
 
     # This will need to be refactored to use the new Table class
-    def plot_table_results(self, pil_img, scores, labels, boxes, model):
+    def plot_table_results(self, pil_img, scores, labels, boxes, model, file_name):
         # colors for visualization
         COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
                 [0.494, 0.184, 0.556], [0.466, 0.674, 0.188], [0.301, 0.745, 0.933]]
@@ -53,6 +53,7 @@ class Table_Detector:
             ax.text(xmin, ymin, text, fontsize=15,
                     bbox=dict(facecolor='yellow', alpha=0.5))
         plt.axis('off')
+        plt.savefig(file_name + ".jpg")
         plt.show()
 
 
@@ -88,7 +89,7 @@ class Table_Detector:
             
             pix = page.get_pixmap(matrix=mat)  # render page to an image
             page_image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-            (table_bounds, model) = self.find_tables(page_image)
+            (table_bounds, model) = self.find_tables(page_image) 
             tables = []
             for table in table_bounds:
                 table_data = {}
@@ -133,7 +134,8 @@ class Table_Detector:
 
             # Save image of the page
             page['image'].save(str(folder_path) + '/page_'+str(page_id)+'.jpg')
-            self.plot_table_results(page['image'], page['scores'], page['labels'], page['boxes'], self.model)
+            results = self.find_tables(page['image'])
+            self.plot_table_results(page['image'], results[0][0]['scores'], results[0][0]['labels'], results[0][0]['boxes'], results[1], str(folder_path) + '/page_'+str(page_id)+'full'+'.jpg')
             
             # Iterate through the tables on the page (may be more than one)
             table_id = 0
