@@ -94,9 +94,11 @@ class Table:
                 cells = get_cropped_columns(row, self.column_limits)
                 for cell in cells:
                     width, height = cell.size
-                    if width > 0:
+                    if width > 0 and height > 0:
                         row_pre_ocr.append(cell)
-            self.table_pre_ocr.append(row_pre_ocr)
+            if len(row_pre_ocr) > 0:
+                self.table_pre_ocr.append(row_pre_ocr)
+
 
     # Generates a datafram representation of the table contents using OCR
     # No post OCR cleanup
