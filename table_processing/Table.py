@@ -89,9 +89,15 @@ class Table:
         row_images = get_cropped_rows(self.image, self.row_limits)
         self.table_pre_ocr = []
         for row in row_images:
+            row_pre_ocr = []
             if row.size[1] > 0:
                 cells = get_cropped_columns(row, self.column_limits)
-                self.table_pre_ocr.append(cells)
+                for cell in cells:
+                    width, height = cell.size
+                    if width > 0 and height > 0:
+                        row_pre_ocr.append(cell)
+            if len(row_pre_ocr) > 0:
+                self.table_pre_ocr.append(row_pre_ocr)
 
 
     # Generates a datafram representation of the table contents using OCR
@@ -104,10 +110,9 @@ class Table:
             raw_cells = []
             for cell in row:
                 width, height = cell.size
-                if width > 0:
-                    cell = cell.resize((int(width*2.5), int(height*2.5)))
-                    ocr_text = pytesseract.image_to_string(cell)
-                    raw_cells.append(ocr_text)
+                cell = cell.resize((int(width*2.5), int(height*2.5)))
+                ocr_text = pytesseract.image_to_string(cell)
+                raw_cells.append(ocr_text)
             raw_rows.append(raw_cells)
         self.raw_table_data = pd.DataFrame.from_records(raw_rows[1:], columns=raw_rows[0])
 
@@ -141,6 +146,25 @@ class Table:
         plt.close()
 
 
+    # Return the raw ocr table content
+    def get_raw_dataframe(self):
+        return self.raw_table_data
+    
+
+    # Save intermediate steps steps
+    def save_pre_ocr_table(self, file_path):
+        if not os.path.exists(str(file_path)):
+            os.makedirs(str(file_path))
+        row_id = 0
+        for row in self.table_pre_ocr:
+            column_id = 0
+            for cell in row:
+                file_name = file_path + "/row_" + str(row_id) + "_column_" + str(column_id) + ".jpg"
+                cell.save(file_name)
+                column_id += 1
+            row_id += 1
+
+
     def get_as_dataframe(self):
         return self.table_data
     
@@ -151,11 +175,7 @@ class Table:
         return self.table_structure['labels'].tolist()
     
     def get_scores(self):
-        return self.table_structure['scores'].tolist()
-
-    # Extract the table in xlsx format (add other tools for exporting the table in excel format)
-    def to_excel(self):
-        self.table_data.to_excel(str(self.table_structure['boxes'][0]))         
+        return self.table_structure['scores'].tolist()   
 
 
 def get_cropped_rows(image, row_limits):

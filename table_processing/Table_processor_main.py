@@ -36,48 +36,50 @@ def validate_output_filename(filename):
 # Returns the path to the output file
 # This is the main method to call if you have file content instead of a file path
 # (Notably used by the GUI)
-def process_content(content, output_file_path = default_output):
+def process_content(content, output_file_path = default_output, input_intermediate_output = False):
     logging.info("Processing file content.")
     output_file_path = validate_output_filename(output_file_path)
     output_dir = Path(output_file_path).parents[0]
-    intermediate_output_path = str(output_dir) + '_intermediate_output/'
+    intermediate_output_path = str(output_dir) + '/intermediate_output/'
     
     try:
         detector = Table_Detector(filedata = content)
         logging.info("Saving output to: " + str(output_file_path))
         detector.to_excel(str(output_file_path))
         logging.info("Saving intermediate steps to: " + str(output_file_path))
-        detector.output_table_steps(intermediate_output_path)
+        if input_intermediate_output == True:
+            detector.output_table_steps(intermediate_output_path)
     except Exception as e:
         logging.error('process_content - An error occured: ' + str(e))
     
     logging.info("Processing complete")
-    return str(output_file_path)
+    return (str(output_file_path), str(intermediate_output_path))
 
 
 # Process the input file from path
 # Returns the path to the output file
 # This is the main method to call if you have a path to an input file
 # (Notably used by the console application)
-def process_pdf(input_file_path, output_file_path = default_output):
+def process_pdf(input_file_path, output_file_path = default_output, input_intermediate_output = False):
     logging.info("Processing path provided: " + str(input_file_path))
     input_file_path = validate_input_filename(input_file_path)
     output_file_path = validate_output_filename(output_file_path)
     logging.info("Processing file: " + str(input_file_path))
     output_dir = Path(output_file_path).parents[0]
-    intermediate_output_path = str(output_dir) + '_intermediate_output/'
+    intermediate_output_path = str(output_dir) + '/intermediate_output/'
 
     try:
         detector = Table_Detector(filename = str(input_file_path))
         logging.info("Saving output to: " + str(output_file_path))
         detector.to_excel(filename = str(output_file_path))
         logging.info("Saving intermediate steps to: " + str(output_file_path))
-        detector.output_table_steps(intermediate_output_path)
+        if input_intermediate_output == True:
+            detector.output_table_steps(intermediate_output_path)
     except Exception as e:
         logging.error('An error occured: ' + str(e))
     
     logging.info("Processing complete")
-    return str(output_file_path)
+    return (str(output_file_path), str(intermediate_output_path))
 
 
 # Main console application
@@ -85,8 +87,17 @@ def console_main():
     logging.info("Table Processor started")
     input_file_path = input('Enter the path to the input PDF file: ')
     output_file_path = input('Enter the path to the output xlsx file: ')
-    output_file_path = process_pdf(input_file_path, output_file_path)
-    logging.info("Table Processor finished. Results are in: " + output_file_path)
+    try:
+        input_intermediate_output = input('Would you like to see the intermediate outputs? (t/F): ').lower()
+        if input_intermediate_output == "t":
+            input_intermediate_output = True
+        else:
+            input_intermediate_output = False
+        output_file_path, intermediate_output_path = process_pdf(input_file_path, output_file_path, input_intermediate_output)
+    except NameError:
+        print('NameError, spelt incorrectly, running as False')
+        output_file_path, intermediate_output_path = process_pdf(input_file_path, output_file_path)
+    logging.info("Table Processor finished. Results are in: " + output_file_path+"\n"+ 'Intermediate Output are in: ' + intermediate_output_path)
 
 
 if __name__ == '__main__':
