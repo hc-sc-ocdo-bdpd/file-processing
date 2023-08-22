@@ -53,7 +53,7 @@ def process_content(content, output_file_path = default_output, input_intermedia
         logging.error('process_content - An error occured: ' + str(e))
     
     logging.info("Processing complete")
-    return str(output_file_path)
+    return (str(output_file_path), str(intermediate_output_path))
 
 
 # Process the input file from path
@@ -79,7 +79,7 @@ def process_pdf(input_file_path, output_file_path = default_output, input_interm
         logging.error('An error occured: ' + str(e))
     
     logging.info("Processing complete")
-    return str(output_file_path)
+    return (str(output_file_path), str(intermediate_output_path))
 
 
 # Main console application
@@ -93,11 +93,11 @@ def console_main():
             input_intermediate_output = True
         else:
             input_intermediate_output = False
-        output_file_path = process_pdf(input_file_path, output_file_path, input_intermediate_output)
+        output_file_path, intermediate_output_path = process_pdf(input_file_path, output_file_path, input_intermediate_output)
     except NameError:
-        print('NameError, spelt incorrectly, intermediate outputs running as False')
-        output_file_path = process_pdf(input_file_path, output_file_path)
-    logging.info("Table Processor finished. Results are in: " + output_file_path)
+        print('NameError, spelt incorrectly, running as False')
+        output_file_path, intermediate_output_path = process_pdf(input_file_path, output_file_path)
+    logging.info("Table Processor finished. Results are in: " + output_file_path+"\n"+ 'Intermediate Output are in: ' + intermediate_output_path)
 
 
 if __name__ == '__main__':
