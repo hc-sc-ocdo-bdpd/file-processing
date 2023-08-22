@@ -339,6 +339,7 @@ def test_clean_cell_text():
 def test_intermediate_output():
     from table_processing.Table_processor_main import process_pdf
     from pathlib import Path
+    import shutil as st
     import os
     
     input_path = "./tests/resources/DmZUHweaZfPcMjTCAySRtp.pdf"
@@ -348,7 +349,7 @@ def test_intermediate_output():
         os.remove(output_path)
     
     if os.path.exists(intermediate_path):
-        os.remove(intermediate_path)
+        st.rmtree(intermediate_path)
 
     returned_path, returned_inter_path = process_pdf(input_path, output_file_path = output_path, input_intermediate_output=True)
     returned_path = Path(returned_path)
@@ -362,6 +363,6 @@ def test_intermediate_output():
     assert os.path.exists(expected_output_path)
     assert os.path.exists(expected_inter_path)
     os.remove(expected_output_path)
-    os.remove(expected_inter_path)
+    st.rmtree(expected_inter_path)
     assert not os.path.exists(expected_output_path)
     assert not os.path.exists(expected_inter_path)
