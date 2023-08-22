@@ -4,7 +4,6 @@ import PyInstaller.__main__
 def build_application(console_app_py):
     PyInstaller.__main__.run([
         console_app_py,
-        '--onefile',
         '--hidden-import=pytorch',
         '--hidden-import=timm',
         '--collect-data=timm',
@@ -30,5 +29,6 @@ def build_application(console_app_py):
 
 if __name__ == '__main__':
     # build_application('./table_processing/Table_Processor_Main.py')
-    build_application('./table_processing/Table_processor_main.py')
+    build_application('./table_processing/GUI.py')
+
     
