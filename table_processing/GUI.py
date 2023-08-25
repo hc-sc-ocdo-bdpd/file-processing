@@ -1,19 +1,19 @@
 from dash import Dash, DiskcacheManager, CeleryManager, Input, Output, html, callback, dcc, State 
+import diskcache
 import os
 import datetime
 from Table_processor_main import process_content
+from long_callbacks import register_long_callbacks
+
 from pathlib import Path
 import logging
 import base64
 import webbrowser
 from threading import Timer
 import time
-from long_callbacks import register_long_callbacks
 
 port = 8050
 
-logging.basicConfig(filename='table_detection_gui.log', filemode='a', datefmt='%Y-%m-%d %H:%M:%S',
-                    level=logging.INFO, format='[%(asctime)s][%(levelname)s] %(message)s\n')
 
 if 'REDIS_URL' in os.environ:
     # Use Redis & Celery if REDIS_URL set as an env variable
@@ -27,9 +27,10 @@ else:
     cache = diskcache.Cache("./cache")
     background_callback_manager = DiskcacheManager(cache)
 
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = Dash(__name__, external_stylesheets=external_stylesheets)
+app = Dash(__name__, external_stylesheets=external_stylesheets, background_callback_manager=background_callback_manager)
 
 app.layout = html.Div([
     dcc.Upload(
@@ -55,11 +56,11 @@ app.layout = html.Div([
     ),
     html.Div(id='output-result'),
 ])
-
-register_long_callbacks(app, background_callback_manager)
+register_long_callbacks(app)
 
 
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port=8080, debug=False, use_reloader=False)
+
     # app.run(debug=True)
     
