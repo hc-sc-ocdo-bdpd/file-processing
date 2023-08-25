@@ -4,6 +4,7 @@ import PyInstaller.__main__
 def build_application(console_app_py):
     PyInstaller.__main__.run([
         console_app_py,
+        '--onefile',
         '--hidden-import=pytorch',
         '--hidden-import=timm',
         '--collect-data=timm',
