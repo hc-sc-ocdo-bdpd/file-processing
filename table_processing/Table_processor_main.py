@@ -36,7 +36,7 @@ def validate_output_filename(filename):
 # Returns the path to the output file
 # This is the main method to call if you have file content instead of a file path
 # (Notably used by the GUI)
-def process_content(content, output_file_path = default_output, input_intermediate_output = False):
+def process_content(content, output_file_path = default_output, input_intermediate_output = True):
     logging.info("Processing file content.")
     output_file_path = validate_output_filename(output_file_path)
     output_dir = Path(output_file_path).parents[0]
@@ -46,7 +46,7 @@ def process_content(content, output_file_path = default_output, input_intermedia
         detector = Table_Detector(filedata = content)
         logging.info("Saving output to: " + str(output_file_path))
         detector.to_excel(str(output_file_path))
-        logging.info("Saving intermediate steps to: " + str(output_file_path))
+        logging.info("Saving intermediate steps to: " + str(intermediate_output_path))
         if input_intermediate_output == True:
             detector.output_table_steps(intermediate_output_path)
     except Exception as e:
