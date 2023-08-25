@@ -64,7 +64,7 @@ def save_file(name, content):
     data = content.encode("utf8").split(b";base64,")[1]
     with open(os.path.join(UPLOAD_DIRECTORY, name), "wb") as fp:
         fp.write(base64.decodebytes(data))
-    output_filename = process_content(base64.decodebytes(data))
+    output_filename = process_content(base64.decodebytes(data))[0]
     output_filename = Path(output_filename)
 
 
