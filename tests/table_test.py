@@ -246,7 +246,7 @@ def test_process_pdf():
     output_path = "./tests/resources/out.xlsx"
     if os.path.exists(output_path):
         os.remove(output_path)
-    returned_path = process_pdf(input_path, output_file_path = output_path)
+    returned_path = process_pdf(input_path, output_file_path = output_path)[0]
     returned_path = Path(returned_path)
     assert(returned_path.match(output_path))
     assert(os.path.exists(output_path))
@@ -258,7 +258,7 @@ def test_process_pdf():
     output_path = default_output
     if os.path.exists(output_path):
         os.remove(output_path)
-    returned_path = process_pdf(input_path)
+    returned_path = process_pdf(input_path)[0]
     returned_path = Path(returned_path)
     assert(returned_path.match(output_path))
     assert os.path.exists(output_path)
@@ -271,7 +271,7 @@ def test_process_pdf():
     output_path = "asdf"
     if os.path.exists(output_path):
         os.remove(output_path)
-    returned_path = process_pdf(input_path, output_file_path = output_path)
+    returned_path = process_pdf(input_path, output_file_path = output_path)[0]
     returned_path = Path(returned_path)
     assert(returned_path.match(expected_output_path))
     assert os.path.exists(expected_output_path)
@@ -291,7 +291,7 @@ def test_process_content():
     doc = fitz.open(input_path)
     content = doc.tobytes() 
     doc.close()
-    returned_path = process_content(content, output_file_path = output_path)
+    returned_path = process_content(content, output_file_path = output_path)[0]
     returned_path = Path(returned_path)
     expected_output_path = output_path
     assert(returned_path.match(expected_output_path))
@@ -317,7 +317,7 @@ def test_base64_input():
     data = (base64.b64encode(content_binary))
     content = base64.b64decode(data)
 
-    returned_path = process_content(content, output_file_path = output_path)
+    returned_path = process_content(content, output_file_path = output_path)[0]
     returned_path = Path(returned_path)
     expected_output_path = output_path
 
