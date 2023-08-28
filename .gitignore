@@ -140,3 +140,4 @@ generated_tables/
 benchmarking_log
 cache/
 output.xlsx
+*.jpg

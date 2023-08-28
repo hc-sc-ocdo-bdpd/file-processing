@@ -155,7 +155,7 @@ class Table_Detector:
 
     def to_excel(self, filename='all_excel.xlsx', raw = False):
         if self.page_data == None:
-            logging.warn("No page data to write to excel. No output file generated")
+            logging.warn("No page data to write to excel. No output file generated ")
             return
 
         logging.info("Writing table data to excel.")

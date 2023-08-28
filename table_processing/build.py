@@ -23,6 +23,7 @@ def build_application(console_app_py):
         '--copy-metadata=transformers',
         '--hidden-import=transformers',
         '--collect-all=timm',
+        '--collect-all=dash'
         '--paths=./.venv/Lib/site-packages'
     ])
 
@@ -30,5 +31,6 @@ def build_application(console_app_py):
 
 if __name__ == '__main__':
     # build_application('./table_processing/Table_Processor_Main.py')
-    build_application('./table_processing/Table_processor_main.py')
+    build_application('./table_processing/GUI2.py')
+
     
