@@ -22,7 +22,7 @@ def test_to_excel():
     if os.path.exists("demofile.txt"):
         os.remove("all_excel.xlsx")
 
-    table_detector = Table_Detector(filename = "tests/resources/test_filess/multipletab.pdf")
+    table_detector = Table_Detector(filename = "tests/resources/test_files/multipletab.pdf")
     table_detector.to_excel()
     assert os.path.exists("all_excel.xlsx")
     os.remove("all_excel.xlsx")
