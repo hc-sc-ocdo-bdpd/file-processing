@@ -1,6 +1,7 @@
 import os
 from txt_processor import TextFileProcessor
 from pdf_processor import PdfFileProcessor
+from docx_processor import DocxFileProcessor
 
 class File:
     def __init__(self, path):
@@ -15,6 +16,8 @@ class File:
             return TextFileProcessor(self.path)
         elif extension == ".pdf":
             return PdfFileProcessor(self.path)
+        elif extension == ".docx":
+            return DocxFileProcessor(self.path)
         else:
             # If no processor is available for the file type, raise an exception
             raise ValueError(f"No processor for file type {extension}")
