@@ -8,8 +8,8 @@ class TextFileProcessor(FileProcessorStrategy):
 
     def process(self):
         # Reads the file and updates the metadata with information about the file
-        with open(self.file_path, 'r') as f:
-            encoding = chardet.detect(open(self.file_path, "rb").read())['encoding']
+        encoding = chardet.detect(open(self.file_path, "rb").read())['encoding']
+        with open(self.file_path, 'r', encoding=encoding) as f:
             text = f.read()
             lines = text.split('\n')
             words = text.split()
