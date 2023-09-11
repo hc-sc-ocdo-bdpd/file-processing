@@ -12,6 +12,9 @@ class DocxFileProcessor(FileProcessorStrategy):
         self.metadata.update({'author': doc.core_properties.author})
         self.metadata.update({'last_modified_by': doc.core_properties.last_modified_by})
 
+        # Other core properties to include: https://python-docx.readthedocs.io/en/latest/api/document.html#coreproperties-objects
+        # keywords, language, subject, version
+
     @staticmethod
     def extract_text_from_docx(doc: Document):
         try:
