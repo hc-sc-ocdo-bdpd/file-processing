@@ -8,8 +8,7 @@ class PdfFileProcessor(FileProcessorStrategy):
 
     def process(self):
         text = self.extract_text_from_pdf(self.file_path)
-        if text is not None:
-            self.metadata.update({'text': text})
+        self.metadata.update({'text': text})
 
     @staticmethod
     def extract_text_from_pdf(file_path):

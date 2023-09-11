@@ -7,14 +7,17 @@ class DocxFileProcessor(FileProcessorStrategy):
         self.metadata = {}
 
     def process(self):
-        text = self.extract_text_from_docx(self.file_path)
-        if text is not None:
-            self.metadata.update({'text': text})
+        doc = Document(self.file_path)
+        self.metadata.update({'text': self.extract_text_from_docx(doc)})
+        self.metadata.update({'author': doc.core_properties.author})
+        self.metadata.update({'last_modified_by': doc.core_properties.last_modified_by})
+
+        # Other core properties to include: https://python-docx.readthedocs.io/en/latest/api/document.html#coreproperties-objects
+        # keywords, language, subject, version
 
     @staticmethod
-    def extract_text_from_docx(file_path):
+    def extract_text_from_docx(doc: Document):
         try:
-            doc = Document(file_path)
             full_text = []
             for para in doc.paragraphs:
                 full_text.append(para.text)
