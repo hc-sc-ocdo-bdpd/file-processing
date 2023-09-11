@@ -23,3 +23,11 @@ def test_txt_num_words():
     txt_2 = File('tests/resources/test_files/usa_government_wikipedia.txt')
     assert txt_1.metadata['num_words'] == 5691
     assert txt_2.metadata['num_words'] == 7160
+
+
+def test_docx_text():
+    from file_processing.file import File
+    docx_1 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.docx')
+    docx_2 = File('tests/resources/test_files/SampleReport.docx')
+    assert len(docx_1.metadata['text']) == 1631
+    assert len(docx_2.metadata['text']) == 3220
