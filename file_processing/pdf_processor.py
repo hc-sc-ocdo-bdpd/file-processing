@@ -2,16 +2,16 @@ from file_processor_strategy import FileProcessorStrategy
 from PyPDF2 import PdfReader
 
 class PdfFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path):
+    def __init__(self, file_path: str) -> None:
         super().__init__(file_path)
         self.metadata = {}
 
-    def process(self):
+    def process(self) -> None:
         text = self.extract_text_from_pdf(self.file_path)
         self.metadata.update({'text': text})
 
     @staticmethod
-    def extract_text_from_pdf(file_path):
+    def extract_text_from_pdf(file_path: str) -> str:
         try:
             reader = PdfReader(file_path)
             text = ""
