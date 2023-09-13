@@ -21,6 +21,3 @@ class PdfFileProcessor(FileProcessorStrategy):
         except Exception as e:
             print(f"Error encountered while opening or processing {file_path}: {e}")
             return None
-
-
-# OCR functionality: to implement
