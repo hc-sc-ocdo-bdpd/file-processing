@@ -4,23 +4,24 @@ from PIL import Image
 import os
 import io
 import getpass
+from file_processor_strategy import FileProcessorStrategy
 
 # Init for tesseract
 pytesseract.pytesseract.tesseract_cmd = os.path.join('C:/Users', getpass.getuser(), 'AppData/Local/Programs/Tesseract-OCR/tesseract.exe')
 
 class OCRDecorator:
-    def __init__(self, processor):
+    def __init__(self, processor: FileProcessorStrategy) -> None:
         """Initializes the OCRDecorator with a given file processor."""
         self._processor = processor
 
-    def process(self):
+    def process(self) -> None:
         """Processes the file using the wrapped processor and then applies OCR."""
         self._processor.process()
         ocr_text = self.extract_text_with_ocr()
         self._processor.metadata['ocr_text'] = ocr_text
 
 
-    def extract_text_with_ocr(self):
+    def extract_text_with_ocr(self) -> str:
         """Extracts text from the file using OCR.
 
         Returns:
@@ -33,7 +34,7 @@ class OCRDecorator:
         else:
             return self._ocr_image()
 
-    def _ocr_image(self):
+    def _ocr_image(self) -> str:
         try:
             image = Image.open(self._processor.file_path)
             ocr_result = pytesseract.image_to_string(image)
@@ -42,7 +43,7 @@ class OCRDecorator:
             print(f"Error during OCR processing for image: {e}")
             return ""
 
-    def _ocr_pdf(self):
+    def _ocr_pdf(self) -> str:
         text = ''
         ocrText = ''
 
@@ -73,11 +74,11 @@ class OCRDecorator:
             return ""
 
     @property
-    def file_name(self):
+    def file_name(self) -> str:
         """Returns the file name of the processed file."""
         return self._processor.file_name
 
     @property
-    def metadata(self):
+    def metadata(self) -> dict:
         """Returns the metadata of the processed file."""
         return self._processor.metadata
