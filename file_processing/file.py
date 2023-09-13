@@ -13,12 +13,12 @@ class File:
         ".docx": DocxFileProcessor,
     }
 
-    def __init__(self, path, use_ocr=False):
+    def __init__(self, path: str, use_ocr: bool = False) -> None:
         self.path = path
         self.processor = self._get_processor(use_ocr)
         self.process()
 
-    def _get_processor(self, use_ocr):
+    def _get_processor(self, use_ocr: bool) -> 'FileProcessorStrategy':
         _, extension = os.path.splitext(self.path)
 
         processor_class = File.PROCESSORS.get(extension)
@@ -34,13 +34,13 @@ class File:
         
         return processor
 
-    def process(self):
+    def process(self) -> None:
         return self.processor.process()
 
     @property
-    def file_name(self):
+    def file_name(self) -> str:
         return self.processor.file_name
 
     @property
-    def metadata(self):
+    def metadata(self) -> dict:
         return self.processor.metadata
