@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import os
 
 class FileProcessorStrategy(ABC):
-    def __init__(self, file_path):
+    def __init__(self, file_path: str) -> None:
         self.file_path = file_path
         self.file_name = os.path.basename(file_path)
         self.extension = os.path.splitext(self.file_name)[1]
@@ -11,6 +11,6 @@ class FileProcessorStrategy(ABC):
         self.access_time = os.path.getatime(file_path)
 
     @abstractmethod
-    def process(self):
+    def process(self) -> None:
         # Abstract method to be implemented by subclasses for file processing
         pass
