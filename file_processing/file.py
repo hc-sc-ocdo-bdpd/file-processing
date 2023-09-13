@@ -2,28 +2,36 @@ import os
 from txt_processor import TextFileProcessor
 from pdf_processor import PdfFileProcessor
 from docx_processor import DocxFileProcessor
+from ocr_decorator import OCRDecorator
 
 class File:
-    def __init__(self, path):
+    OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
+
+    def __init__(self, path, use_ocr=False):
         self.path = path
-        self.processor = self._get_processor()  # Decides which processor to use
+        self.processor = self._get_processor(use_ocr)
         self.process()
 
-    def _get_processor(self):
+    def _get_processor(self, use_ocr):
         _, extension = os.path.splitext(self.path)
-        # Choose the appropriate processor based on file extension
+        processor = None
+
         if extension == ".txt":
-            return TextFileProcessor(self.path)
+            processor = TextFileProcessor(self.path)
         elif extension == ".pdf":
-            return PdfFileProcessor(self.path)
+            processor = PdfFileProcessor(self.path)
         elif extension == ".docx":
-            return DocxFileProcessor(self.path)
+            processor = DocxFileProcessor(self.path)
         else:
-            # If no processor is available for the file type, raise an exception
             raise ValueError(f"No processor for file type {extension}")
 
+        if use_ocr:
+            if extension not in File.OCR_APPLICABLE_EXTENSIONS:
+                raise ValueError(f"OCR is not applicable for file type {extension}.")
+            return OCRDecorator(processor)
+        return processor
+
     def process(self):
-        # Processes the file using the chosen processor
         return self.processor.process()
 
     @property

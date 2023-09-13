@@ -81,3 +81,10 @@ def test_docx_last_modified_by():
     docx_2 = File(test_docx_2_path)
     assert docx_1.metadata['last_modified_by'] == test_last_modified_by_1
     assert docx_2.metadata['last_modified_by'] == test_last_modified_by_2
+
+
+def test_pdf_ocr_text_found():
+    from file_processing.file import File
+    pdf_1 = File('tests/resources/test_files/SampleReportScreenShot.pdf', use_ocr=True)
+    ocr_text = pdf_1.metadata['ocr_text']
+    assert len(ocr_text) > 0
