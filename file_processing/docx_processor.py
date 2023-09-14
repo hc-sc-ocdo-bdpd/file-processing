@@ -2,11 +2,11 @@ from file_processor_strategy import FileProcessorStrategy
 from docx import Document
 
 class DocxFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path):
+    def __init__(self, file_path: str) -> None:
         super().__init__(file_path)
         self.metadata = {}
 
-    def process(self):
+    def process(self) -> None:
         doc = Document(self.file_path)
         self.metadata.update({'text': self.extract_text_from_docx(doc)})
         self.metadata.update({'author': doc.core_properties.author})
@@ -16,7 +16,7 @@ class DocxFileProcessor(FileProcessorStrategy):
         # keywords, language, subject, version
 
     @staticmethod
-    def extract_text_from_docx(doc: Document):
+    def extract_text_from_docx(doc: Document) -> str:
         try:
             full_text = []
             for para in doc.paragraphs:

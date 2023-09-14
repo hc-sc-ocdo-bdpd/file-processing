@@ -26,11 +26,7 @@
 ### 2. Update the Main File
 
 - Import your processor at the top of [`file.py`](./file.py).
-- In the `_get_processor` method, add:
-
-  ```python
-  elif extension == ".[YOUR_FILE_EXTENSION]":
-      return [YOUR_FILE_PROCESSOR_CLASS](self.path)
+- Add the newly supported file extension and processor to the `PROCESSORS` dictionary.
 
 
 ### Important Notes
