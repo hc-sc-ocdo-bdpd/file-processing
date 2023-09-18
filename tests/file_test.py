@@ -88,3 +88,27 @@ def test_pdf_ocr_text_found():
     pdf_1 = File('tests/resources/test_files/SampleReportScreenShot.pdf', use_ocr=True)
     ocr_text = pdf_1.metadata['ocr_text']
     assert len(ocr_text) > 0
+
+def test_msg_text():
+    from file_processing.file import File
+    msg = File('tests/resources/test_files/Test Email.msg')
+    msg_text = msg.metadata['text']
+    assert msg_text == 'Body text.\r\n\r\n \r\n\r\n'
+
+def test_msg_subject():
+    from file_processing.file import File
+    msg = File('tests/resources/test_files/Test Email.msg')
+    msg_subject = msg.metadata['subject']
+    assert msg_subject == 'Test Email'
+
+def test_msg_date():
+    from file_processing.file import File
+    msg = File('tests/resources/test_files/Test Email.msg')
+    msg_date = msg.metadata['date']
+    assert msg_date == 'Mon, 18 Sep 2023 13:57:16 -0400'
+
+def test_msg_sender():
+    from file_processing.file import File
+    msg = File('tests/resources/test_files/Test Email.msg')
+    msg_sender = msg.metadata['sender']
+    assert msg_sender == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
