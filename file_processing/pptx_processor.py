@@ -11,6 +11,7 @@ class PptxFileProcessor(FileProcessorStrategy):
         self.metadata.update({'text': self.extract_text_from_pptx(ppt)})
         self.metadata.update({'author': ppt.core_properties.author})
         self.metadata.update({'last_modified_by': ppt.core_properties.last_modified_by})
+        self.metadata.update({"num_slides": len(ppt.slides)})
 
         # Other core properties to include: https://python-docx.readthedocs.io/en/latest/api/document.html#coreproperties-objects
         # keywords, language, subject, version

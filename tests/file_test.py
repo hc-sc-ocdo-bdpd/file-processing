@@ -169,3 +169,10 @@ def test_pptx_last_modified_by():
     pptx_2 = File(test_pptx_2_path)
     assert pptx_1.metadata['last_modified_by'] == test_last_modified_by_1
     assert pptx_2.metadata['last_modified_by'] == test_last_modified_by_2
+
+def test_pptx_num_slides():
+    from file_processing.file import File
+    pptx_1 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx')
+    pptx_2 = File('tests/resources/test_files/SampleReport.pptx')
+    assert pptx_1.metadata['num_slides'] == 4
+    assert pptx_2.metadata['num_slides'] == 4
