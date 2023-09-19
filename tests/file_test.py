@@ -112,3 +112,60 @@ def test_msg_sender():
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_sender = msg.metadata['sender']
     assert msg_sender == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
+
+def test_pptx_text():
+    from file_processing.file import File
+    pptx_1 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx')
+    pptx_2 = File('tests/resources/test_files/SampleReport.pptx')
+    assert len(pptx_1.metadata['text']) == 1655
+    assert len(pptx_2.metadata['text']) == 3244
+
+
+def test_pptx_author():
+    from file_processing.file import File
+    from pptx import Presentation
+
+    # Paths of test files
+    test_pptx_1_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx'
+    test_pptx_2_path = 'tests/resources/test_files/SampleReport.pptx'
+
+    # Arbitrary test author names
+    test_author_1 = 'Test Author One'
+    test_author_2 = 'Second Test Author'
+
+    # Update test pptx files to have test names
+    for x in [(test_pptx_1_path,test_author_1), (test_pptx_2_path, test_author_2)]:
+        ppt = Presentation(x[0])
+        ppt.core_properties.author = x[1]
+        ppt.save(x[0])
+
+    # Test author names match
+    pptx_1 = File(test_pptx_1_path)
+    pptx_2 = File(test_pptx_2_path)
+    assert pptx_1.metadata['author'] == test_author_1
+    assert pptx_2.metadata['author'] == test_author_2
+
+
+def test_pptx_last_modified_by():
+    from file_processing.file import File
+    from pptx import Presentation
+
+    # Paths of test files
+    test_pptx_1_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx'
+    test_pptx_2_path = 'tests/resources/test_files/SampleReport.pptx'
+
+    # Arbitrary test last_modified_by names
+    test_last_modified_by_1 = 'Test last_modified_by One'
+    test_last_modified_by_2 = 'last_modified_by Test Author'
+
+    # Update test pptx files to have test names
+    for x in [(test_pptx_1_path,test_last_modified_by_1), (test_pptx_2_path, test_last_modified_by_2)]:
+        ppt = Presentation(x[0])
+        ppt.core_properties.last_modified_by = x[1]
+        ppt.save(x[0])
+
+    # Test last_modified_by names match
+    pptx_1 = File(test_pptx_1_path)
+    pptx_2 = File(test_pptx_2_path)
+    assert pptx_1.metadata['last_modified_by'] == test_last_modified_by_1
+    assert pptx_2.metadata['last_modified_by'] == test_last_modified_by_2
