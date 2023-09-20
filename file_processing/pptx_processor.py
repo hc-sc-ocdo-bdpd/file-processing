@@ -13,7 +13,7 @@ class PptxFileProcessor(FileProcessorStrategy):
         self.metadata.update({'last_modified_by': ppt.core_properties.last_modified_by})
         self.metadata.update({"num_slides": len(ppt.slides)})
 
-        # Other core properties to include: https://python-docx.readthedocs.io/en/latest/api/document.html#coreproperties-objects
+        # Other core properties to include: https://python-pptx.readthedocs.io/en/latest/api/presentation.html#coreproperties-objects
         # keywords, language, subject, version
 
     @staticmethod
