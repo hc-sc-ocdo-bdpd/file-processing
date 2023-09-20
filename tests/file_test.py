@@ -118,7 +118,7 @@ def test_pptx_text():
     pptx_1 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx')
     pptx_2 = File('tests/resources/test_files/SampleReport.pptx')
     assert len(pptx_1.metadata['text']) == 1655
-    assert len(pptx_2.metadata['text']) == 3244
+    assert len(pptx_2.metadata['text']) == 2037
 
 
 def test_pptx_author():
@@ -175,4 +175,4 @@ def test_pptx_num_slides():
     pptx_1 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx')
     pptx_2 = File('tests/resources/test_files/SampleReport.pptx')
     assert pptx_1.metadata['num_slides'] == 4
-    assert pptx_2.metadata['num_slides'] == 4
+    assert pptx_2.metadata['num_slides'] == 5

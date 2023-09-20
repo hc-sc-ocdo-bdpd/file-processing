@@ -24,6 +24,12 @@ class PptxFileProcessor(FileProcessorStrategy):
                 for shape in slide.shapes:
                     if hasattr(shape, "text"):
                         full_text.append(shape.text)
+                    if shape.has_table:
+                        for r in shape.table.rows:
+                            s = ""
+                            for c in r.cells:
+                                s += c.text_frame.text + " | "
+                            full_text.append(s)
             return '\n'.join(full_text)
         except Exception as e:
             print(f"Error encountered while opening or processing {file_path}: {e}")
