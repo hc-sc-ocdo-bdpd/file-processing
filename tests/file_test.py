@@ -112,3 +112,31 @@ def test_msg_sender():
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_sender = msg.metadata['sender']
     assert msg_sender == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
+
+def test_png_format():
+    from file_processing.file import File
+    png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
+    png_2 = File('tests/resources/test_files/MapCanada.png')
+    assert png_1.metadata['original_format'] == 'GIF'
+    assert png_2.metadata['original_format'] == 'PNG'
+
+def test_png_mode():
+    from file_processing.file import File
+    png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
+    png_2 = File('tests/resources/test_files/MapCanada.png')
+    assert png_1.metadata['mode'] == 'P'
+    assert png_2.metadata['mode'] == 'RGBA'
+
+def test_png_width():
+    from file_processing.file import File
+    png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
+    png_2 = File('tests/resources/test_files/MapCanada.png')
+    assert png_1.metadata['width'] == 303
+    assert png_2.metadata['width'] == 3000
+
+def test_png_height():
+    from file_processing.file import File
+    png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
+    png_2 = File('tests/resources/test_files/MapCanada.png')
+    assert png_1.metadata['height'] == 40
+    assert png_2.metadata['height'] == 2408
