@@ -112,3 +112,35 @@ def test_msg_sender():
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_sender = msg.metadata['sender']
     assert msg_sender == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
+
+def test_excel_sheets():
+    from file_processing.file import File 
+    exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
+    exceldoc_sheetnames = exceldoc.metadata['sheet names']
+    assert exceldoc_sheetnames == ['Sheet1', 'Sheet2', 'Sheet3']
+
+def test_excel_activesheet():
+    from file_processing.file import File
+    exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
+    exceldoc_activesheet = exceldoc.metadata['active sheet']
+    assert str(exceldoc_activesheet) == "<Worksheet \"Sheet3\">"
+
+def test_excel_data():
+    from file_processing.file import File
+    exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
+    assert len(exceldoc.metadata['data']['Sheet1']) == 10
+    assert len(exceldoc.metadata['data']['Sheet2']) == 11
+    assert len(exceldoc.metadata['data']['Sheet3']) == 21
+
+def test_excel_last_modified_by():
+    from file_processing.file import File
+    exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
+    assert exceldoc.metadata['last_modified_by'] == 'Burnett, Taylen (HC/SC)'
+
+def test_excel_creator():
+    from file_processing.file import File
+    exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
+    assert exceldoc.metadata['creator'] == 'Burnett, Taylen (HC/SC)'
+
+
+    
