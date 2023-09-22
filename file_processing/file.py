@@ -41,9 +41,30 @@ class File:
     def process(self) -> None:
         return self.processor.process()
 
+    
+    @property
+    def file_path(self) -> str:
+        return self.processor.file_path
+
     @property
     def file_name(self) -> str:
         return self.processor.file_name
+
+    @property
+    def extension(self) -> str:
+        return self.processor.extension
+
+    @property
+    def size(self) -> str:
+        return self.processor.size
+
+    @property
+    def modification_time(self) -> str:
+        return self.processor.modification_time
+
+    @property
+    def access_time(self) -> str:
+        return self.processor.access_time
 
     @property
     def metadata(self) -> dict:
