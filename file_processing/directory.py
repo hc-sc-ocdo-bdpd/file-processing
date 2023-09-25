@@ -89,7 +89,15 @@ class Directory:
         :param keywords: The list of keywords to count.
         :return: A dictionary with the keywords as keys and their counts as values.
         """
-        return 1
+
+        keyword_dict = {}
+        text = text.lower()
+
+        for keyword in keywords:
+            count = text.count(keyword.lower())
+            keyword_dict[keyword] = count
+
+        return keyword_dict
 
 
 
