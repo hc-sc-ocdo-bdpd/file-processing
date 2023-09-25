@@ -40,25 +40,28 @@ class Directory:
         return self._file_generator(filters)
 
 
-    def generate_report(self, report_file: str, include_text: bool = True, filters: Optional[dict] = None) -> None:
+    def generate_report(self, report_file: str, include_text: bool = True, filters: Optional[dict] = None, keywords: Optional[list] = None) -> None:
         """
         Generates a report of the directory and writes it to a CSV file.
 
         :param report_file: The path to the output CSV file.
         :param include_text: Whether to include the 'text' attribute in the metadata column.
         :param filters: A dictionary of filters to apply to the files.
+        :param keywords: A list of keywords to count in the 'text' attribute of the metadata.
         """
-
+        
         # Count the total number of files that match the filters
         total_files = sum(1 for _ in self._file_generator(filters))
-
+        
         with open(report_file, mode='w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             
-            # Write the header row to the CSV file
-            writer.writerow([
-                'File Path', 'File Name', 'Extension', 'Size', 'Modification Time', 'Access Time', 'Metadata'
-            ])
+            # Modify the header row to include the 'Keywords' column if keywords are provided
+            header_row = ['File Path', 'File Name', 'Extension', 'Size', 'Modification Time', 'Access Time', 'Metadata']
+            if keywords:
+                header_row.append('Keywords')
+            
+            writer.writerow(header_row)
             
             # Iterate over each file in the directory and write the information to the CSV file
             with tqdm(total=total_files, desc='Generating Report', unit='file') as pbar:
@@ -67,7 +70,7 @@ class Directory:
                     if not include_text:
                         metadata.pop('text', None)  # Remove the 'text' attribute if it exists and include_text is False
                     
-                    writer.writerow([
+                    row_data = [
                         file.file_path,
                         file.file_name,
                         file.extension,
@@ -75,9 +78,14 @@ class Directory:
                         file.modification_time,
                         file.access_time,
                         json.dumps(metadata, ensure_ascii=False)  # Convert metadata to a JSON string
-                    ])
+                    ]
                     
-                    # Update the progress bar after processing each file
+                    if keywords:
+                        text = metadata.get('text', '')
+                        keyword_counts = self._count_keywords(text, keywords)
+                        row_data.append(json.dumps(keyword_counts, ensure_ascii=False))
+                    
+                    writer.writerow(row_data)
                     pbar.update(1)
 
 
