@@ -16,8 +16,7 @@ class File:
         ".docx": DocxFileProcessor,
         ".msg": msgFileProcessor,
         ".pptx": PptxFileProcessor,
-        ".jpeg": JpegFileProcessor,
-        ".jpg": JpegFileProcessor
+        ".jpeg": JpegFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False) -> None:

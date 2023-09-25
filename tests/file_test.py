@@ -179,28 +179,28 @@ def test_pptx_num_slides():
 
 def test_jpeg_format():
     from file_processing.file import File
-    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpg')
-    jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
+    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpeg')
+    jpeg_2 = File('tests/resources/test_files/MapCanada.jpeg')
     assert jpeg_1.metadata['original_format'] == 'JPEG'
     assert jpeg_2.metadata['original_format'] == 'JPEG'
 
 def test_jpeg_mode():
     from file_processing.file import File
-    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpg')
-    jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
+    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpeg')
+    jpeg_2 = File('tests/resources/test_files/MapCanada.jpeg')
     assert jpeg_1.metadata['mode'] == 'RGB'
     assert jpeg_2.metadata['mode'] == 'RGB'
 
 def test_jpeg_width():
     from file_processing.file import File
-    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpg')
-    jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
+    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpeg')
+    jpeg_2 = File('tests/resources/test_files/MapCanada.jpeg')
     assert jpeg_1.metadata['width'] == 474
     assert jpeg_2.metadata['width'] == 4489
 
 def test_jpeg_height():
     from file_processing.file import File
-    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpg')
-    jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
+    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpeg')
+    jpeg_2 = File('tests/resources/test_files/MapCanada.jpeg')
     assert jpeg_1.metadata['height'] == 262
     assert jpeg_2.metadata['height'] == 2896
