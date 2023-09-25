@@ -5,6 +5,7 @@ from docx_processor import DocxFileProcessor
 from ocr_decorator import OCRDecorator
 from msg_processor import msgFileProcessor
 from pptx_processor import PptxFileProcessor
+from jpeg_processor import JpegFileProcessor
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
@@ -14,7 +15,9 @@ class File:
         ".pdf": PdfFileProcessor,
         ".docx": DocxFileProcessor,
         ".msg": msgFileProcessor,
-        ".pptx": PptxFileProcessor
+        ".pptx": PptxFileProcessor,
+        ".jpeg": JpegFileProcessor,
+        ".jpg": JpegFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False) -> None:
