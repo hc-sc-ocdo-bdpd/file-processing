@@ -176,3 +176,8 @@ def test_pptx_num_slides():
     pptx_2 = File('tests/resources/test_files/SampleReport.pptx')
     assert pptx_1.metadata['num_slides'] == 4
     assert pptx_2.metadata['num_slides'] == 5
+
+def test_rtf_text():
+    from file_processing.file import File
+    rtf_1 = File('tests/resources/test_files/Test_for_RTF.rtf')
+    assert len(rtf_1.metadata['rtf_text']) == 43
