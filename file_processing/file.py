@@ -3,7 +3,7 @@ from txt_processor import TextFileProcessor
 from pdf_processor import PdfFileProcessor
 from docx_processor import DocxFileProcessor
 from ocr_decorator import OCRDecorator
-from msg_processor import msgFileProcessor
+from msg_processor import MsgFileProcessor
 from pptx_processor import PptxFileProcessor
 
 class File:
@@ -13,7 +13,7 @@ class File:
         ".txt": TextFileProcessor,
         ".pdf": PdfFileProcessor,
         ".docx": DocxFileProcessor,
-        ".msg": msgFileProcessor,
+        ".msg": MsgFileProcessor,
         ".pptx": PptxFileProcessor
     }
 
