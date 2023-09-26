@@ -18,7 +18,7 @@ class File:
         ".docx": DocxFileProcessor,
         ".msg": msgFileProcessor,
         ".pptx": PptxFileProcessor,
-        ".jpeg": JpegFileProcessor
+        ".jpeg": JpegFileProcessor,
         ".png": PngFileProcessor,
         ".xlsx": xlsxFileProcessor,
         ".pptx": PptxFileProcessor
