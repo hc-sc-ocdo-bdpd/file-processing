@@ -289,7 +289,42 @@ def test_pptx_num_slides():
     pptx_2 = File('tests/resources/test_files/SampleReport.pptx')
     assert pptx_1.metadata['num_slides'] == 4
     assert pptx_2.metadata['num_slides'] == 5
+
+def test_save_docx_metadata():
+    from file_processing.file import File
+    from pptx import Presentation
     
+    test_ppt_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx'
+    copy_test_ppt_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_copy.pptx'
+    
+    # Copying file
+    with open(test_ppt_path, 'rb') as src_file:
+        with open(copy_test_ppt_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Arbitrary test author and last_modified_by names
+        test_author = 'New Author'
+        test_last_modified_by = 'Modified Author'
+        
+        # Load and change metadata via File object
+        ppt_file = File(copy_test_ppt_path)
+        ppt_file.metadata['author'] = test_author
+        ppt_file.metadata['last_modified_by'] = test_last_modified_by
+        
+        # Save changes
+        ppt_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        ppt = Presentation(copy_test_ppt_path)
+        
+        # Assert if changes are correctly reflected
+        assert ppt.core_properties.author == test_author
+        assert ppt.core_properties.last_modified_by == test_last_modified_by
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_ppt_path)
 
 def test_jpeg_format():
     from file_processing.file import File
