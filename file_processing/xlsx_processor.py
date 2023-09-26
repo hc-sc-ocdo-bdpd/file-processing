@@ -8,8 +8,8 @@ class xlsxFileProcessor(FileProcessorStrategy):
     
     def process(self) -> None:
         exceldoc = load_workbook(self.file_path)
-        self.metadata.update({"active sheet": exceldoc.active})
-        self.metadata.update({"sheet names": exceldoc.sheetnames})
+        self.metadata.update({"active_sheet": exceldoc.active})
+        self.metadata.update({"sheet_names": exceldoc.sheetnames})
         self.metadata.update({"data":self.read_all_data(exceldoc)})
         self.metadata.update({"last_modified_by": exceldoc.properties.lastModifiedBy})
         self.metadata.update({"creator": exceldoc.properties.creator})

@@ -116,13 +116,13 @@ def test_msg_sender():
 def test_excel_sheets():
     from file_processing.file import File 
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
-    exceldoc_sheetnames = exceldoc.metadata['sheet names']
+    exceldoc_sheetnames = exceldoc.metadata['sheet_names']
     assert exceldoc_sheetnames == ['Sheet1', 'Sheet2', 'Sheet3']
 
 def test_excel_activesheet():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
-    exceldoc_activesheet = exceldoc.metadata['active sheet']
+    exceldoc_activesheet = exceldoc.metadata['active_sheet']
     assert str(exceldoc_activesheet) == "<Worksheet \"Sheet3\">"
 
 def test_excel_data():
