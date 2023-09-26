@@ -250,6 +250,26 @@ def test_pptx_num_slides():
     assert pptx_2.metadata['num_slides'] == 5
 
     
+def test_html_text():
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
+    assert len(txt_1.metadata['text']) == 165405
+
+    
+def test_html_num_lines():
+    # indirectly tests lines attribute
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
+    assert txt_1.metadata['num_lines'] == 3439
+
+    
+def test_html_num_words():
+    # indirectly tests words attribute
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
+    assert txt_1.metadata['num_words'] == 11162
+
+    
 def test_xml_text():
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Sample.xml')
