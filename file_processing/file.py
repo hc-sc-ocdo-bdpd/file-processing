@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from txt_processor import TextFileProcessor
 from pdf_processor import PdfFileProcessor
 from docx_processor import DocxFileProcessor
@@ -8,6 +8,7 @@ from png_processor import PngFileProcessor
 from xlsx_processor import xlsxFileProcessor
 from pptx_processor import PptxFileProcessor
 from jpeg_processor import JpegFileProcessor
+
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
@@ -25,24 +26,24 @@ class File:
     }
 
     def __init__(self, path: str, use_ocr: bool = False) -> None:
-        self.path = path
+        self.path = Path(path)
         self.processor = self._get_processor(use_ocr)
         self.process()
 
     def _get_processor(self, use_ocr: bool) -> 'FileProcessorStrategy':
-        _, extension = os.path.splitext(self.path)
+        extension = self.path.suffix
 
         processor_class = File.PROCESSORS.get(extension)
         if not processor_class:
             raise ValueError(f"No processor for file type {extension}")
 
-        processor = processor_class(self.path)
+        processor = processor_class(str(self.path))
 
         if use_ocr:
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
                 raise ValueError(f"OCR is not applicable for file type {extension}.")
             return OCRDecorator(processor)
-        
+
         return processor
 
     def process(self) -> None:
