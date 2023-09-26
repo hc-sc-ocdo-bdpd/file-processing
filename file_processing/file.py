@@ -7,8 +7,8 @@ from msg_processor import msgFileProcessor
 from png_processor import PngFileProcessor
 from xlsx_processor import xlsxFileProcessor
 from pptx_processor import PptxFileProcessor
+from xml_processor import XmlFileProcessor
 from jpeg_processor import JpegFileProcessor
-
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
@@ -19,6 +19,7 @@ class File:
         ".docx": DocxFileProcessor,
         ".msg": msgFileProcessor,
         ".pptx": PptxFileProcessor,
+        ".xml": XmlFileProcessor,
         ".png": PngFileProcessor,
         ".xlsx": xlsxFileProcessor,
         ".jpeg": JpegFileProcessor,

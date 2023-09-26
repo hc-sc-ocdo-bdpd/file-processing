@@ -248,6 +248,26 @@ def test_pptx_num_slides():
     pptx_2 = File('tests/resources/test_files/SampleReport.pptx')
     assert pptx_1.metadata['num_slides'] == 4
     assert pptx_2.metadata['num_slides'] == 5
+
+    
+def test_xml_text():
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Sample.xml')
+    assert len(txt_1.metadata['text']) == 4429
+
+    
+def test_xml_num_lines():
+    # indirectly tests lines attribute
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Sample.xml')
+    assert txt_1.metadata['num_lines'] == 120
+
+    
+def test_xml_num_words():
+    # indirectly tests words attribute
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Sample.xml')
+    assert txt_1.metadata['num_words'] == 336
     
 
 def test_jpeg_format():
