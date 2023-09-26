@@ -24,6 +24,32 @@ def test_txt_num_words():
     assert txt_1.metadata['num_words'] == 5691
     assert txt_2.metadata['num_words'] == 7160
 
+def test_save_txt_metadata():
+    from file_processing.file import File
+    
+    test_txt_path = 'tests/resources/test_files/government_of_canada_wikipedia.txt'
+    copy_test_txt_path = 'tests/resources/test_files/government_of_canada_wikipedia_copy.txt'
+    
+    # Copying file
+    with open(test_txt_path, 'rb') as src_file:
+        with open(copy_test_txt_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        
+        # Load via File object
+        txt_file = File(copy_test_txt_path)
+        
+        # Save
+        txt_file.save()
+        
+        # Assert if .txt correctly saved
+        assert len(txt_file.metadata['text']) == 38983
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_txt_path)
+
 
 def test_docx_text():
     from file_processing.file import File
