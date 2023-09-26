@@ -224,6 +224,41 @@ def test_excel_creator():
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert exceldoc.metadata['creator'] == 'Burnett, Taylen (HC/SC)'
 
+def test_save_exc_metadata():
+    from file_processing.file import File
+    from openpyxl import load_workbook
+    
+    test_exc_path = 'tests/resources/test_files/Test_excel_file.xlsx'
+    copy_test_exc_path = 'tests/resources/test_files/Test_excel_file_copy.xlsx'
+    
+    # Copying file
+    with open(test_exc_path, 'rb') as src_file:
+        with open(copy_test_exc_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Arbitrary test author and last_modified_by names
+        test_creator = 'New Creator'
+        test_last_modified_by = 'Modified Creator'
+        
+        # Load and change metadata via File object
+        exc_file = File(copy_test_exc_path)
+        exc_file.metadata['creator'] = test_creator
+        exc_file.metadata['last_modified_by'] = test_last_modified_by
+        
+        # Save changes
+        exc_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        exceldoc = load_workbook(copy_test_exc_path)
+        
+        # Assert if changes are correctly reflected
+        assert exceldoc.properties.creator == test_creator
+        assert exceldoc.properties.lastModifiedBy == test_last_modified_by
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_exc_path)
     
 def test_pptx_text():
     from file_processing.file import File
@@ -290,7 +325,7 @@ def test_pptx_num_slides():
     assert pptx_1.metadata['num_slides'] == 4
     assert pptx_2.metadata['num_slides'] == 5
 
-def test_save_docx_metadata():
+def test_save_ppt_metadata():
     from file_processing.file import File
     from pptx import Presentation
     
