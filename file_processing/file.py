@@ -4,6 +4,7 @@ from pdf_processor import PdfFileProcessor
 from docx_processor import DocxFileProcessor
 from ocr_decorator import OCRDecorator
 from msg_processor import msgFileProcessor
+from png_processor import PngFileProcessor
 from xlsx_processor import xlsxFileProcessor
 from pptx_processor import PptxFileProcessor
 
@@ -15,6 +16,7 @@ class File:
         ".pdf": PdfFileProcessor,
         ".docx": DocxFileProcessor,
         ".msg": msgFileProcessor,
+        ".png": PngFileProcessor,
         ".xlsx": xlsxFileProcessor,
         ".pptx": PptxFileProcessor
     }
