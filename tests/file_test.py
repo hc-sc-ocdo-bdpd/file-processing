@@ -83,6 +83,47 @@ def test_docx_last_modified_by():
     assert docx_2.metadata['last_modified_by'] == test_last_modified_by_2
 
 
+    import os
+
+
+def test_save_docx_metadata():
+    from file_processing.file import File
+    from docx import Document
+    
+    test_docx_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.docx'
+    copy_test_docx_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_copy.docx'
+    
+    # Copying file
+    with open(test_docx_path, 'rb') as src_file:
+        with open(copy_test_docx_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Arbitrary test author and last_modified_by names
+        test_author = 'New Author'
+        test_last_modified_by = 'Modified Author'
+        
+        # Load and change metadata via File object
+        docx_file = File(copy_test_docx_path)
+        docx_file.metadata['author'] = test_author
+        docx_file.metadata['last_modified_by'] = test_last_modified_by
+        
+        # Save changes
+        docx_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        doc = Document(copy_test_docx_path)
+        
+        # Assert if changes are correctly reflected
+        assert doc.core_properties.author == test_author
+        assert doc.core_properties.last_modified_by == test_last_modified_by
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_docx_path)
+
+
+
 def test_pdf_ocr_text_found():
     from file_processing.file import File
     pdf_1 = File('tests/resources/test_files/SampleReportScreenShot.pdf', use_ocr=True)
