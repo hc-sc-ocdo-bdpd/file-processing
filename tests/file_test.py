@@ -89,42 +89,49 @@ def test_pdf_ocr_text_found():
     ocr_text = pdf_1.metadata['ocr_text']
     assert len(ocr_text) > 0
 
+    
 def test_msg_text():
     from file_processing.file import File
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_text = msg.metadata['text']
     assert msg_text == 'Body text.\r\n\r\n \r\n\r\n'
 
+    
 def test_msg_subject():
     from file_processing.file import File
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_subject = msg.metadata['subject']
     assert msg_subject == 'Test Email'
 
+    
 def test_msg_date():
     from file_processing.file import File
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_date = msg.metadata['date']
     assert msg_date == 'Mon, 18 Sep 2023 13:57:16 -0400'
 
+    
 def test_msg_sender():
     from file_processing.file import File
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_sender = msg.metadata['sender']
     assert msg_sender == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
 
+    
 def test_excel_sheets():
     from file_processing.file import File 
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     exceldoc_sheetnames = exceldoc.metadata['sheet_names']
     assert exceldoc_sheetnames == ['Sheet1', 'Sheet2', 'Sheet3']
 
+    
 def test_excel_activesheet():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     exceldoc_activesheet = exceldoc.metadata['active_sheet']
     assert str(exceldoc_activesheet) == "<Worksheet \"Sheet3\">"
 
+    
 def test_excel_data():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
@@ -132,15 +139,80 @@ def test_excel_data():
     assert len(exceldoc.metadata['data']['Sheet2']) == 11
     assert len(exceldoc.metadata['data']['Sheet3']) == 21
 
+    
 def test_excel_last_modified_by():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert exceldoc.metadata['last_modified_by'] == 'Burnett, Taylen (HC/SC)'
 
+    
 def test_excel_creator():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert exceldoc.metadata['creator'] == 'Burnett, Taylen (HC/SC)'
 
+    
+def test_pptx_text():
+    from file_processing.file import File
+    pptx_1 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx')
+    pptx_2 = File('tests/resources/test_files/SampleReport.pptx')
+    assert len(pptx_1.metadata['text']) == 1655
+    assert len(pptx_2.metadata['text']) == 2037
+
+
+def test_pptx_author():
+    from file_processing.file import File
+    from pptx import Presentation
+
+    # Paths of test files
+    test_pptx_1_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx'
+    test_pptx_2_path = 'tests/resources/test_files/SampleReport.pptx'
+
+    # Arbitrary test author names
+    test_author_1 = 'Test Author One'
+    test_author_2 = 'Second Test Author'
+
+    # Update test pptx files to have test names
+    for x in [(test_pptx_1_path,test_author_1), (test_pptx_2_path, test_author_2)]:
+        ppt = Presentation(x[0])
+        ppt.core_properties.author = x[1]
+        ppt.save(x[0])
+
+    # Test author names match
+    pptx_1 = File(test_pptx_1_path)
+    pptx_2 = File(test_pptx_2_path)
+    assert pptx_1.metadata['author'] == test_author_1
+    assert pptx_2.metadata['author'] == test_author_2
+
+
+def test_pptx_last_modified_by():
+    from file_processing.file import File
+    from pptx import Presentation
+
+    # Paths of test files
+    test_pptx_1_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx'
+    test_pptx_2_path = 'tests/resources/test_files/SampleReport.pptx'
+
+    # Arbitrary test last_modified_by names
+    test_last_modified_by_1 = 'Test last_modified_by One'
+    test_last_modified_by_2 = 'last_modified_by Test Author'
+
+    # Update test pptx files to have test names
+    for x in [(test_pptx_1_path,test_last_modified_by_1), (test_pptx_2_path, test_last_modified_by_2)]:
+        ppt = Presentation(x[0])
+        ppt.core_properties.last_modified_by = x[1]
+        ppt.save(x[0])
+
+    # Test last_modified_by names match
+    pptx_1 = File(test_pptx_1_path)
+    pptx_2 = File(test_pptx_2_path)
+    assert pptx_1.metadata['last_modified_by'] == test_last_modified_by_1
+    assert pptx_2.metadata['last_modified_by'] == test_last_modified_by_2
 
     
+def test_pptx_num_slides():
+    from file_processing.file import File
+    pptx_1 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx')
+    pptx_2 = File('tests/resources/test_files/SampleReport.pptx')
+    assert pptx_1.metadata['num_slides'] == 4
+    assert pptx_2.metadata['num_slides'] == 5
