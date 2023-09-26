@@ -89,30 +89,101 @@ def test_pdf_ocr_text_found():
     ocr_text = pdf_1.metadata['ocr_text']
     assert len(ocr_text) > 0
 
+    
 def test_msg_text():
     from file_processing.file import File
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_text = msg.metadata['text']
     assert msg_text == 'Body text.\r\n\r\n \r\n\r\n'
 
+    
 def test_msg_subject():
     from file_processing.file import File
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_subject = msg.metadata['subject']
     assert msg_subject == 'Test Email'
 
+    
 def test_msg_date():
     from file_processing.file import File
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_date = msg.metadata['date']
     assert msg_date == 'Mon, 18 Sep 2023 13:57:16 -0400'
 
+    
 def test_msg_sender():
     from file_processing.file import File
     msg = File('tests/resources/test_files/Test Email.msg')
     msg_sender = msg.metadata['sender']
     assert msg_sender == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
 
+
+def test_png_format():
+    from file_processing.file import File
+    png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
+    png_2 = File('tests/resources/test_files/MapCanada.png')
+    assert png_1.metadata['original_format'] == 'GIF'
+    assert png_2.metadata['original_format'] == 'PNG'
+
+    
+def test_png_mode():
+    from file_processing.file import File
+    png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
+    png_2 = File('tests/resources/test_files/MapCanada.png')
+    assert png_1.metadata['mode'] == 'P'
+    assert png_2.metadata['mode'] == 'RGBA'
+
+    
+def test_png_width():
+    from file_processing.file import File
+    png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
+    png_2 = File('tests/resources/test_files/MapCanada.png')
+    assert png_1.metadata['width'] == 303
+    assert png_2.metadata['width'] == 3000
+
+    
+def test_png_height():
+    from file_processing.file import File
+    png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
+    png_2 = File('tests/resources/test_files/MapCanada.png')
+    assert png_1.metadata['height'] == 40
+    assert png_2.metadata['height'] == 2408
+    
+    
+def test_excel_sheets():
+    from file_processing.file import File 
+    exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
+    exceldoc_sheetnames = exceldoc.metadata['sheet_names']
+    assert exceldoc_sheetnames == ['Sheet1', 'Sheet2', 'Sheet3']
+
+    
+def test_excel_activesheet():
+    from file_processing.file import File
+    exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
+    exceldoc_activesheet = exceldoc.metadata['active_sheet']
+    assert str(exceldoc_activesheet) == "<Worksheet \"Sheet3\">"
+
+    
+def test_excel_data():
+    from file_processing.file import File
+    exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
+    assert len(exceldoc.metadata['data']['Sheet1']) == 10
+    assert len(exceldoc.metadata['data']['Sheet2']) == 11
+    assert len(exceldoc.metadata['data']['Sheet3']) == 21
+
+    
+def test_excel_last_modified_by():
+    from file_processing.file import File
+    exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
+    assert exceldoc.metadata['last_modified_by'] == 'Burnett, Taylen (HC/SC)'
+
+    
+def test_excel_creator():
+    from file_processing.file import File
+    exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
+    assert exceldoc.metadata['creator'] == 'Burnett, Taylen (HC/SC)'
+
+    
 def test_pptx_text():
     from file_processing.file import File
     pptx_1 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx')
@@ -170,6 +241,7 @@ def test_pptx_last_modified_by():
     assert pptx_1.metadata['last_modified_by'] == test_last_modified_by_1
     assert pptx_2.metadata['last_modified_by'] == test_last_modified_by_2
 
+    
 def test_pptx_num_slides():
     from file_processing.file import File
     pptx_1 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx')
@@ -177,19 +249,74 @@ def test_pptx_num_slides():
     assert pptx_1.metadata['num_slides'] == 4
     assert pptx_2.metadata['num_slides'] == 5
 
+    
 def test_html_text():
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
     assert len(txt_1.metadata['text']) == 165405
 
+    
 def test_html_num_lines():
     # indirectly tests lines attribute
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
     assert txt_1.metadata['num_lines'] == 3439
 
+    
 def test_html_num_words():
     # indirectly tests words attribute
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
     assert txt_1.metadata['num_words'] == 11162
+
+    
+def test_xml_text():
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Sample.xml')
+    assert len(txt_1.metadata['text']) == 4429
+
+    
+def test_xml_num_lines():
+    # indirectly tests lines attribute
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Sample.xml')
+    assert txt_1.metadata['num_lines'] == 120
+
+    
+def test_xml_num_words():
+    # indirectly tests words attribute
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Sample.xml')
+    assert txt_1.metadata['num_words'] == 336
+    
+
+def test_jpeg_format():
+    from file_processing.file import File
+    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpeg')
+    jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
+    assert jpeg_1.metadata['original_format'] == 'JPEG'
+    assert jpeg_2.metadata['original_format'] == 'JPEG'
+
+    
+def test_jpeg_mode():
+    from file_processing.file import File
+    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpeg')
+    jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
+    assert jpeg_1.metadata['mode'] == 'RGB'
+    assert jpeg_2.metadata['mode'] == 'RGB'
+
+    
+def test_jpeg_width():
+    from file_processing.file import File
+    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpeg')
+    jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
+    assert jpeg_1.metadata['width'] == 474
+    assert jpeg_2.metadata['width'] == 4489
+
+    
+def test_jpeg_height():
+    from file_processing.file import File
+    jpeg_1 = File('tests/resources/test_files/HealthCanada.jpeg')
+    jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
+    assert jpeg_1.metadata['height'] == 262
+    assert jpeg_2.metadata['height'] == 2896

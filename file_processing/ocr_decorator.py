@@ -1,13 +1,13 @@
 import PyPDF2
 import pytesseract
 from PIL import Image
-import os
+from pathlib import Path
 import io
 import getpass
 from file_processor_strategy import FileProcessorStrategy
 
 # Init for tesseract
-pytesseract.pytesseract.tesseract_cmd = os.path.join('C:/Users', getpass.getuser(), 'AppData/Local/Programs/Tesseract-OCR/tesseract.exe')
+pytesseract.pytesseract.tesseract_cmd = Path('C:/Users') / getpass.getuser() / 'AppData/Local/Programs/Tesseract-OCR/tesseract.exe'
 
 class OCRDecorator:
     def __init__(self, processor: FileProcessorStrategy) -> None:
@@ -19,7 +19,6 @@ class OCRDecorator:
         self._processor.process()
         ocr_text = self.extract_text_with_ocr()
         self._processor.metadata['ocr_text'] = ocr_text
-
 
     def extract_text_with_ocr(self) -> str:
         """Extracts text from the file using OCR.
@@ -48,26 +47,24 @@ class OCRDecorator:
         ocrText = ''
 
         try:
-            pdfFileObj = open(self._processor.file_path, 'rb')
-            reader = PyPDF2.PdfReader(pdfFileObj)
-            numPages = len(reader.pages)
+            with open(self._processor.file_path, 'rb') as pdfFileObj:
+                reader = PyPDF2.PdfReader(pdfFileObj)
+                numPages = len(reader.pages)
 
-            # Assuming you want to read the whole document for the OCRDecorator
-            startPage = 0
-            endPage = numPages
+                startPage = 0
+                endPage = numPages
 
-            for i in range(startPage, endPage):
-                pageObj = reader.pages[i]
-                
-                text += pageObj.extract_text()  # extract the text of the page
-                
-                for image in pageObj.images:  # extract the images of the page
-                    ocrText += pytesseract.image_to_string(Image.open(io.BytesIO(image.data)))
-            pdfFileObj.close()
+                for i in range(startPage, endPage):
+                    pageObj = reader.pages[i]
+                    
+                    text += pageObj.extract_text()
+                    
+                    for image in pageObj.images:
+                        ocrText += pytesseract.image_to_string(Image.open(io.BytesIO(image.data)))
 
-            # Combine the extracted text and OCR text
-            combined_text = text + "\n" + ocrText
-            return combined_text
+                # Combine the extracted text and OCR text
+                combined_text = text + "\n" + ocrText
+                return combined_text
 
         except Exception as e:
             print(f"Error during OCR processing for PDF: {e}")
