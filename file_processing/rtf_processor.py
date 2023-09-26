@@ -1,5 +1,6 @@
 from file_processor_strategy import FileProcessorStrategy
 from striprtf.striprtf import rtf_to_text
+#https://pypi.org/project/striprtf/
 
 class RtfFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -8,5 +9,3 @@ class RtfFileProcessor(FileProcessorStrategy):
 
     def process(self) -> None:
         self.metadata.update({"rtf_text": rtf_to_text(self.file_path)})
-        #rtf_text = self.file_path
-        #text = rtf_to_text(rtf_text)
