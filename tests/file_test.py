@@ -250,6 +250,12 @@ def test_pptx_num_slides():
     assert pptx_2.metadata['num_slides'] == 5
 
     
+def test_rtf_text():
+    from file_processing.file import File
+    rtf_1 = File('tests/resources/test_files/Test_for_RTF.rtf')
+    assert len(rtf_1.metadata['text']) == 5306
+    
+                 
 def test_html_text():
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
