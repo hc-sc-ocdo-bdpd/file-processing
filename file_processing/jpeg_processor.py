@@ -16,3 +16,9 @@ class JpegFileProcessor(FileProcessorStrategy):
             'width': image.width,
             'height': image.height,
         })
+
+    def save(self, output_path: str = None) -> None:
+        image = Image.open(self.file_path)
+        
+        save_path = output_path or self.file_path
+        image.save(save_path)

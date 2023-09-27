@@ -184,7 +184,6 @@ def test_msg_sender():
     msg_sender = msg.metadata['sender']
     assert msg_sender == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
 
-
 def test_png_format():
     from file_processing.file import File
     png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
@@ -417,3 +416,33 @@ def test_jpeg_height():
     jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
     assert jpeg_1.metadata['height'] == 262
     assert jpeg_2.metadata['height'] == 2896
+
+def test_save_jpeg_metadata():
+    from file_processing.file import File
+    
+    test_jpeg_path = 'tests/resources/test_files/HealthCanada.jpeg'
+    copy_test_jpeg_path = 'tests/resources/test_files/HealthCanada_copy.jpeg'
+    
+    # Copying file
+    with open(test_jpeg_path, 'rb') as src_file:
+        with open(copy_test_jpeg_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Load via File object
+        jpeg_file = File(copy_test_jpeg_path)
+        
+        # Save changes
+        jpeg_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        jpeg = File(copy_test_jpeg_path)
+        
+        # Assert if file correctly saved
+        assert jpeg.metadata['height'] == 262
+        assert jpeg.metadata['width'] == 474
+        assert jpeg.metadata['mode'] == 'RGB'
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_jpeg_path)
