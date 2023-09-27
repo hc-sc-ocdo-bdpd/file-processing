@@ -1,5 +1,5 @@
 from file_processor_strategy import FileProcessorStrategy
-import extract_msg 
+import extract_msg
 
 class msgFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -13,4 +13,9 @@ class msgFileProcessor(FileProcessorStrategy):
         self.metadata.update({'date': msg.date})
         self.metadata.update({'sender': msg.sender})
 
-
+    def save(self, output_path: str = None) -> None:
+        save_path = output_path or self.file_path
+        msg = extract_msg.Message(self.file_path)
+        
+        msg.save(save_path)
+    
