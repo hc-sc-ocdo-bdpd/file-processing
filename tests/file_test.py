@@ -184,6 +184,38 @@ def test_msg_sender():
     msg_sender = msg.metadata['sender']
     assert msg_sender == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
 
+def test_save_msg_metadata():
+    from file_processing.file import File
+    
+    test_msg_path = 'tests/resources/test_files/Test Email.msg'
+    copy_test_msg_path = 'tests/resources/test_files/Test Email_copy.msg'
+    
+    # Copying file
+    with open(test_msg_path, 'rb') as src_file:
+        with open(copy_test_msg_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Load via File object
+        msg_file = File(copy_test_msg_path)
+        
+        # Save changes
+        msg_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        msg = File(copy_test_msg_path)
+        
+        # Assert if file correctly saved
+        print(msg.metadata)
+        assert msg.metadata['sender'] == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
+        assert msg.metadata['date'] == 'Mon, 18 Sep 2023 13:57:16 -0400'
+        assert msg.metadata['subject'] == 'Test Email'
+        assert msg.metadata['text'] == 'Body text.\r\n\r\n \r\n\r\n'
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_msg_path)
+
 def test_png_format():
     from file_processing.file import File
     png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
