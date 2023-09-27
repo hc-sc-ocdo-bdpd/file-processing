@@ -8,4 +8,6 @@ class RtfFileProcessor(FileProcessorStrategy):
         self.metadata = {}
 
     def process(self) -> None:
-        self.metadata.update({"rtf_text": rtf_to_text(self.file_path)})
+        with open(self.file_path, 'r', encoding='utf-8') as file:
+            file_content = file.read()
+        self.metadata.update({"text": rtf_to_text(file_content)})

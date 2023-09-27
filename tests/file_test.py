@@ -252,9 +252,8 @@ def test_pptx_num_slides():
     
 def test_rtf_text():
     from file_processing.file import File
-    rtf_1 = File('tes
-                 ts/resources/test_files/Test_for_RTF.rtf')
-    assert len(rtf_1.metadata['rtf_text']) == 43
+    rtf_1 = File('tests/resources/test_files/Test_for_RTF.rtf')
+    assert len(rtf_1.metadata['text']) == 5306
     
                  
 def test_html_text():
