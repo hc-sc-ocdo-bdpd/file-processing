@@ -1,5 +1,7 @@
 from file_processor_strategy import FileProcessorStrategy
 from openpyxl import load_workbook 
+from zipfile import ZipFile
+from zipfile import BadZipFile
 
 class xlsxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -7,12 +9,16 @@ class xlsxFileProcessor(FileProcessorStrategy):
         self.metadata = {}
     
     def process(self) -> None:
-        exceldoc = load_workbook(self.file_path)
-        self.metadata.update({"active_sheet": exceldoc.active})
-        self.metadata.update({"sheet_names": exceldoc.sheetnames})
-        self.metadata.update({"data":self.read_all_data(exceldoc)})
-        self.metadata.update({"last_modified_by": exceldoc.properties.lastModifiedBy})
-        self.metadata.update({"creator": exceldoc.properties.creator})
+        try:
+            with ZipFile(self.file_path) as zf:
+                exceldoc = load_workbook(self.file_path)
+                self.metadata.update({"active_sheet": exceldoc.active})
+                self.metadata.update({"sheet_names": exceldoc.sheetnames})
+                self.metadata.update({"data":self.read_all_data(exceldoc)})
+                self.metadata.update({"last_modified_by": exceldoc.properties.lastModifiedBy})
+                self.metadata.update({"creator": exceldoc.properties.creator})
+        except BadZipFile:
+            raise
     
     @staticmethod
     def read_all_data(exceldoc):

@@ -1,5 +1,7 @@
 from file_processor_strategy import FileProcessorStrategy
 from pptx import Presentation
+from zipfile import ZipFile
+from zipfile import BadZipFile
 
 class PptxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -7,11 +9,15 @@ class PptxFileProcessor(FileProcessorStrategy):
         self.metadata = {}
 
     def process(self) -> None:
-        ppt = Presentation(self.file_path)
-        self.metadata.update({'text': self.extract_text_from_pptx(ppt)})
-        self.metadata.update({'author': ppt.core_properties.author})
-        self.metadata.update({'last_modified_by': ppt.core_properties.last_modified_by})
-        self.metadata.update({"num_slides": len(ppt.slides)})
+        try:
+            with ZipFile(self.file_path) as zf:
+                ppt = Presentation(self.file_path)
+                self.metadata.update({'text': self.extract_text_from_pptx(ppt)})
+                self.metadata.update({'author': ppt.core_properties.author})
+                self.metadata.update({'last_modified_by': ppt.core_properties.last_modified_by})
+                self.metadata.update({"num_slides": len(ppt.slides)})
+        except BadZipFile:
+            raise
 
         # Other core properties to include: https://python-pptx.readthedocs.io/en/latest/api/presentation.html#coreproperties-objects
         # keywords, language, subject, version

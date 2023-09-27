@@ -1,5 +1,7 @@
 from file_processor_strategy import FileProcessorStrategy
 from docx import Document
+from zipfile import ZipFile
+from zipfile import BadZipFile
 
 class DocxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -7,10 +9,14 @@ class DocxFileProcessor(FileProcessorStrategy):
         self.metadata = {}
 
     def process(self) -> None:
-        doc = Document(self.file_path)
-        self.metadata.update({'text': self.extract_text_from_docx(doc)})
-        self.metadata.update({'author': doc.core_properties.author})
-        self.metadata.update({'last_modified_by': doc.core_properties.last_modified_by})
+        try:
+            with ZipFile(self.file_path) as zf:
+                doc = Document(self.file_path)
+                self.metadata.update({'text': self.extract_text_from_docx(doc)})
+                self.metadata.update({'author': doc.core_properties.author})
+                self.metadata.update({'last_modified_by': doc.core_properties.last_modified_by})
+        except BadZipFile:
+            raise
 
         # Other core properties to include: https://python-docx.readthedocs.io/en/latest/api/document.html#coreproperties-objects
         # keywords, language, subject, version

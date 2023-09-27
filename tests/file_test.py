@@ -83,13 +83,27 @@ def test_docx_last_modified_by():
     assert docx_2.metadata['last_modified_by'] == test_last_modified_by_2
 
 
+def test_docx_locked():
+    from file_processing.file import File
+    import pytest
+    with pytest.raises(Exception) as e_info:
+        docx_1 = File('tests/resources/test_files/SampleReport_Locked.docx')
+
+
 def test_pdf_ocr_text_found():
     from file_processing.file import File
     pdf_1 = File('tests/resources/test_files/SampleReportScreenShot.pdf', use_ocr=True)
     ocr_text = pdf_1.metadata['ocr_text']
     assert len(ocr_text) > 0
 
+
+def test_pdf_locked():
+    from file_processing.file import File
+    import pytest
+    with pytest.raises(Exception) as e_info:
+        pdf_1 = File('tests/resources/test_files/SampleReport_Locked.pdf')
     
+
 def test_msg_text():
     from file_processing.file import File
     msg = File('tests/resources/test_files/Test Email.msg')
@@ -183,6 +197,13 @@ def test_excel_creator():
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert exceldoc.metadata['creator'] == 'Burnett, Taylen (HC/SC)'
 
+
+def test_excel_locked():
+    from file_processing.file import File
+    import pytest
+    with pytest.raises(Exception) as e_info:
+        exceldoc = File('tests/resources/test_files/Test_excel_file_Locked.xlsx')
+
     
 def test_pptx_text():
     from file_processing.file import File
@@ -249,7 +270,14 @@ def test_pptx_num_slides():
     assert pptx_1.metadata['num_slides'] == 4
     assert pptx_2.metadata['num_slides'] == 5
 
+
+def test_pptx_locked():
+    from file_processing.file import File
+    import pytest
+    with pytest.raises(Exception) as e_info:
+        pptx_1 = File('tests/resources/test_files/SampleReport_Locked.pptx')
     
+
 def test_html_text():
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
