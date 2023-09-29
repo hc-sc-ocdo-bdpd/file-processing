@@ -11,3 +11,8 @@ class RtfFileProcessor(FileProcessorStrategy):
         with open(self.file_path, 'r', encoding='utf-8') as file:
             file_content = file.read()
         self.metadata.update({"text": rtf_to_text(file_content)})
+
+    def save(self, output_path: str = None) -> None:
+        save_path = output_path or self.file_path
+        with open(save_path, 'w') as f:
+            f.write(self.metadata['text'])

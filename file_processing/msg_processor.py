@@ -12,10 +12,13 @@ class msgFileProcessor(FileProcessorStrategy):
         self.metadata.update({'subject': msg.subject})
         self.metadata.update({'date': msg.date})
         self.metadata.update({'sender': msg.sender})
+        msg.close()
+
+
 
     def save(self, output_path: str = None) -> None:
-        save_path = output_path or self.file_path
-        msg = extract_msg.Message(self.file_path)
-        
-        msg.save(save_path)
+        output_path = output_path or self.file_path
+        msg_file = extract_msg.Message(self.file_path)
+        msg_file.export(path=output_path)
+        msg_file.close()
     

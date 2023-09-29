@@ -186,7 +186,7 @@ def test_msg_sender():
 
 def test_save_msg_metadata():
     from file_processing.file import File
-    
+
     test_msg_path = 'tests/resources/test_files/Test Email.msg'
     copy_test_msg_path = 'tests/resources/test_files/Test Email_copy.msg'
     
@@ -201,19 +201,17 @@ def test_save_msg_metadata():
         
         # Save changes
         msg_file.save()
-        
+
         # Load document again to check if the changes were saved correctly
         msg = File(copy_test_msg_path)
         
         # Assert if file correctly saved
-        print(msg.metadata)
         assert msg.metadata['sender'] == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
         assert msg.metadata['date'] == 'Mon, 18 Sep 2023 13:57:16 -0400'
         assert msg.metadata['subject'] == 'Test Email'
         assert msg.metadata['text'] == 'Body text.\r\n\r\n \r\n\r\n'
 
     finally:
-        # Clean up by removing the copied file after the test is done
         os.remove(copy_test_msg_path)
 
 def test_png_format():
@@ -246,6 +244,36 @@ def test_png_height():
     png_2 = File('tests/resources/test_files/MapCanada.png')
     assert png_1.metadata['height'] == 40
     assert png_2.metadata['height'] == 2408
+
+def test_save_png_metadata():
+    from file_processing.file import File
+    
+    test_jpeg_path = 'tests/resources/test_files/Health_Canada_logo.png'
+    copy_test_jpeg_path = 'tests/resources/test_files/Health_Canada_logo_copy.png'
+    
+    # Copying file
+    with open(test_jpeg_path, 'rb') as src_file:
+        with open(copy_test_jpeg_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Load via File object
+        jpeg_file = File(copy_test_jpeg_path)
+        
+        # Save changes
+        jpeg_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        jpeg = File(copy_test_jpeg_path)
+        
+        # Assert if file correctly saved
+        assert jpeg.metadata['height'] == 40
+        assert jpeg.metadata['width'] == 303
+        assert jpeg.metadata['mode'] == 'P'
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_jpeg_path)
     
     
 def test_excel_sheets():
@@ -385,52 +413,6 @@ def test_pptx_num_slides():
 def test_save_ppt_metadata():
     from file_processing.file import File
     from pptx import Presentation
-    
-def test_rtf_text():
-    from file_processing.file import File
-    rtf_1 = File('tests/resources/test_files/Test_for_RTF.rtf')
-    assert len(rtf_1.metadata['text']) == 5306
-    
-                 
-def test_html_text():
-    from file_processing.file import File
-    txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
-    assert len(txt_1.metadata['text']) == 165405
-
-    
-def test_html_num_lines():
-    # indirectly tests lines attribute
-    from file_processing.file import File
-    txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
-    assert txt_1.metadata['num_lines'] == 3439
-
-    
-def test_html_num_words():
-    # indirectly tests words attribute
-    from file_processing.file import File
-    txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
-    assert txt_1.metadata['num_words'] == 11162
-
-    
-def test_xml_text():
-    from file_processing.file import File
-    txt_1 = File('tests/resources/test_files/Sample.xml')
-    assert len(txt_1.metadata['text']) == 4429
-
-    
-def test_xml_num_lines():
-    # indirectly tests lines attribute
-    from file_processing.file import File
-    txt_1 = File('tests/resources/test_files/Sample.xml')
-    assert txt_1.metadata['num_lines'] == 120
-
-    
-def test_xml_num_words():
-    # indirectly tests words attribute
-    from file_processing.file import File
-    txt_1 = File('tests/resources/test_files/Sample.xml')
-    assert txt_1.metadata['num_words'] == 336
-    
     test_ppt_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx'
     copy_test_ppt_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_copy.pptx'
     
@@ -462,6 +444,128 @@ def test_xml_num_words():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_ppt_path)
+    
+def test_rtf_text():
+    from file_processing.file import File
+    rtf_1 = File('tests/resources/test_files/Test_for_RTF.rtf')
+    assert len(rtf_1.metadata['text']) == 5306
+
+def test_save_rtf_metadata():
+    from file_processing.file import File
+    
+    test_rtf_path = 'tests/resources/test_files/Test_for_RTF.rtf'
+    copy_test_rtf_path = 'tests/resources/test_files/Test_for_RTF_copy.rtf'
+    
+    # Copying file
+    with open(test_rtf_path, 'rb') as src_file:
+        with open(copy_test_rtf_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        
+        # Load via File object
+        rtf_file = File(copy_test_rtf_path)
+        
+        # Save
+        rtf_file.save()
+        
+        # Assert if .txt correctly saved
+        assert len(rtf_file.metadata['text']) == 5306
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_rtf_path)
+                 
+def test_html_text():
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
+    assert len(txt_1.metadata['text']) == 165405
+
+    
+def test_html_num_lines():
+    # indirectly tests lines attribute
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
+    assert txt_1.metadata['num_lines'] == 3439
+
+    
+def test_html_num_words():
+    # indirectly tests words attribute
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
+    assert txt_1.metadata['num_words'] == 11162
+
+def test_save_html_metadata():
+    from file_processing.file import File
+    
+    test_html_path = 'tests/resources/test_files/Health - Canada.ca.html'
+    copy_test_html_path = 'tests/resources/test_files/Health - Canada.ca_copy.html'
+    
+    # Copying file
+    with open(test_html_path, 'rb') as src_file:
+        with open(copy_test_html_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        
+        # Load via File object
+        html_file = File(copy_test_html_path)
+        
+        # Save
+        html_file.save()
+        
+        # Assert if .txt correctly saved
+        assert len(html_file.metadata['text']) == 165405
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_html_path)
+
+    
+def test_xml_text():
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Sample.xml')
+    assert len(txt_1.metadata['text']) == 4429
+
+    
+def test_xml_num_lines():
+    # indirectly tests lines attribute
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Sample.xml')
+    assert txt_1.metadata['num_lines'] == 120
+
+    
+def test_xml_num_words():
+    # indirectly tests words attribute
+    from file_processing.file import File
+    txt_1 = File('tests/resources/test_files/Sample.xml')
+    assert txt_1.metadata['num_words'] == 336
+
+def test_save_xml_metadata():
+    from file_processing.file import File
+    
+    test_xml_path = 'tests/resources/test_files/Sample.xml'
+    copy_test_xml_path = 'tests/resources/test_files/Sample_copy.xml'
+    
+    # Copying file
+    with open(test_xml_path, 'rb') as src_file:
+        with open(copy_test_xml_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        
+        # Load via File object
+        xml_file = File(copy_test_xml_path)
+        
+        # Save
+        xml_file.save()
+        
+        # Assert if .txt correctly saved
+        assert len(xml_file.metadata['text']) == 4429
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_xml_path)
 
 def test_jpeg_format():
     from file_processing.file import File
@@ -523,4 +627,3 @@ def test_save_jpeg_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_jpeg_path)
-    assert jpeg_2.metadata['height'] == 2896
