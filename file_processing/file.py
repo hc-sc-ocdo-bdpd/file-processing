@@ -51,12 +51,19 @@ class File:
 
         return processor
 
+
+    def save(self, output_path: str = None) -> None:
+        self.processor.save(output_path)
+
+
     def process(self) -> None:
         return self.processor.process()
+
 
     @property
     def file_name(self) -> str:
         return self.processor.file_name
+
 
     @property
     def metadata(self) -> dict:

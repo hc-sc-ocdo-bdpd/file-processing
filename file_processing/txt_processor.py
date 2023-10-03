@@ -22,3 +22,8 @@ class TextFileProcessor(FileProcessorStrategy):
             'num_lines': len(lines),
             'num_words': len(words),
         })
+
+    def save(self, output_path: str = None) -> None:
+        save_path = output_path or self.file_path
+        with open(save_path, 'w', encoding = self.metadata['encoding']) as f:
+            f.write(self.metadata['text'])
