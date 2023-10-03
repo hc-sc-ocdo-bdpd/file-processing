@@ -97,11 +97,11 @@ def test_pdf_ocr_text_found():
     assert len(ocr_text) > 0
 
 
-def test_pdf_locked():
+def test_pdf_locked(capfd):
     from file_processing.file import File
-    import pytest
-    with pytest.raises(Exception) as e_info:
-        pdf_1 = File('tests/resources/test_files/SampleReport_Locked.pdf')
+    pdf_1 = File('tests/resources/test_files/SampleReport_Locked.pdf')
+    out, err = capfd.readouterr()
+    assert out == 'Error encountered while opening or processing tests\\resources\\test_files\SampleReport_Locked.pdf: File has not been decrypted\n'
     
 
 def test_msg_text():

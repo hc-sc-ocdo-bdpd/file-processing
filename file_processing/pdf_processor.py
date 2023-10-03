@@ -1,7 +1,5 @@
 from file_processor_strategy import FileProcessorStrategy
 from PyPDF2 import PdfReader
-from zipfile import ZipFile
-from zipfile import BadZipFile
 
 class PdfFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -9,12 +7,8 @@ class PdfFileProcessor(FileProcessorStrategy):
         self.metadata = {}
 
     def process(self) -> None:
-        try:
-            with ZipFile(self.file_path) as zf:
-                text = self.extract_text_from_pdf(self.file_path)
-                self.metadata.update({'text': text})
-        except BadZipFile:
-            raise
+        text = self.extract_text_from_pdf(self.file_path)
+        self.metadata.update({'text': text})
 
     @staticmethod
     def extract_text_from_pdf(file_path: str) -> str:
