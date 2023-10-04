@@ -19,3 +19,8 @@ class FileProcessorStrategy(ABC):
     def process(self) -> None:
         # Abstract method to be implemented by subclasses for file processing
         pass
+
+    @abstractmethod
+    def save(self) -> None:
+        """Saves the processed file after metadata changes"""
+        pass

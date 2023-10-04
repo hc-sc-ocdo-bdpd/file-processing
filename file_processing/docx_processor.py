@@ -2,6 +2,7 @@ from file_processor_strategy import FileProcessorStrategy
 from docx import Document
 from zipfile import ZipFile
 from zipfile import BadZipFile
+from docx.oxml import OxmlElement
 
 class DocxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -20,6 +21,19 @@ class DocxFileProcessor(FileProcessorStrategy):
 
         # Other core properties to include: https://python-docx.readthedocs.io/en/latest/api/document.html#coreproperties-objects
         # keywords, language, subject, version
+
+
+    def save(self, output_path: str = None) -> None:
+        doc = Document(self.file_path)
+
+        # Update the core properties (metadata)
+        cp = doc.core_properties
+        cp.author = self.metadata.get('author', cp.author)
+        cp.last_modified_by = self.metadata.get('last_modified_by', cp.last_modified_by)
+        
+        save_path = output_path or self.file_path
+        doc.save(save_path)
+
 
     @staticmethod
     def extract_text_from_docx(doc: Document) -> str:

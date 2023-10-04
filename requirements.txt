@@ -18,6 +18,7 @@ python-docx==0.8.11
 chardet==5.2.0
 extract-msg
 python-pptx
+striprtf
 
 #Used To read excel files with pandas
 openpyxl>=3.1.2

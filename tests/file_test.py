@@ -24,6 +24,32 @@ def test_txt_num_words():
     assert txt_1.metadata['num_words'] == 5691
     assert txt_2.metadata['num_words'] == 7160
 
+def test_save_txt_metadata():
+    from file_processing.file import File
+    
+    test_txt_path = 'tests/resources/test_files/government_of_canada_wikipedia.txt'
+    copy_test_txt_path = 'tests/resources/test_files/government_of_canada_wikipedia_copy.txt'
+    
+    # Copying file
+    with open(test_txt_path, 'rb') as src_file:
+        with open(copy_test_txt_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        
+        # Load via File object
+        txt_file = File(copy_test_txt_path)
+        
+        # Save
+        txt_file.save()
+        
+        # Assert if .txt correctly saved
+        assert len(txt_file.metadata['text']) == 38983
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_txt_path)
+
 
 def test_docx_text():
     from file_processing.file import File
@@ -92,6 +118,44 @@ def test_docx_locked():
         docx_2 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.docx')
 
 
+def test_save_docx_metadata():
+    from file_processing.file import File
+    from docx import Document
+    
+    test_docx_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.docx'
+    copy_test_docx_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_copy.docx'
+    
+    # Copying file
+    with open(test_docx_path, 'rb') as src_file:
+        with open(copy_test_docx_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Arbitrary test author and last_modified_by names
+        test_author = 'New Author'
+        test_last_modified_by = 'Modified Author'
+        
+        # Load and change metadata via File object
+        docx_file = File(copy_test_docx_path)
+        docx_file.metadata['author'] = test_author
+        docx_file.metadata['last_modified_by'] = test_last_modified_by
+        
+        # Save changes
+        docx_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        doc = Document(copy_test_docx_path)
+        
+        # Assert if changes are correctly reflected
+        assert doc.core_properties.author == test_author
+        assert doc.core_properties.last_modified_by == test_last_modified_by
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_docx_path)
+
+
+
 def test_pdf_ocr_text_found():
     from file_processing.file import File
     pdf_1 = File('tests/resources/test_files/SampleReportScreenShot.pdf', use_ocr=True)
@@ -136,6 +200,35 @@ def test_msg_sender():
     msg_sender = msg.metadata['sender']
     assert msg_sender == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
 
+def test_save_msg_metadata():
+    from file_processing.file import File
+
+    test_msg_path = 'tests/resources/test_files/Test Email.msg'
+    copy_test_msg_path = 'tests/resources/test_files/Test Email_copy.msg'
+    
+    # Copying file
+    with open(test_msg_path, 'rb') as src_file:
+        with open(copy_test_msg_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Load via File object
+        msg_file = File(copy_test_msg_path)
+        
+        # Save changes
+        msg_file.save()
+
+        # Load document again to check if the changes were saved correctly
+        msg = File(copy_test_msg_path)
+        
+        # Assert if file correctly saved
+        assert msg.metadata['sender'] == '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'
+        assert msg.metadata['date'] == 'Mon, 18 Sep 2023 13:57:16 -0400'
+        assert msg.metadata['subject'] == 'Test Email'
+        assert msg.metadata['text'] == 'Body text.\r\n\r\n \r\n\r\n'
+
+    finally:
+        os.remove(copy_test_msg_path)
 
 def test_png_format():
     from file_processing.file import File
@@ -167,6 +260,36 @@ def test_png_height():
     png_2 = File('tests/resources/test_files/MapCanada.png')
     assert png_1.metadata['height'] == 40
     assert png_2.metadata['height'] == 2408
+
+def test_save_png_metadata():
+    from file_processing.file import File
+    
+    test_jpeg_path = 'tests/resources/test_files/Health_Canada_logo.png'
+    copy_test_jpeg_path = 'tests/resources/test_files/Health_Canada_logo_copy.png'
+    
+    # Copying file
+    with open(test_jpeg_path, 'rb') as src_file:
+        with open(copy_test_jpeg_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Load via File object
+        jpeg_file = File(copy_test_jpeg_path)
+        
+        # Save changes
+        jpeg_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        jpeg = File(copy_test_jpeg_path)
+        
+        # Assert if file correctly saved
+        assert jpeg.metadata['height'] == 40
+        assert jpeg.metadata['width'] == 303
+        assert jpeg.metadata['mode'] == 'P'
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_jpeg_path)
     
     
 def test_excel_sheets():
@@ -211,6 +334,42 @@ def test_excel_locked():
     with pytest.raises(Exception) as e_info:
         exceldoc_2 = File('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
 
+
+def test_save_exc_metadata():
+    from file_processing.file import File
+    from openpyxl import load_workbook
+    
+    test_exc_path = 'tests/resources/test_files/Test_excel_file.xlsx'
+    copy_test_exc_path = 'tests/resources/test_files/Test_excel_file_copy.xlsx'
+    
+    # Copying file
+    with open(test_exc_path, 'rb') as src_file:
+        with open(copy_test_exc_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Arbitrary test author and last_modified_by names
+        test_creator = 'New Creator'
+        test_last_modified_by = 'Modified Creator'
+        
+        # Load and change metadata via File object
+        exc_file = File(copy_test_exc_path)
+        exc_file.metadata['creator'] = test_creator
+        exc_file.metadata['last_modified_by'] = test_last_modified_by
+        
+        # Save changes
+        exc_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        exceldoc = load_workbook(copy_test_exc_path)
+        
+        # Assert if changes are correctly reflected
+        assert exceldoc.properties.creator == test_creator
+        assert exceldoc.properties.lastModifiedBy == test_last_modified_by
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_exc_path)
     
 def test_pptx_text():
     from file_processing.file import File
@@ -287,6 +446,75 @@ def test_pptx_locked():
         pptx_2 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
     
 
+def test_save_ppt_metadata():
+    from file_processing.file import File
+    from pptx import Presentation
+    test_ppt_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx'
+    copy_test_ppt_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_copy.pptx'
+    
+    # Copying file
+    with open(test_ppt_path, 'rb') as src_file:
+        with open(copy_test_ppt_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Arbitrary test author and last_modified_by names
+        test_author = 'New Author'
+        test_last_modified_by = 'Modified Author'
+        
+        # Load and change metadata via File object
+        ppt_file = File(copy_test_ppt_path)
+        ppt_file.metadata['author'] = test_author
+        ppt_file.metadata['last_modified_by'] = test_last_modified_by
+        
+        # Save changes
+        ppt_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        ppt = Presentation(copy_test_ppt_path)
+        
+        # Assert if changes are correctly reflected
+        assert ppt.core_properties.author == test_author
+        assert ppt.core_properties.last_modified_by == test_last_modified_by
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_ppt_path)
+    
+
+def test_rtf_text():
+    from file_processing.file import File
+    rtf_1 = File('tests/resources/test_files/Test_for_RTF.rtf')
+    assert len(rtf_1.metadata['text']) == 5306
+
+
+def test_save_rtf_metadata():
+    from file_processing.file import File
+    
+    test_rtf_path = 'tests/resources/test_files/Test_for_RTF.rtf'
+    copy_test_rtf_path = 'tests/resources/test_files/Test_for_RTF_copy.rtf'
+    
+    # Copying file
+    with open(test_rtf_path, 'rb') as src_file:
+        with open(copy_test_rtf_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        
+        # Load via File object
+        rtf_file = File(copy_test_rtf_path)
+        
+        # Save
+        rtf_file.save()
+        
+        # Assert if .txt correctly saved
+        assert len(rtf_file.metadata['text']) == 5306
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_rtf_path)
+               
+                 
 def test_html_text():
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
@@ -305,6 +533,32 @@ def test_html_num_words():
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
     assert txt_1.metadata['num_words'] == 11162
+
+def test_save_html_metadata():
+    from file_processing.file import File
+    
+    test_html_path = 'tests/resources/test_files/Health - Canada.ca.html'
+    copy_test_html_path = 'tests/resources/test_files/Health - Canada.ca_copy.html'
+    
+    # Copying file
+    with open(test_html_path, 'rb') as src_file:
+        with open(copy_test_html_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        
+        # Load via File object
+        html_file = File(copy_test_html_path)
+        
+        # Save
+        html_file.save()
+        
+        # Assert if .txt correctly saved
+        assert len(html_file.metadata['text']) == 165405
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_html_path)
 
     
 def test_xml_text():
@@ -325,7 +579,32 @@ def test_xml_num_words():
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Sample.xml')
     assert txt_1.metadata['num_words'] == 336
+
+def test_save_xml_metadata():
+    from file_processing.file import File
     
+    test_xml_path = 'tests/resources/test_files/Sample.xml'
+    copy_test_xml_path = 'tests/resources/test_files/Sample_copy.xml'
+    
+    # Copying file
+    with open(test_xml_path, 'rb') as src_file:
+        with open(copy_test_xml_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        
+        # Load via File object
+        xml_file = File(copy_test_xml_path)
+        
+        # Save
+        xml_file.save()
+        
+        # Assert if .txt correctly saved
+        assert len(xml_file.metadata['text']) == 4429
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_xml_path)
 
 def test_jpeg_format():
     from file_processing.file import File
@@ -357,3 +636,33 @@ def test_jpeg_height():
     jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
     assert jpeg_1.metadata['height'] == 262
     assert jpeg_2.metadata['height'] == 2896
+
+def test_save_jpeg_metadata():
+    from file_processing.file import File
+    
+    test_jpeg_path = 'tests/resources/test_files/HealthCanada.jpeg'
+    copy_test_jpeg_path = 'tests/resources/test_files/HealthCanada_copy.jpeg'
+    
+    # Copying file
+    with open(test_jpeg_path, 'rb') as src_file:
+        with open(copy_test_jpeg_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        # Load via File object
+        jpeg_file = File(copy_test_jpeg_path)
+        
+        # Save changes
+        jpeg_file.save()
+        
+        # Load document again to check if the changes were saved correctly
+        jpeg = File(copy_test_jpeg_path)
+        
+        # Assert if file correctly saved
+        assert jpeg.metadata['height'] == 262
+        assert jpeg.metadata['width'] == 474
+        assert jpeg.metadata['mode'] == 'RGB'
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_jpeg_path)

@@ -19,7 +19,17 @@ class xlsxFileProcessor(FileProcessorStrategy):
                 self.metadata.update({"creator": exceldoc.properties.creator})
         except BadZipFile:
             raise
-    
+   
+    def save(self, output_path: str = None) -> None:
+        exceldoc = load_workbook(self.file_path)
+        cp = exceldoc.properties
+        # Update the core properties (metadata)
+        cp.creator = self.metadata.get('creator', cp.creator)
+        cp.last_modified_by = self.metadata.get('last_modified_by', cp.lastModifiedBy)
+        
+        save_path = output_path or self.file_path
+        exceldoc.save(save_path)
+ 
     @staticmethod
     def read_all_data(exceldoc):
         data = {}
@@ -30,4 +40,3 @@ class xlsxFileProcessor(FileProcessorStrategy):
                 sheet_data.append(row)
             data[sheet_name] = sheet_data
         return data
-    

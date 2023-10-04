@@ -7,10 +7,10 @@ from msg_processor import msgFileProcessor
 from png_processor import PngFileProcessor
 from xlsx_processor import xlsxFileProcessor
 from pptx_processor import PptxFileProcessor
+from rtf_processor import RtfFileProcessor
 from html_processor import HtmlFileProcessor
 from xml_processor import XmlFileProcessor
 from jpeg_processor import JpegFileProcessor
-
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
@@ -21,6 +21,7 @@ class File:
         ".docx": DocxFileProcessor,
         ".msg": msgFileProcessor,
         ".pptx": PptxFileProcessor,
+        ".rtf": RtfFileProcessor,
         ".html": HtmlFileProcessor,
         ".xml": XmlFileProcessor,
         ".png": PngFileProcessor,
@@ -50,12 +51,19 @@ class File:
 
         return processor
 
+
+    def save(self, output_path: str = None) -> None:
+        self.processor.save(output_path)
+
+
     def process(self) -> None:
         return self.processor.process()
+
 
     @property
     def file_name(self) -> str:
         return self.processor.file_name
+
 
     @property
     def metadata(self) -> dict:
