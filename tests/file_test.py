@@ -109,9 +109,6 @@ def test_docx_last_modified_by():
     assert docx_2.metadata['last_modified_by'] == test_last_modified_by_2
 
 
-    import os
-
-
 def test_save_docx_metadata():
     from file_processing.file import File
     from docx import Document
@@ -148,6 +145,51 @@ def test_save_docx_metadata():
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_docx_path)
 
+
+def test_docx_save_as_txt():
+    from file_processing.file import File
+
+    # Paths of test files
+    test_docx_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.docx'
+    output_txt_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_output.txt'
+
+    try:
+        # Convert DOCX to TXT
+        docx_file = File(test_docx_path)
+        docx_file.processor.save_as_txt(output_txt_path)
+        
+        # Verify the TXT file was created and is not empty
+        assert os.path.exists(output_txt_path)
+        with open(output_txt_path, 'r', encoding='utf-8') as file:
+            txt_content = file.read()
+        assert len(txt_content) > 0
+        assert txt_content == docx_file.metadata['text']
+
+    finally:
+        # Clean up by removing the TXT file after the test is done
+        if os.path.exists(output_txt_path):
+            os.remove(output_txt_path)
+
+def test_docx_save_as_pdf():
+    from file_processing.file import File
+
+    # Paths of test files
+    test_docx_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.docx'
+    output_pdf_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_output.pdf'
+
+    try:
+        # Convert DOCX to PDF
+        docx_file = File(test_docx_path)
+        docx_file.processor.save_as_pdf(output_pdf_path)
+        
+        # Verify the PDF file was created and is not empty
+        assert os.path.exists(output_pdf_path)
+        assert os.path.getsize(output_pdf_path) > 0
+
+    finally:
+        # Clean up by removing the PDF file after the test is done
+        if os.path.exists(output_pdf_path):
+            os.remove(output_pdf_path)
 
 
 def test_pdf_ocr_text_found():
