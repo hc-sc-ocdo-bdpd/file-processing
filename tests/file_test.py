@@ -88,6 +88,8 @@ def test_docx_locked():
     import pytest
     with pytest.raises(Exception) as e_info:
         docx_1 = File('tests/resources/test_files/SampleReport_Locked.docx')
+    with pytest.raises(Exception) as e_info:
+        docx_2 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.docx')
 
 
 def test_pdf_ocr_text_found():
@@ -102,6 +104,9 @@ def test_pdf_locked(capfd):
     pdf_1 = File('tests/resources/test_files/SampleReport_Locked.pdf')
     out, err = capfd.readouterr()
     assert out == 'Error encountered while opening or processing tests\\resources\\test_files\SampleReport_Locked.pdf: File has not been decrypted\n'
+    pdf_2 = File('tests/resources/test_files/ArtificialNeuralNetworksForBeginners_Locked.pdf')
+    out, err = capfd.readouterr()
+    assert out == 'Error encountered while opening or processing tests\\resources\\test_files\ArtificialNeuralNetworksForBeginners_Locked.pdf: File has not been decrypted\n'
     
 
 def test_msg_text():
@@ -203,6 +208,8 @@ def test_excel_locked():
     import pytest
     with pytest.raises(Exception) as e_info:
         exceldoc = File('tests/resources/test_files/Test_excel_file_Locked.xlsx')
+    with pytest.raises(Exception) as e_info:
+        exceldoc_2 = File('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
 
     
 def test_pptx_text():
@@ -276,6 +283,8 @@ def test_pptx_locked():
     import pytest
     with pytest.raises(Exception) as e_info:
         pptx_1 = File('tests/resources/test_files/SampleReport_Locked.pptx')
+    with pytest.raises(Exception) as e_info:
+        pptx_2 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
     
 
 def test_html_text():
