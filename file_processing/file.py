@@ -11,6 +11,7 @@ from rtf_processor import RtfFileProcessor
 from html_processor import HtmlFileProcessor
 from xml_processor import XmlFileProcessor
 from jpeg_processor import JpegFileProcessor
+from zip_processor import ZipFileProcessor
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
@@ -28,6 +29,7 @@ class File:
         ".xlsx": xlsxFileProcessor,
         ".jpeg": JpegFileProcessor,
         ".jpg": JpegFileProcessor,
+        ".zip": ZipFileProcessor,
     }
 
     def __init__(self, path: str, use_ocr: bool = False) -> None:
