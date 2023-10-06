@@ -1,6 +1,7 @@
 from file_processor_strategy import FileProcessorStrategy
 from pptx import Presentation
 
+
 class PptxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
         super().__init__(file_path)
