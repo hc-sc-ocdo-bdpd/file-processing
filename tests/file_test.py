@@ -627,3 +627,27 @@ def test_save_jpeg_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_jpeg_path)
+
+
+def test_zip_num_files():
+    from file_processing.file import File
+    zip_1 = File('tests/resources/test_files/SampleReport.zip')
+    zip_2 = File('tests/resources/test_files/Empty.zip')
+    assert zip_1.metadata['num_files'] == 3
+    assert zip_2.metadata['num_files'] == 0
+
+    
+def test_zip_file_types():
+    from file_processing.file import File
+    zip_1 = File('tests/resources/test_files/SampleReport.zip')
+    zip_2 = File('tests/resources/test_files/Empty.zip')
+    assert zip_1.metadata['file_types'] == {'docx': 2, 'pptx': 1}
+    assert zip_2.metadata['file_types'] == {}
+
+
+def test_zip_file_names():
+    from file_processing.file import File
+    zip_1 = File('tests/resources/test_files/SampleReport.zip')
+    zip_2 = File('tests/resources/test_files/Empty.zip')
+    assert zip_1.metadata['file_names'] == ['SampleReport.docx', 'SampleReport.pptx', 'HealthCanadaOverviewFromWikipedia.docx']
+    assert zip_2.metadata['file_names'] == []
