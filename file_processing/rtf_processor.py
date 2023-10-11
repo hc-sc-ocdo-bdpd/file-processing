@@ -18,17 +18,6 @@ class RtfFileProcessor(FileProcessorStrategy):
         with open(save_path, 'w') as f:
             f.write(self.metadata['text'])
     
-    def save_as_pdf(self, output_path: str) -> None:
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("helvetica", size = 12)
-        
-        with open(self.file_path, "r") as f:
-            for x in f:
-                x = x.encode('utf-8').decode('latin1')
-                pdf.multi_cell(200,10, txt = x.strip(), align = 'C')
-        pdf.output(output_path)
-    
     def save_as_docx(self, output_path: str) -> None:
         from docx import Document
         docx_file = Document()
@@ -37,3 +26,7 @@ class RtfFileProcessor(FileProcessorStrategy):
             docx_file.add_paragraph(text)
 
         docx_file.save(output_path)
+
+    def save_as_txt(self, output_path: str) -> None:
+        with open(output_path, 'w', encoding='utf-8') as file:
+            file.write(self.metadata['text'])

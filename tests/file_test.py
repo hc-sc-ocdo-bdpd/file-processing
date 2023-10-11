@@ -280,26 +280,6 @@ def test_pdf_save_as_docx():
         # Clean up by removing the DOCX file after the test is done
         if os.path.exists(output_docx_path):
             os.remove(output_docx_path)
-
-def test_pdf_save_as_png():
-    from file_processing.file import File
-
-    # Paths of test files
-    test_pdf_path = 'tests/resources/test_files/ArtificialNeuralNetworksForBeginners.pdf'
-    output_jpeg_path = 'tests/resources/test_files/ArtificialNeuralNetworksForBeginners.png'
-
-    try:
-        # Convert PDF to PNG
-        pdf_file = File(test_pdf_path)
-        pdf_file.processor.save_as_png(output_jpeg_path)
-        
-        # Verify the PNG file was created
-        assert os.path.exists(output_jpeg_path)
-
-    finally:
-        # Clean up by removing the PNG file after the test is done
-        if os.path.exists(output_jpeg_path):
-            os.remove(output_jpeg_path)
     
 def test_msg_text():
     from file_processing.file import File
@@ -460,6 +440,27 @@ def test_save_png_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_jpeg_path)
+
+def test_png_save_as_pdf():
+    from file_processing.file import File
+
+    # Paths of test files
+    test_png_path = 'tests/resources/test_files/Health_Canada_logo.png'
+    output_pdf_path = 'tests/resources/test_files/Health_Canada_logo.pdf'
+
+    try:
+        # Convert JPEG to PDF
+        png_file = File(test_png_path)
+        png_file.processor.save(output_pdf_path)
+        
+    # Verify the PDF file was created and is not empty
+        assert os.path.exists(output_pdf_path)
+        assert os.path.getsize(output_pdf_path) > 0
+
+    finally:
+        # Clean up by removing the PDF file after the test is done
+        if os.path.exists(output_pdf_path):
+            os.remove(output_pdf_path)
     
     
 def test_excel_sheets():
@@ -630,6 +631,26 @@ def test_save_ppt_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_ppt_path)
+
+def test_pptx_save_as_pdf():
+    from file_processing.file import File
+
+    # Paths of test files
+    test_html_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx'
+    output_txt_path = 'tests/resources/test_files/_HealthCanadaOverviewFromWikipedia_.pdf'
+    try:
+        # Convert PPTX to PDF
+        html_file = File(test_html_path)
+        html_file.processor.save_as_pdf(output_txt_path)
+        
+    # Verify the PDF file was created and is not empty
+        assert os.path.exists(output_txt_path)
+        assert os.path.getsize(output_txt_path) > 0
+
+    finally:
+        # Clean up by removing the PDF file after the test is done
+        if os.path.exists(output_txt_path):
+            os.remove(output_txt_path)
     
 def test_rtf_text():
     from file_processing.file import File
@@ -672,7 +693,7 @@ def test_rtf_save_as_txt():
     try:
         # Convert RTF to TXT
         rtf_file = File(test_rtf_path)
-        rtf_file.processor.save(output_txt_path)
+        rtf_file.processor.save_as_txt(output_txt_path)
         
     # Verify the TXT file was created and is not empty
         assert os.path.exists(output_txt_path)
@@ -682,27 +703,6 @@ def test_rtf_save_as_txt():
         # Clean up by removing the TXT file after the test is done
         if os.path.exists(output_txt_path):
             os.remove(output_txt_path)
-
-def test_rtf_save_as_pdf():
-    from file_processing.file import File
-
-    # Paths of test files
-    test_rtf_path = 'tests/resources/test_files/Test_for_RTF.rtf'
-    output_pdf_path = 'tests/resources/test_files/Test_for_RTF.pdf'
-
-    try:
-        # Convert RTF to PDF
-        rtf_file = File(test_rtf_path)
-        rtf_file.processor.save(output_pdf_path)
-        
-    # Verify the PDF file was created and is not empty
-        assert os.path.exists(output_pdf_path)
-        assert os.path.getsize(output_pdf_path) > 0
-
-    finally:
-        # Clean up by removing the PDF file after the test is done
-        if os.path.exists(output_pdf_path):
-            os.remove(output_pdf_path)
 
 def test_rtf_save_as_docx():
     from file_processing.file import File
@@ -714,14 +714,14 @@ def test_rtf_save_as_docx():
     try:
         # Convert RTF to DOCX
         rtf_file = File(test_rtf_path)
-        rtf_file.processor.save(output_docx_path)
+        rtf_file.processor.save_as_docx(output_docx_path)
         
     # Verify the DOCX file was created and is not empty
         assert os.path.exists(output_docx_path)
         assert os.path.getsize(output_docx_path) > 0
 
     finally:
-        # Clean up by removing the PDF file after the test is done
+        # Clean up by removing the DOCX file after the test is done
         if os.path.exists(output_docx_path):
             os.remove(output_docx_path)
                  
@@ -769,6 +769,26 @@ def test_save_html_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_html_path)
+
+def test_html_save_as_txt():
+    from file_processing.file import File
+
+    # Paths of test files
+    test_html_path = 'tests/resources/test_files/Health - Canada.ca.html'
+    output_txt_path = 'tests/resources/test_files/Health - Canada.ca.txt'
+    try:
+        # Convert HTML to TXT
+        html_file = File(test_html_path)
+        html_file.processor.save(output_txt_path)
+        
+    # Verify the TXT file was created and is not empty
+        assert os.path.exists(output_txt_path)
+        assert os.path.getsize(output_txt_path) > 0
+
+    finally:
+        # Clean up by removing the TXT file after the test is done
+        if os.path.exists(output_txt_path):
+            os.remove(output_txt_path)
 
     
 def test_xml_text():
@@ -876,3 +896,24 @@ def test_save_jpeg_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_jpeg_path)
+
+def test_jpeg_save_as_pdf():
+    from file_processing.file import File
+
+    # Paths of test files
+    test_jpeg_path = 'tests/resources/test_files/HealthCanada.jpeg'
+    output_pdf_path = 'tests/resources/test_files/HealthCanada_.pdf'
+
+    try:
+        # Convert JPEG to PDF
+        jpeg_file = File(test_jpeg_path)
+        jpeg_file.processor.save(output_pdf_path)
+        
+    # Verify the PDF file was created and is not empty
+        assert os.path.exists(output_pdf_path)
+        assert os.path.getsize(output_pdf_path) > 0
+
+    finally:
+        # Clean up by removing the PDF file after the test is done
+        if os.path.exists(output_pdf_path):
+            os.remove(output_pdf_path)
