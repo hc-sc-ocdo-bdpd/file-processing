@@ -34,13 +34,3 @@ class xlsxFileProcessor(FileProcessorStrategy):
                 sheet_data.append(row)
             data[sheet_name] = sheet_data
         return data
-    
-    def save_as_pdf(self, output_path: str) -> None:
-        import win32com.client
-        o = win32com.client.Dispatch("Excel.Application")
-        o.Visible = False
-        wb = o.Workbooks.Open(self.file_path)
-
-        ws_index_list = [1] 
-        wb.WorkSheets(ws_index_list).Select()
-        wb.ActiveSheet.ExportAsFixedFormat(0, output_path)

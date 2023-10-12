@@ -451,7 +451,7 @@ def test_png_save_as_pdf():
     try:
         # Convert JPEG to PDF
         png_file = File(test_png_path)
-        png_file.processor.save(output_pdf_path)
+        png_file.processor.save_as_pdf(output_pdf_path)
         
     # Verify the PDF file was created and is not empty
         assert os.path.exists(output_pdf_path)
@@ -779,7 +779,7 @@ def test_html_save_as_txt():
     try:
         # Convert HTML to TXT
         html_file = File(test_html_path)
-        html_file.processor.save(output_txt_path)
+        html_file.processor.save_as_txt(output_txt_path)
         
     # Verify the TXT file was created and is not empty
         assert os.path.exists(output_txt_path)
