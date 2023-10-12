@@ -6,6 +6,7 @@ sys.path.append(os.path.join(sys.path[0],'file_processing'))
 def test_directory_report():
     from file_processing.directory import Directory
     dir1 = Directory('tests/resources/test_files')
+    os.mkdir('tests/outputs')
     old_outputs = glob.glob('tests/outputs/*')
     for f in old_outputs:
         os.remove(f)

@@ -142,4 +142,4 @@ cache/
 output.xlsx
 *.jpg
 
-tests/outputs/
+tests/outputs/*
