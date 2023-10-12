@@ -141,3 +141,5 @@ benchmarking_log
 cache/
 output.xlsx
 *.jpg
+
+tests/outputs/*
