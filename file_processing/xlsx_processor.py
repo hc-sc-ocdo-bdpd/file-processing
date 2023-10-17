@@ -1,24 +1,34 @@
 from file_processor_strategy import FileProcessorStrategy
 from openpyxl import load_workbook 
-from zipfile import ZipFile
 from zipfile import BadZipFile
 
 class xlsxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
         super().__init__(file_path)
-        self.metadata = {}
+        self.metadata = self._default_metadata()
+
+
+    def _default_metadata(self) -> dict:
+        return {
+            "active_sheet": None,
+            "sheet_names": None,
+            "data": None,
+            "last_modified_by": None,
+            "creator": None,
+            "has_password": False
+        }
+
     
     def process(self) -> None:
         try:
-            with ZipFile(self.file_path) as zf:
-                exceldoc = load_workbook(self.file_path)
-                self.metadata.update({"active_sheet": exceldoc.active})
-                self.metadata.update({"sheet_names": exceldoc.sheetnames})
-                self.metadata.update({"data":self.read_all_data(exceldoc)})
-                self.metadata.update({"last_modified_by": exceldoc.properties.lastModifiedBy})
-                self.metadata.update({"creator": exceldoc.properties.creator})
+            exceldoc = load_workbook(self.file_path)
+            self.metadata.update({"active_sheet": exceldoc.active})
+            self.metadata.update({"sheet_names": exceldoc.sheetnames})
+            self.metadata.update({"data":self.read_all_data(exceldoc)})
+            self.metadata.update({"last_modified_by": exceldoc.properties.lastModifiedBy})
+            self.metadata.update({"creator": exceldoc.properties.creator})
         except BadZipFile:
-            raise
+            self.metadata['has_password'] = True
    
     def save(self, output_path: str = None) -> None:
         exceldoc = load_workbook(self.file_path)

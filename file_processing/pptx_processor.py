@@ -1,23 +1,32 @@
 from file_processor_strategy import FileProcessorStrategy
 from pptx import Presentation
-from zipfile import ZipFile
 from zipfile import BadZipFile
 
 class PptxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
         super().__init__(file_path)
-        self.metadata = {}
+        self.metadata = self._default_metadata()
+
+
+    def _default_metadata(self) -> dict:
+        return {
+            'text': None,
+            'author': None,
+            'last_modified_by': None,
+            'num_slides': None,
+            'has_password': False
+        }
+
 
     def process(self) -> None:
         try:
-            with ZipFile(self.file_path) as zf:
-                ppt = Presentation(self.file_path)
-                self.metadata.update({'text': self.extract_text_from_pptx(ppt)})
-                self.metadata.update({'author': ppt.core_properties.author})
-                self.metadata.update({'last_modified_by': ppt.core_properties.last_modified_by})
-                self.metadata.update({"num_slides": len(ppt.slides)})
+            ppt = Presentation(self.file_path)
+            self.metadata.update({'text': self.extract_text_from_pptx(ppt)})
+            self.metadata.update({'author': ppt.core_properties.author})
+            self.metadata.update({'last_modified_by': ppt.core_properties.last_modified_by})
+            self.metadata.update({"num_slides": len(ppt.slides)})
         except BadZipFile:
-            raise
+            self.metadata['has_password'] = True
 
         # Other core properties to include: https://python-pptx.readthedocs.io/en/latest/api/presentation.html#coreproperties-objects
         # keywords, language, subject, version

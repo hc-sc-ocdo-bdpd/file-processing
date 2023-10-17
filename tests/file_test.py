@@ -111,11 +111,12 @@ def test_docx_last_modified_by():
 
 def test_docx_locked():
     from file_processing.file import File
-    import pytest
-    with pytest.raises(Exception) as e_info:
-        docx_1 = File('tests/resources/test_files/SampleReport_Locked.docx')
-    with pytest.raises(Exception) as e_info:
-        docx_2 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.docx')
+
+    docx_1 = File('tests/resources/test_files/SampleReport_Locked.docx')
+    assert docx_1.metadata["has_password"] == True
+
+    docx_2 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.docx')
+    assert docx_2.metadata["has_password"] == True
 
 
 def test_save_docx_metadata():
@@ -163,15 +164,15 @@ def test_pdf_ocr_text_found():
     assert len(ocr_text) > 0
 
 
-def test_pdf_locked(capfd):
+def test_pdf_locked():
     from file_processing.file import File
+
     pdf_1 = File('tests/resources/test_files/SampleReport_Locked.pdf')
-    out, err = capfd.readouterr()
-    assert out == 'Error encountered while opening or processing tests\\resources\\test_files\SampleReport_Locked.pdf: File has not been decrypted\n'
+    assert pdf_1.metadata["has_password"] == True
+
     pdf_2 = File('tests/resources/test_files/ArtificialNeuralNetworksForBeginners_Locked.pdf')
-    out, err = capfd.readouterr()
-    assert out == 'Error encountered while opening or processing tests\\resources\\test_files\ArtificialNeuralNetworksForBeginners_Locked.pdf: File has not been decrypted\n'
-    
+    assert pdf_2.metadata["has_password"] == True
+
 
 def test_msg_text():
     from file_processing.file import File
@@ -292,21 +293,21 @@ def test_save_png_metadata():
         os.remove(copy_test_jpeg_path)
     
     
-def test_excel_sheets():
+def test_xlsx_sheets():
     from file_processing.file import File 
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     exceldoc_sheetnames = exceldoc.metadata['sheet_names']
     assert exceldoc_sheetnames == ['Sheet1', 'Sheet2', 'Sheet3']
 
     
-def test_excel_activesheet():
+def test_xlsx_activesheet():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     exceldoc_activesheet = exceldoc.metadata['active_sheet']
     assert str(exceldoc_activesheet) == "<Worksheet \"Sheet3\">"
 
     
-def test_excel_data():
+def test_xlsx_data():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert len(exceldoc.metadata['data']['Sheet1']) == 10
@@ -314,28 +315,30 @@ def test_excel_data():
     assert len(exceldoc.metadata['data']['Sheet3']) == 21
 
     
-def test_excel_last_modified_by():
+def test_xlsx_last_modified_by():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert exceldoc.metadata['last_modified_by'] == 'Burnett, Taylen (HC/SC)'
 
     
-def test_excel_creator():
+def test_xlsx_creator():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert exceldoc.metadata['creator'] == 'Burnett, Taylen (HC/SC)'
 
 
-def test_excel_locked():
+def test_xlsx_locked():
     from file_processing.file import File
-    import pytest
-    with pytest.raises(Exception) as e_info:
-        exceldoc = File('tests/resources/test_files/Test_excel_file_Locked.xlsx')
-    with pytest.raises(Exception) as e_info:
-        exceldoc_2 = File('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
+
+    exceldoc = File('tests/resources/test_files/Test_excel_file_Locked.xlsx')
+    assert exceldoc.metadata["has_password"] == True
+
+    exceldoc_2 = File('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
+    assert exceldoc_2.metadata["has_password"] == True
 
 
-def test_save_exc_metadata():
+
+def test_save_xlsx_metadata():
     from file_processing.file import File
     from openpyxl import load_workbook
     
@@ -439,11 +442,12 @@ def test_pptx_num_slides():
 
 def test_pptx_locked():
     from file_processing.file import File
-    import pytest
-    with pytest.raises(Exception) as e_info:
-        pptx_1 = File('tests/resources/test_files/SampleReport_Locked.pptx')
-    with pytest.raises(Exception) as e_info:
-        pptx_2 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
+
+    pptx_1 = File('tests/resources/test_files/SampleReport_Locked.pptx')
+    assert pptx_1.metadata["has_password"] == True
+
+    pptx_2 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
+    assert pptx_2.metadata["has_password"] == True
     
 
 def test_save_ppt_metadata():
