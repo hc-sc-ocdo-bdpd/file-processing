@@ -671,6 +671,68 @@ def test_save_jpeg_metadata():
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_jpeg_path)
 
+        
+def test_csv_text():
+    from file_processing.file import File
+    csv_1 = File('tests/resources/test_files/2021_Census_English.csv')
+    csv_2 = File('tests/resources/test_files/Approved_Schools_2023_10_01.csv')
+    assert len(csv_1.metadata['text']) == 4463562
+    assert len(csv_2.metadata['text']) == 1274028
+
+def test_csv_num_rows():
+    from file_processing.file import File
+    csv_1 = File('tests/resources/test_files/2021_Census_English.csv')
+    csv_2 = File('tests/resources/test_files/Approved_Schools_2023_10_01.csv')
+    assert csv_1.metadata['num_rows'] == 36835
+    assert csv_2.metadata['num_rows'] == 5385
+
+def test_csv_num_cols():
+    from file_processing.file import File
+    csv_1 = File('tests/resources/test_files/2021_Census_English.csv')
+    csv_2 = File('tests/resources/test_files/Approved_Schools_2023_10_01.csv')
+    assert csv_1.metadata['num_cols'] == 23
+    assert csv_2.metadata['num_cols'] == 13
+
+def test_csv_num_cells():
+    from file_processing.file import File
+    csv_1 = File('tests/resources/test_files/2021_Census_English.csv')
+    csv_2 = File('tests/resources/test_files/Approved_Schools_2023_10_01.csv')
+    assert csv_1.metadata['num_cells'] == 847205
+    assert csv_2.metadata['num_cells'] == 70005
+
+def test_csv_empty_cells():
+    from file_processing.file import File
+    csv_1 = File('tests/resources/test_files/2021_Census_English.csv')
+    csv_2 = File('tests/resources/test_files/Approved_Schools_2023_10_01.csv')
+    assert csv_1.metadata['empty_cells'] == 253932
+    assert csv_2.metadata['empty_cells'] == 0
+
+def test_save_csv_metadata():
+    from file_processing.file import File
+    
+    test_csv_path = 'tests/resources/test_files/2021_Census_English.csv'
+    copy_test_csv_path = 'tests/resources/test_files/2021_Census_English_copy.csv'
+    
+    # Copying file
+    with open(test_csv_path, 'rb') as src_file:
+        with open(copy_test_csv_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+        
+        # Load via File object
+        csv_file = File(copy_test_csv_path)
+        
+        # Save
+        csv_file.save()
+        
+        # Assert if changes correctly saved
+        assert len(csv_file.metadata['text']) == 4463562
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_csv_path)
+        
 
 def test_zip_num_files():
     from file_processing.file import File
