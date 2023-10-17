@@ -11,12 +11,14 @@ from rtf_processor import RtfFileProcessor
 from html_processor import HtmlFileProcessor
 from xml_processor import XmlFileProcessor
 from jpeg_processor import JpegFileProcessor
+from csv_processor import CsvFileProcessor
 from zip_processor import ZipFileProcessor
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
 
     PROCESSORS = {
+        ".csv": CsvFileProcessor,
         ".txt": TextFileProcessor,
         ".pdf": PdfFileProcessor,
         ".docx": DocxFileProcessor,
