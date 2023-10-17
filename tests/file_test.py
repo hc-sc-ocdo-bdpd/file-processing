@@ -109,7 +109,14 @@ def test_docx_last_modified_by():
     assert docx_2.metadata['last_modified_by'] == test_last_modified_by_2
 
 
-    import os
+def test_docx_locked():
+    from file_processing.file import File
+
+    docx_1 = File('tests/resources/test_files/SampleReport_Locked.docx')
+    assert docx_1.metadata["has_password"] == True
+
+    docx_2 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.docx')
+    assert docx_2.metadata["has_password"] == True
 
 
 def test_save_docx_metadata():
@@ -156,7 +163,17 @@ def test_pdf_ocr_text_found():
     ocr_text = pdf_1.metadata['ocr_text']
     assert len(ocr_text) > 0
 
-    
+
+def test_pdf_locked():
+    from file_processing.file import File
+
+    pdf_1 = File('tests/resources/test_files/SampleReport_Locked.pdf')
+    assert pdf_1.metadata["has_password"] == True
+
+    pdf_2 = File('tests/resources/test_files/ArtificialNeuralNetworksForBeginners_Locked.pdf')
+    assert pdf_2.metadata["has_password"] == True
+
+
 def test_msg_text():
     from file_processing.file import File
     msg = File('tests/resources/test_files/Test Email.msg')
@@ -276,21 +293,21 @@ def test_save_png_metadata():
         os.remove(copy_test_jpeg_path)
     
     
-def test_excel_sheets():
+def test_xlsx_sheets():
     from file_processing.file import File 
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     exceldoc_sheetnames = exceldoc.metadata['sheet_names']
     assert exceldoc_sheetnames == ['Sheet1', 'Sheet2', 'Sheet3']
 
     
-def test_excel_activesheet():
+def test_xlsx_activesheet():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     exceldoc_activesheet = exceldoc.metadata['active_sheet']
     assert str(exceldoc_activesheet) == "<Worksheet \"Sheet3\">"
 
     
-def test_excel_data():
+def test_xlsx_data():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert len(exceldoc.metadata['data']['Sheet1']) == 10
@@ -298,18 +315,30 @@ def test_excel_data():
     assert len(exceldoc.metadata['data']['Sheet3']) == 21
 
     
-def test_excel_last_modified_by():
+def test_xlsx_last_modified_by():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert exceldoc.metadata['last_modified_by'] == 'Burnett, Taylen (HC/SC)'
 
     
-def test_excel_creator():
+def test_xlsx_creator():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert exceldoc.metadata['creator'] == 'Burnett, Taylen (HC/SC)'
 
-def test_save_exc_metadata():
+
+def test_xlsx_locked():
+    from file_processing.file import File
+
+    exceldoc = File('tests/resources/test_files/Test_excel_file_Locked.xlsx')
+    assert exceldoc.metadata["has_password"] == True
+
+    exceldoc_2 = File('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
+    assert exceldoc_2.metadata["has_password"] == True
+
+
+
+def test_save_xlsx_metadata():
     from file_processing.file import File
     from openpyxl import load_workbook
     
@@ -410,6 +439,17 @@ def test_pptx_num_slides():
     assert pptx_1.metadata['num_slides'] == 4
     assert pptx_2.metadata['num_slides'] == 5
 
+
+def test_pptx_locked():
+    from file_processing.file import File
+
+    pptx_1 = File('tests/resources/test_files/SampleReport_Locked.pptx')
+    assert pptx_1.metadata["has_password"] == True
+
+    pptx_2 = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
+    assert pptx_2.metadata["has_password"] == True
+    
+
 def test_save_ppt_metadata():
     from file_processing.file import File
     from pptx import Presentation
@@ -445,10 +485,12 @@ def test_save_ppt_metadata():
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_ppt_path)
     
+
 def test_rtf_text():
     from file_processing.file import File
     rtf_1 = File('tests/resources/test_files/Test_for_RTF.rtf')
     assert len(rtf_1.metadata['text']) == 5306
+
 
 def test_save_rtf_metadata():
     from file_processing.file import File
@@ -475,6 +517,7 @@ def test_save_rtf_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_rtf_path)
+               
                  
 def test_html_text():
     from file_processing.file import File
@@ -628,6 +671,7 @@ def test_save_jpeg_metadata():
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_jpeg_path)
 
+        
 def test_csv_text():
     from file_processing.file import File
     csv_1 = File('tests/resources/test_files/2021_Census_English.csv')
@@ -688,3 +732,62 @@ def test_save_csv_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_csv_path)
+        
+
+def test_zip_num_files():
+    from file_processing.file import File
+    zip_1 = File('tests/resources/test_files/SampleReport.zip')
+    zip_2 = File('tests/resources/test_files/Empty.zip')
+    assert zip_1.metadata['num_files'] == 3
+    assert zip_2.metadata['num_files'] == 0
+
+    
+def test_zip_file_types():
+    from file_processing.file import File
+    zip_1 = File('tests/resources/test_files/SampleReport.zip')
+    zip_2 = File('tests/resources/test_files/Empty.zip')
+    assert zip_1.metadata['file_types'] == {'docx': 2, 'pptx': 1}
+    assert zip_2.metadata['file_types'] == {}
+
+
+def test_zip_file_names():
+    from file_processing.file import File
+    zip_1 = File('tests/resources/test_files/SampleReport.zip')
+    zip_2 = File('tests/resources/test_files/Empty.zip')
+    assert zip_1.metadata['file_names'] == ['SampleReport.docx', 'SampleReport.pptx', 'HealthCanadaOverviewFromWikipedia.docx']
+    assert zip_2.metadata['file_names'] == []
+
+
+def test_zip_extraction():
+    from file_processing.file import File
+    import shutil
+    zip_file = File('tests/resources/test_files/SampleReport.zip')
+    zip_file.processor.extract()
+
+    extraction_dir = 'tests/resources/test_files/SampleReport'
+    assert os.path.isdir(extraction_dir)
+
+    extracted_files = os.listdir(extraction_dir)
+    expected_files = ['SampleReport.docx', 'SampleReport.pptx', 'HealthCanadaOverviewFromWikipedia.docx']
+    assert set(extracted_files) == set(expected_files)
+
+    shutil.rmtree(extraction_dir)
+
+
+def test_zip_save():
+    from file_processing.file import File
+    import tempfile
+    import zipfile
+    with tempfile.TemporaryDirectory() as temp_dir:
+        original_zip_path = 'tests/resources/test_files/SampleReport.zip'
+        saved_zip_path = os.path.join(temp_dir, 'SavedSampleReport.zip')
+
+        zip_file = File(original_zip_path)
+        zip_file.process()
+
+        zip_file.processor.save(saved_zip_path)
+
+        assert os.path.exists(saved_zip_path)
+
+        with zipfile.ZipFile(original_zip_path, 'r') as original_zip, zipfile.ZipFile(saved_zip_path, 'r') as saved_zip:
+            assert set(original_zip.namelist()) == set(saved_zip.namelist()) # Check contents are still the same
