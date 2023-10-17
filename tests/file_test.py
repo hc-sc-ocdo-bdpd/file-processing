@@ -651,3 +651,38 @@ def test_zip_file_names():
     zip_2 = File('tests/resources/test_files/Empty.zip')
     assert zip_1.metadata['file_names'] == ['SampleReport.docx', 'SampleReport.pptx', 'HealthCanadaOverviewFromWikipedia.docx']
     assert zip_2.metadata['file_names'] == []
+
+
+def test_zip_extraction():
+    from file_processing.file import File
+    import shutil
+    zip_file = File('tests/resources/test_files/SampleReport.zip')
+    zip_file.processor.extract()
+
+    extraction_dir = 'tests/resources/test_files/SampleReport'
+    assert os.path.isdir(extraction_dir)
+
+    extracted_files = os.listdir(extraction_dir)
+    expected_files = ['SampleReport.docx', 'SampleReport.pptx', 'HealthCanadaOverviewFromWikipedia.docx']
+    assert set(extracted_files) == set(expected_files)
+
+    shutil.rmtree(extraction_dir)
+
+
+def test_zip_save():
+    from file_processing.file import File
+    import tempfile
+    import zipfile
+    with tempfile.TemporaryDirectory() as temp_dir:
+        original_zip_path = 'tests/resources/test_files/SampleReport.zip'
+        saved_zip_path = os.path.join(temp_dir, 'SavedSampleReport.zip')
+
+        zip_file = File(original_zip_path)
+        zip_file.process()
+
+        zip_file.processor.save(saved_zip_path)
+
+        assert os.path.exists(saved_zip_path)
+
+        with zipfile.ZipFile(original_zip_path, 'r') as original_zip, zipfile.ZipFile(saved_zip_path, 'r') as saved_zip:
+            assert set(original_zip.namelist()) == set(saved_zip.namelist()) # Check contents are still the same
