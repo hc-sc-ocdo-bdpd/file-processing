@@ -22,7 +22,7 @@ class xlsxFileProcessor(FileProcessorStrategy):
     def process(self) -> None:
         try:
             exceldoc = load_workbook(self.file_path)
-            self.metadata.update({"active_sheet": exceldoc.active})
+            self.metadata.update({"active_sheet": exceldoc.active.title})
             self.metadata.update({"sheet_names": exceldoc.sheetnames})
             self.metadata.update({"data":self.read_all_data(exceldoc)})
             self.metadata.update({"last_modified_by": exceldoc.properties.lastModifiedBy})
@@ -47,6 +47,7 @@ class xlsxFileProcessor(FileProcessorStrategy):
             sheet = exceldoc[sheet_name]
             sheet_data = []
             for row in sheet.iter_rows(values_only=True):
-                sheet_data.append(row)
+                cleaned_row = [str(cell) if cell else None for cell in row]
+                sheet_data.append(cleaned_row)
             data[sheet_name] = sheet_data
         return data
