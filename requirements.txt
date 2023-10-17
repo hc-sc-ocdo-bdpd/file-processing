@@ -9,7 +9,7 @@ Pillow>=10.0.0
 pymupdf>=1.17.0
 pdf2image==1.16.3
 pandas==2.0.3
-torch>=2.0.1 --index-url https://download.pytorch.org/whl/cu118
+torch>=2.0.1
 transformers>=4.30.2
 huggingface-hub>=0.16.4
 matplotlib>=3.7.2
