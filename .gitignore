@@ -127,17 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-.vscode/settings.json
 
-# Model directory
-resources/models/
-resources/models/.gitattributes
-resources/models/adapter_config.json
-resources/models/README.md
-table_metrics.xlsx
-US_Cities.txt
-generated_tables/
-benchmarking_log
-cache/
-output.xlsx
-*.jpg
+
+.vscode/*.*
