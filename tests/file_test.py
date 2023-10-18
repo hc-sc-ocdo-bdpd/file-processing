@@ -231,6 +231,16 @@ def test_save_msg_metadata():
     finally:
         os.remove(copy_test_msg_path)
 
+def test_msg_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    msg_file = File('tests/resources/test_files/Test Email.msg')
+    with pytest.raises(FileProcessingFailedError):
+        msg_file.processor.save('/non_existent_folder/Test Email.msg')
+
+
 def test_png_format():
     from file_processing.file import File
     png_1 = File('tests/resources/test_files/Health_Canada_logo.png')
