@@ -21,3 +21,7 @@ class OCRError(FileProcessorError):
 class OCRProcessingError(OCRError):
     """Raised when there's an issue during OCR processing."""
     pass
+
+class NotOCRApplciableError(OCRError):
+    """Raised when attempting OCR on a file type that doesn't support it."""
+    pass
