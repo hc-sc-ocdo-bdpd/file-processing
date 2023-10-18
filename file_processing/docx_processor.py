@@ -2,6 +2,7 @@ from file_processor_strategy import FileProcessorStrategy
 from docx import Document
 from zipfile import BadZipFile
 from docx.oxml import OxmlElement
+from errors import FileProcessingFailedError
 
 class DocxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -26,6 +27,8 @@ class DocxFileProcessor(FileProcessorStrategy):
             self.metadata.update({'last_modified_by': doc.core_properties.last_modified_by})
         except BadZipFile:
             self.metadata["has_password"] = True
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while processing {self.file_path}: {e}")
 
         # Other core properties to include: https://python-docx.readthedocs.io/en/latest/api/document.html#coreproperties-objects
         # keywords, language, subject, version
@@ -51,5 +54,5 @@ class DocxFileProcessor(FileProcessorStrategy):
                 full_text.append(para.text)
             return '\n'.join(full_text)
         except Exception as e:
-            print(f"Error encountered while opening or processing {self.file_path}: {e}")
+            raise FileProcessingFailedError(f"Error encountered while opening or processing {doc}: {e}")
             return None
