@@ -291,6 +291,15 @@ def test_save_png_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_jpeg_path)
+
+def test_png_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    png_file = File('tests/resources/test_files/Health_Canada_logo.png')
+    with pytest.raises(FileProcessingFailedError):
+        png_file.processor.save('/non_existent_folder/Health_Canada_logo.png')
     
     
 def test_xlsx_sheets():
