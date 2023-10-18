@@ -36,6 +36,7 @@ class PptxFileProcessor(FileProcessorStrategy):
         # keywords, language, subject, version
 
     def save(self, output_path: str = None) -> None:
+        save_path = output_path or self.file_path
         try:
             ppt = Presentation(self.file_path)
 
@@ -43,11 +44,11 @@ class PptxFileProcessor(FileProcessorStrategy):
             cp = ppt.core_properties
             cp.author = self.metadata.get('author', cp.author)
             cp.last_modified_by = self.metadata.get('last_modified_by', cp.last_modified_by)
-            
-            save_path = output_path or self.file_path
+
             ppt.save(save_path)
         except Exception as e:
             raise FileProcessingFailedError(f"Error encountered while saving to {save_path}: {e}")
+
 
 
     @staticmethod

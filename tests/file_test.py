@@ -306,7 +306,6 @@ def test_xlsx_activesheet():
     exceldoc_activesheet = exceldoc.metadata['active_sheet']
     assert str(exceldoc_activesheet) == "<Worksheet \"Sheet3\">"
 
-    
 def test_xlsx_data():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
@@ -314,18 +313,15 @@ def test_xlsx_data():
     assert len(exceldoc.metadata['data']['Sheet2']) == 11
     assert len(exceldoc.metadata['data']['Sheet3']) == 21
 
-    
 def test_xlsx_last_modified_by():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert exceldoc.metadata['last_modified_by'] == 'Burnett, Taylen (HC/SC)'
 
-    
 def test_xlsx_creator():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     assert exceldoc.metadata['creator'] == 'Burnett, Taylen (HC/SC)'
-
 
 def test_xlsx_locked():
     from file_processing.file import File
@@ -335,8 +331,6 @@ def test_xlsx_locked():
 
     exceldoc_2 = File('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
     assert exceldoc_2.metadata["has_password"] == True
-
-
 
 def test_save_xlsx_metadata():
     from file_processing.file import File
@@ -373,6 +367,16 @@ def test_save_xlsx_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_exc_path)
+
+def test_xlsx_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    xlsx_file = File('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
+    with pytest.raises(FileProcessingFailedError):
+        xlsx_file.processor.save('/non_existent_folder/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
+
     
 def test_pptx_text():
     from file_processing.file import File
@@ -484,6 +488,16 @@ def test_save_ppt_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_ppt_path)
+
+def test_pptx_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    pptx_file = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
+    with pytest.raises(FileProcessingFailedError):
+        pptx_file.processor.save('/non_existent_folder/HealthCanadaOverviewFromWikipedia_Locked.pptx')
+
     
 
 def test_rtf_text():
