@@ -1,5 +1,6 @@
 from file_processor_strategy import FileProcessorStrategy
 from PIL import Image
+from errors import FileProcessingFailedError
 
 class JpegFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:

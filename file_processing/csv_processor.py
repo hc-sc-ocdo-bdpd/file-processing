@@ -1,6 +1,7 @@
 from file_processor_strategy import FileProcessorStrategy
 import csv
 import chardet
+from errors import FileProcessingFailedError
 
 class CsvFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
