@@ -732,6 +732,14 @@ def test_save_csv_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_csv_path)
+
+def test_csv_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    csv_file = File('tests/resources/test_files/2021_Census_English.csv')
+    with pytest.raises(FileProcessingFailedError):
+        csv_file.processor.save('/non_existent_folder/2021_Census_English.csv')
         
 
 def test_zip_num_files():
