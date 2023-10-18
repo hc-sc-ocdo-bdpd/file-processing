@@ -13,3 +13,11 @@ class FileProcessingFailedError(FileProcessorError):
     """Raised when there's a generic error during file processing."""
     pass
 
+
+class OCRError(FileProcessorError):
+    """Base exception for OCR related issues."""
+    pass
+
+class OCRProcessingError(OCRError):
+    """Raised when there's an issue during OCR processing."""
+    pass
