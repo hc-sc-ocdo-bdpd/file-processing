@@ -610,6 +610,16 @@ def test_save_xml_metadata():
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_xml_path)
 
+def test_xml_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    xml_file = File('tests/resources/test_files/Sample.xml')
+    with pytest.raises(FileProcessingFailedError):
+        xml_file.processor.save('/non_existent_folder/Sample.xml')
+
+
 def test_jpeg_format():
     from file_processing.file import File
     jpeg_1 = File('tests/resources/test_files/HealthCanada.jpeg')
@@ -670,6 +680,16 @@ def test_save_jpeg_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_jpeg_path)
+
+def test_jpeg_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    jpeg_file = File('tests/resources/test_files/HealthCanada.jpeg')
+    with pytest.raises(FileProcessingFailedError):
+        jpeg_file.processor.save('/non_existent_folder/HealthCanada.jpeg')
+
 
         
 def test_csv_text():

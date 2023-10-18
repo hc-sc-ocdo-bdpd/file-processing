@@ -23,7 +23,10 @@ class JpegFileProcessor(FileProcessorStrategy):
 
 
     def save(self, output_path: str = None) -> None:
-        image = Image.open(self.file_path)
-        
-        save_path = output_path or self.file_path
-        image.save(save_path)
+        try:
+            image = Image.open(self.file_path)
+            
+            save_path = output_path or self.file_path
+            image.save(save_path)
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while processing: {e}")
