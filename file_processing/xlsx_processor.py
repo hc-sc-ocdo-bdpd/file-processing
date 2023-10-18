@@ -1,6 +1,7 @@
 from file_processor_strategy import FileProcessorStrategy
 from openpyxl import load_workbook 
 from zipfile import BadZipFile
+from errors import FileProcessingFailedError
 
 class xlsxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -29,24 +30,33 @@ class xlsxFileProcessor(FileProcessorStrategy):
             self.metadata.update({"creator": exceldoc.properties.creator})
         except BadZipFile:
             self.metadata['has_password'] = True
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while processing {self.file_path}: {e}")
+
    
     def save(self, output_path: str = None) -> None:
-        exceldoc = load_workbook(self.file_path)
-        cp = exceldoc.properties
-        # Update the core properties (metadata)
-        cp.creator = self.metadata.get('creator', cp.creator)
-        cp.last_modified_by = self.metadata.get('last_modified_by', cp.lastModifiedBy)
-        
-        save_path = output_path or self.file_path
-        exceldoc.save(save_path)
+        try:
+            exceldoc = load_workbook(self.file_path)
+            cp = exceldoc.properties
+            cp.creator = self.metadata.get('creator', cp.creator)
+            cp.last_modified_by = self.metadata.get('last_modified_by', cp.lastModifiedBy)
+            
+            save_path = output_path or self.file_path
+            exceldoc.save(save_path)
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while saving {self.file_path}: {e}")
+
  
     @staticmethod
     def read_all_data(exceldoc):
-        data = {}
-        for sheet_name in exceldoc.sheetnames:
-            sheet = exceldoc[sheet_name]
-            sheet_data = []
-            for row in sheet.iter_rows(values_only=True):
-                sheet_data.append(row)
-            data[sheet_name] = sheet_data
-        return data
+        try:
+            data = {}
+            for sheet_name in exceldoc.sheetnames:
+                sheet = exceldoc[sheet_name]
+                sheet_data = []
+                for row in sheet.iter_rows(values_only=True):
+                    sheet_data.append(row)
+                data[sheet_name] = sheet_data
+            return data
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while reading data from Excel document: {e}")
