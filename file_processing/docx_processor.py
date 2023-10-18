@@ -35,15 +35,18 @@ class DocxFileProcessor(FileProcessorStrategy):
 
 
     def save(self, output_path: str = None) -> None:
-        doc = Document(self.file_path)
+        try:
+            doc = Document(self.file_path)
 
-        # Update the core properties (metadata)
-        cp = doc.core_properties
-        cp.author = self.metadata.get('author', cp.author)
-        cp.last_modified_by = self.metadata.get('last_modified_by', cp.last_modified_by)
-        
-        save_path = output_path or self.file_path
-        doc.save(save_path)
+            # Update the core properties (metadata)
+            cp = doc.core_properties
+            cp.author = self.metadata.get('author', cp.author)
+            cp.last_modified_by = self.metadata.get('last_modified_by', cp.last_modified_by)
+            
+            save_path = output_path or self.file_path
+            doc.save(save_path)
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while saving {self.file_path}: {e}")
 
 
     @staticmethod

@@ -50,6 +50,16 @@ def test_save_txt_metadata():
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_txt_path)
 
+def test_txt_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    txt_file = File('tests/resources/test_files/government_of_canada_wikipedia.txt')
+    with pytest.raises(FileProcessingFailedError):
+        txt_file.processor.save('/non_existent_folder/government_of_canada_wikipedia.txt')
+
+
 
 def test_docx_text():
     from file_processing.file import File
@@ -155,6 +165,16 @@ def test_save_docx_metadata():
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_docx_path)
 
+def test_docx_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    docx_file = File('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.docx')
+    with pytest.raises(FileProcessingFailedError):
+        docx_file.processor.save('/non_existent_folder/HealthCanadaOverviewFromWikipedia.docx')
+
+
 
 
 def test_pdf_ocr_text_found():
@@ -172,6 +192,15 @@ def test_pdf_locked():
 
     pdf_2 = File('tests/resources/test_files/ArtificialNeuralNetworksForBeginners_Locked.pdf')
     assert pdf_2.metadata["has_password"] == True
+
+def test_pdf_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    pdf_file = File('tests/resources/test_files/ArtificialNeuralNetworksForBeginners_Locked.pdf')
+    with pytest.raises(FileProcessingFailedError):
+        pdf_file.processor.save('/non_existent_folder/ArtificialNeuralNetworksForBeginners_Locked.pdf')
 
 
 def test_msg_text():
