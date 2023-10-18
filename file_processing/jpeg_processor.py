@@ -7,15 +7,19 @@ class JpegFileProcessor(FileProcessorStrategy):
         self.metadata = {}
 
     def process(self) -> None:
-        image = Image.open(self.file_path)
-        image.load()
-        self.metadata.update({
-            'original_format': image.format,
-            # mode defines type and width of a pixel (https://pillow.readthedocs.io/en/stable/handbook/concepts.html#concept-modes)
-            'mode': image.mode,
-            'width': image.width,
-            'height': image.height,
-        })
+        try:
+            image = Image.open(self.file_path)
+            image.load()
+            self.metadata.update({
+                'original_format': image.format,
+                # mode defines type and width of a pixel (https://pillow.readthedocs.io/en/stable/handbook/concepts.html#concept-modes)
+                'mode': image.mode,
+                'width': image.width,
+                'height': image.height,
+            })
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while processing: {e}")
+
 
     def save(self, output_path: str = None) -> None:
         image = Image.open(self.file_path)
