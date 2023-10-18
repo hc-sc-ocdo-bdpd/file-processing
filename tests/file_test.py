@@ -517,6 +517,17 @@ def test_save_rtf_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_rtf_path)
+
+
+def test_rtf_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    rtf_file = File('tests/resources/test_files/Test_for_RTF.rtf')
+    with pytest.raises(FileProcessingFailedError):
+        rtf_file.processor.save('/non_existent_folder/Test_for_RTF.rtf')
+
                
                  
 def test_html_text():
@@ -563,6 +574,16 @@ def test_save_html_metadata():
     finally:
         # Clean up by removing the copied file after the test is done
         os.remove(copy_test_html_path)
+
+def test_html_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    
+    html_file = File('tests/resources/test_files/Health - Canada.ca.html')
+    with pytest.raises(FileProcessingFailedError):
+        html_file.processor.save('/non_existent_folder/Health - Canada.ca.html')
+
 
     
 def test_xml_text():
