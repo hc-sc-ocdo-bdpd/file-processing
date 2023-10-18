@@ -17,26 +17,34 @@ def test_txt_metadata(path, text_length, num_lines, num_words):
     assert text.metadata['num_words'] == num_words
 
 
-def test_save_txt_metadata():
-    test_txt_path = 'tests/resources/test_files/government_of_canada_wikipedia.txt'
-    copy_test_txt_path = 'tests/resources/test_files/government_of_canada_wikipedia_copy.txt'
-    
+@pytest.fixture(scope="function")
+def copy_file_paths(tmp_path_factory):
+    from pathlib import Path
+    file_path = 'tests/resources/test_files/government_of_canada_wikipedia.txt'
+    copy_path = str(tmp_path_factory.mktemp("copy") / Path(file_path).name)
+    yield file_path, copy_path
+
+
+@pytest.fixture()
+def copy_file_length(copy_file_paths):
+    file_path, copy_path = copy_file_paths
+
     # Copying file
-    with open(test_txt_path, 'rb') as src_file:
-        with open(copy_test_txt_path, 'wb') as dest_file:
+    with open(file_path, 'rb') as src_file:
+        with open(copy_path, 'wb') as dest_file:
             dest_file.write(src_file.read())
 
-    try:
+    # Load via File object
+    txt_file = File(copy_path)
         
-        # Load via File object
-        txt_file = File(copy_test_txt_path)
-        
-        # Save
-        txt_file.save()
-        
-        # Assert if .txt correctly saved
-        assert len(txt_file.metadata['text']) == 38983
+    # Save
+    txt_file.save()
 
-    finally:
-        # Clean up by removing the copied file after the test is done
-        os.remove(copy_test_txt_path)
+    copy_path_length = len(txt_file.metadata['text'])
+
+    yield copy_path_length 
+
+
+def test_save_txt_metadata(copy_file_length):
+    # Assert if .txt correctly saved
+    assert copy_file_length == 38983
