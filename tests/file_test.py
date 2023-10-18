@@ -783,7 +783,6 @@ def test_zip_save():
         saved_zip_path = os.path.join(temp_dir, 'SavedSampleReport.zip')
 
         zip_file = File(original_zip_path)
-        zip_file.process()
 
         zip_file.processor.save(saved_zip_path)
 
@@ -791,3 +790,11 @@ def test_zip_save():
 
         with zipfile.ZipFile(original_zip_path, 'r') as original_zip, zipfile.ZipFile(saved_zip_path, 'r') as saved_zip:
             assert set(original_zip.namelist()) == set(saved_zip.namelist()) # Check contents are still the same
+
+def test_zip_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    zip_file = File('tests/resources/test_files/SampleReport.zip')
+    with pytest.raises(FileProcessingFailedError):
+        zip_file.processor.save('/non_existent_folder/SavedSampleReport.zip')
