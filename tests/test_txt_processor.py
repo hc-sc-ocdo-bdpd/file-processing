@@ -11,40 +11,27 @@ values = [
 
 @pytest.mark.parametrize(variable_names, values)
 def test_txt_metadata(path, text_length, num_lines, num_words):
-    text = File(path)
-    assert len(text.metadata['text']) == text_length
-    assert text.metadata['num_lines'] == num_lines
-    assert text.metadata['num_words'] == num_words
-
-
-@pytest.fixture(scope="function")
-def copy_file_paths(tmp_path_factory):
-    from pathlib import Path
-    file_path = 'tests/resources/test_files/government_of_canada_wikipedia.txt'
-    copy_path = str(tmp_path_factory.mktemp("copy") / Path(file_path).name)
-    yield file_path, copy_path
+    file_obj = File(path)
+    assert len(file_obj.metadata['text']) == text_length
+    assert file_obj.metadata['num_lines'] == num_lines
+    assert file_obj.metadata['num_words'] == num_words
 
 
 @pytest.fixture()
-def copy_file_length(copy_file_paths):
-    file_path, copy_path = copy_file_paths
-
-    # Copying file
-    with open(file_path, 'rb') as src_file:
-        with open(copy_path, 'wb') as dest_file:
-            dest_file.write(src_file.read())
-
-    # Load via File object
-    txt_file = File(copy_path)
-        
-    # Save
-    txt_file.save()
-
-    copy_path_length = len(txt_file.metadata['text'])
-
-    yield copy_path_length 
+def copy_file(tmp_path_factory):
+    from pathlib import Path
+    path = 'tests/resources/test_files/government_of_canada_wikipedia.txt'
+    copy_path = str(tmp_path_factory.mktemp("copy") / Path(path).name)
+    file_obj = File(path)
+    file_obj.save(copy_path)
+    (text_length, num_lines, num_words) = (38983, 306, 5691)
+    yield copy_path, text_length, num_lines, num_words
 
 
-def test_save_txt_metadata(copy_file_length):
-    # Assert if .txt correctly saved
-    assert copy_file_length == 38983
+#@pytest.mark.parametrize(copy_file, values, indirect = True)
+def test_save_txt_metadata(copy_file):
+    path, expected_text_length, expected_num_lines, expected_num_words = copy_file
+    file_obj = File(path)
+    assert len(file_obj.metadata['text']) == expected_text_length
+    assert file_obj.metadata['num_lines'] == expected_num_lines
+    assert file_obj.metadata['num_words'] == expected_num_words
