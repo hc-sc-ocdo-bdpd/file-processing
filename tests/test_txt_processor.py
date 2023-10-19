@@ -9,29 +9,31 @@ values = [
    ('tests/resources/test_files/usa_government_wikipedia.txt', 47819, 383, 7160)
 ]
 
-@pytest.mark.parametrize(variable_names, values)
-def test_txt_metadata(path, text_length, num_lines, num_words):
+@pytest.fixture()
+def file_metadata(path):
     file_obj = File(path)
-    assert len(file_obj.metadata['text']) == text_length
-    assert file_obj.metadata['num_lines'] == num_lines
-    assert file_obj.metadata['num_words'] == num_words
+    yield (len(file_obj.metadata['text']),
+           file_obj.metadata['num_lines'],
+           file_obj.metadata['num_words'])
+
+
+@pytest.mark.parametrize(variable_names, values)
+def test_txt_metadata(file_metadata, text_length, num_lines, num_words):
+    assert (text_length, num_lines, num_words) == file_metadata
 
 
 @pytest.fixture()
-def copy_file(tmp_path_factory):
+def copy_file(path, tmp_path_factory):
     from pathlib import Path
-    path = 'tests/resources/test_files/government_of_canada_wikipedia.txt'
     copy_path = str(tmp_path_factory.mktemp("copy") / Path(path).name)
     file_obj = File(path)
     file_obj.save(copy_path)
-    (text_length, num_lines, num_words) = (38983, 306, 5691)
-    yield copy_path, text_length, num_lines, num_words
+    yield copy_path
 
 
-#@pytest.mark.parametrize(copy_file, values, indirect = True)
-def test_save_txt_metadata(copy_file):
-    path, expected_text_length, expected_num_lines, expected_num_words = copy_file
-    file_obj = File(path)
-    assert len(file_obj.metadata['text']) == expected_text_length
-    assert file_obj.metadata['num_lines'] == expected_num_lines
-    assert file_obj.metadata['num_words'] == expected_num_words
+@pytest.mark.parametrize(variable_names, values)
+def test_save_txt_metadata(copy_file, text_length, num_lines, num_words):
+    file_obj = File(copy_file)
+    assert (len(file_obj.metadata['text']), 
+           file_obj.metadata['num_lines'],
+           file_obj.metadata['num_words']) == (text_length, num_lines, num_words)
