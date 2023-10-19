@@ -460,8 +460,8 @@ def test_xlsx_invalid_save_location():
 def test_xlsx_corrupted_file_processing():
     import pytest
     from file_processing.file import File
-    from errors import FileProcessingFailedError
-    with pytest.raises(FileProcessingFailedError) as exc_info:
+    from errors import FileCorruptionError
+    with pytest.raises(FileCorruptionError) as exc_info:
         File("tests/resources/test_files/Test_excel_file_corrupted.xlsx")
 
     
@@ -588,8 +588,8 @@ def test_pptx_invalid_save_location():
 def test_pptx_corrupted_file_processing():
     import pytest
     from file_processing.file import File
-    from errors import FileProcessingFailedError
-    with pytest.raises(FileProcessingFailedError) as exc_info:
+    from errors import FileCorruptionError
+    with pytest.raises(FileCorruptionError) as exc_info:
         File("tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.pptx")
 
 
