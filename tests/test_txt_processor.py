@@ -9,17 +9,13 @@ values = [
    ('tests/resources/test_files/usa_government_wikipedia.txt', 47819, 383, 7160)
 ]
 
-@pytest.fixture()
-def file_metadata(path):
-    file_obj = File(path)
-    yield (len(file_obj.metadata['text']),
-           file_obj.metadata['num_lines'],
-           file_obj.metadata['num_words'])
-
 
 @pytest.mark.parametrize(variable_names, values)
-def test_txt_metadata(file_metadata, text_length, num_lines, num_words):
-    assert (text_length, num_lines, num_words) == file_metadata
+def test_txt_metadata(path, text_length, num_lines, num_words):
+    file_obj = File(path)
+    assert len(file_obj.metadata['text']) == text_length
+    assert file_obj.metadata['num_lines'] == num_lines
+    assert file_obj.metadata['num_words'] == num_words
 
 
 @pytest.fixture()
@@ -33,7 +29,4 @@ def copy_file(path, tmp_path_factory):
 
 @pytest.mark.parametrize(variable_names, values)
 def test_save_txt_metadata(copy_file, text_length, num_lines, num_words):
-    file_obj = File(copy_file)
-    assert (len(file_obj.metadata['text']), 
-           file_obj.metadata['num_lines'],
-           file_obj.metadata['num_words']) == (text_length, num_lines, num_words)
+    test_txt_metadata(copy_file, text_length, num_lines, num_words)
