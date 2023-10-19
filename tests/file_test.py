@@ -59,6 +59,12 @@ def test_txt_invalid_save_location():
     with pytest.raises(FileProcessingFailedError):
         txt_file.processor.save('/non_existent_folder/government_of_canada_wikipedia.txt')
 
+def test_txt_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/government_of_canada_wikipedia_corrupted.txt")
 
 
 def test_docx_text():
@@ -174,7 +180,12 @@ def test_docx_invalid_save_location():
     with pytest.raises(FileProcessingFailedError):
         docx_file.processor.save('/non_existent_folder/HealthCanadaOverviewFromWikipedia.docx')
 
-
+def test_docx_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.docx")
 
 
 def test_pdf_ocr_text_found():
@@ -201,6 +212,13 @@ def test_pdf_invalid_save_location():
     pdf_file = File('tests/resources/test_files/ArtificialNeuralNetworksForBeginners_Locked.pdf')
     with pytest.raises(FileProcessingFailedError):
         pdf_file.processor.save('/non_existent_folder/ArtificialNeuralNetworksForBeginners_Locked.pdf')
+
+def test_pdf_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/SampleReportScreenShot_corrupted.pdf")
 
 
 def test_msg_text():
@@ -268,6 +286,13 @@ def test_msg_invalid_save_location():
     msg_file = File('tests/resources/test_files/Test Email.msg')
     with pytest.raises(FileProcessingFailedError):
         msg_file.processor.save('/non_existent_folder/Test Email.msg')
+
+def test_msg_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/Test Email_corrupted.msg")
 
 
 def test_png_format():
@@ -339,6 +364,13 @@ def test_png_invalid_save_location():
     png_file = File('tests/resources/test_files/Health_Canada_logo.png')
     with pytest.raises(FileProcessingFailedError):
         png_file.processor.save('/non_existent_folder/Health_Canada_logo.png')
+
+def test_png_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/MapCanada_corrupted.png")
     
     
 def test_xlsx_sheets():
@@ -424,6 +456,13 @@ def test_xlsx_invalid_save_location():
     xlsx_file = File('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
     with pytest.raises(FileProcessingFailedError):
         xlsx_file.processor.save('/non_existent_folder/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
+
+def test_xlsx_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/Test_excel_file_corrupted.xlsx")
 
     
 def test_pptx_text():
@@ -546,7 +585,13 @@ def test_pptx_invalid_save_location():
     with pytest.raises(FileProcessingFailedError):
         pptx_file.processor.save('/non_existent_folder/HealthCanadaOverviewFromWikipedia_Locked.pptx')
 
-    
+def test_pptx_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.pptx")
+
 
 def test_rtf_text():
     from file_processing.file import File
@@ -590,20 +635,24 @@ def test_rtf_invalid_save_location():
     with pytest.raises(FileProcessingFailedError):
         rtf_file.processor.save('/non_existent_folder/Test_for_RTF.rtf')
 
-               
+def test_rtf_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/Test_for_RTF_corrupted.rtf")
+
                  
 def test_html_text():
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
     assert len(txt_1.metadata['text']) == 165405
 
-    
 def test_html_num_lines():
     # indirectly tests lines attribute
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Health - Canada.ca.html')
     assert txt_1.metadata['num_lines'] == 3439
-
     
 def test_html_num_words():
     # indirectly tests words attribute
@@ -646,6 +695,12 @@ def test_html_invalid_save_location():
     with pytest.raises(FileProcessingFailedError):
         html_file.processor.save('/non_existent_folder/Health - Canada.ca.html')
 
+def test_html_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/Health - Canada.ca_corrupted.html")
 
     
 def test_xml_text():
@@ -653,13 +708,11 @@ def test_xml_text():
     txt_1 = File('tests/resources/test_files/Sample.xml')
     assert len(txt_1.metadata['text']) == 4429
 
-    
 def test_xml_num_lines():
     # indirectly tests lines attribute
     from file_processing.file import File
     txt_1 = File('tests/resources/test_files/Sample.xml')
     assert txt_1.metadata['num_lines'] == 120
-
     
 def test_xml_num_words():
     # indirectly tests words attribute
@@ -702,6 +755,13 @@ def test_xml_invalid_save_location():
     with pytest.raises(FileProcessingFailedError):
         xml_file.processor.save('/non_existent_folder/Sample.xml')
 
+def test_xml_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/Sample_corrupted.xml")
+
 
 def test_jpeg_format():
     from file_processing.file import File
@@ -709,7 +769,6 @@ def test_jpeg_format():
     jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
     assert jpeg_1.metadata['original_format'] == 'JPEG'
     assert jpeg_2.metadata['original_format'] == 'JPEG'
-
     
 def test_jpeg_mode():
     from file_processing.file import File
@@ -717,7 +776,6 @@ def test_jpeg_mode():
     jpeg_2 = File('tests/resources/test_files/MapCanada.jpg')
     assert jpeg_1.metadata['mode'] == 'RGB'
     assert jpeg_2.metadata['mode'] == 'RGB'
-
     
 def test_jpeg_width():
     from file_processing.file import File
@@ -726,7 +784,6 @@ def test_jpeg_width():
     assert jpeg_1.metadata['width'] == 474
     assert jpeg_2.metadata['width'] == 4489
 
-    
 def test_jpeg_height():
     from file_processing.file import File
     jpeg_1 = File('tests/resources/test_files/HealthCanada.jpeg')
@@ -773,6 +830,12 @@ def test_jpeg_invalid_save_location():
     with pytest.raises(FileProcessingFailedError):
         jpeg_file.processor.save('/non_existent_folder/HealthCanada.jpeg')
 
+def test_jpeg_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/MapCanada_corrupted.jpg")
 
         
 def test_csv_text():
@@ -843,6 +906,13 @@ def test_csv_invalid_save_location():
     csv_file = File('tests/resources/test_files/2021_Census_English.csv')
     with pytest.raises(FileProcessingFailedError):
         csv_file.processor.save('/non_existent_folder/2021_Census_English.csv')
+
+def test_csv_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/2021_Census_English_corrupted.csv")
         
 
 def test_zip_num_files():
@@ -852,7 +922,6 @@ def test_zip_num_files():
     assert zip_1.metadata['num_files'] == 3
     assert zip_2.metadata['num_files'] == 0
 
-    
 def test_zip_file_types():
     from file_processing.file import File
     zip_1 = File('tests/resources/test_files/SampleReport.zip')
@@ -868,7 +937,6 @@ def test_zip_file_names():
     assert zip_1.metadata['file_names'] == ['SampleReport.docx', 'SampleReport.pptx', 'HealthCanadaOverviewFromWikipedia.docx']
     assert zip_2.metadata['file_names'] == []
 
-
 def test_zip_extraction():
     from file_processing.file import File
     import shutil
@@ -883,7 +951,6 @@ def test_zip_extraction():
     assert set(extracted_files) == set(expected_files)
 
     shutil.rmtree(extraction_dir)
-
 
 def test_zip_save():
     from file_processing.file import File
@@ -909,3 +976,10 @@ def test_zip_invalid_save_location():
     zip_file = File('tests/resources/test_files/SampleReport.zip')
     with pytest.raises(FileProcessingFailedError):
         zip_file.processor.save('/non_existent_folder/SavedSampleReport.zip')
+
+def test_zip_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/SampleReport_corrupted.zip")
