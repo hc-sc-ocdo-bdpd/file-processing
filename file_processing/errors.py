@@ -14,6 +14,10 @@ class FileProcessingFailedError(FileProcessorError):
     """Raised when there's a generic error during file processing."""
     pass
 
+class FileCorruptionError(FileProcessorError):
+    """Raised when the file is found to be corrupted."""
+    pass
+
 
 
 class OCRError(FileProcessorError):

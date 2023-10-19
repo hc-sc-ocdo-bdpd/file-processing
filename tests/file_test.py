@@ -183,8 +183,8 @@ def test_docx_invalid_save_location():
 def test_docx_corrupted_file_processing():
     import pytest
     from file_processing.file import File
-    from errors import FileProcessingFailedError
-    with pytest.raises(FileProcessingFailedError) as exc_info:
+    from errors import FileCorruptionError
+    with pytest.raises(FileCorruptionError) as exc_info:
         File("tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.docx")
 
 
