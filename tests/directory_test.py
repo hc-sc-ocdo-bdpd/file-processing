@@ -4,11 +4,11 @@ import glob
 import pytest
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.directory import Directory
-from typing import Optional
+import json
 
 variable_names = "include_text, filters, keywords"
 values = [(True, None, None), (False, None, None), (False, {"extensions": '.csv'}, None), (False, {"extensions": ['.csv', '.pptx']}, None),
-          (False, {"min_size": 50000}, None), (False, {"max_size": 50000}, None)]
+          (False, {"min_size": 50000}, None), (False, {"max_size": 50000}, None), (False, None, ['Canada'])]
 
 @pytest.fixture
 def mk_get_rm_dir(include_text, filters, keywords, tmp_path_factory):
@@ -59,17 +59,21 @@ def test_filters(mk_get_rm_dir, include_text, filters, keywords):
         if "extensions" in filters.keys():
             assert mk_get_rm_dir["Extension"].str.contains(r'\b(?:{})\b'.format("|".join(filters.get("extensions")))).count() == mk_get_rm_dir.shape[0]
         if "min_size" in filters.keys():
-            assert mk_get_rm_dir["Size"].all() >= filters.get("min_size")
+            assert (mk_get_rm_dir["Size"] >= filters.get("min_size")).all()
         if "max_size" in filters.keys():
-            assert mk_get_rm_dir["Size"].all() <= filters.get("max_size")
+            assert (mk_get_rm_dir["Size"] <= filters.get("max_size")).all()
     # add some else statement
     # else:
     #     assert mk_get_rm_dir["Extension"].str.conta == mk_get_rm_dir.shape[0]
     
-    # filters ALL THREE
     # keywords EMPTY LIST
     # keywords ONE
     # keywords MULTIPLE
+@pytest.mark.parametrize(variable_names, values)
+def test_keywords(mk_get_rm_dir, include_text, filters, keywords):
+    # if keywords is not None:
+    #     assert (mk_get_rm_dir["Metadata"].apply(lambda x: sum(json.loads(x).get("text").count(key) for key in keywords)) == mk_get_rm_dir["Keywords"].apply(lambda x : sum(json.loads(x).values()))).all()
+        # assert (mk_get_rm_dir["Metadata"].apply(lambda x: sum([x.count(key) for key in keywords])) == mk_get_rm_dir["Keywords"].apply(lambda x : sum(json.loads(x).values()))).all()
 
 # _count_keywords method
     # good text, one keyword -> match
