@@ -82,7 +82,7 @@ class Directory:
                     
                     if keywords:
                         text = metadata.get('text', '')
-                        if text is None:
+                        if text is None: # if {text: null} in metadata
                             text = ''
                         keyword_counts = self._count_keywords(text, keywords)
                         row_data.append(json.dumps(keyword_counts, ensure_ascii=False))
