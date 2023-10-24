@@ -1,6 +1,9 @@
 from file_processor_strategy import FileProcessorStrategy
 from openpyxl import load_workbook 
 from zipfile import BadZipFile
+import msoffcrypto
+from errors import FileProcessingFailedError, FileCorruptionError
+from io import BytesIO
 
 class xlsxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -20,34 +23,53 @@ class xlsxFileProcessor(FileProcessorStrategy):
 
     
     def process(self) -> None:
+        with open(self.file_path, 'rb') as f:
+            file_content = BytesIO(f.read())
+
         try:
+            office_file = msoffcrypto.OfficeFile(file_content)
+            if office_file.is_encrypted():
+                self.metadata["has_password"] = True
+                return
+        except Exception as e:
+            raise FileCorruptionError(f"File is corrupted: {self.file_path}")
+
+
+        try:
+            file_content.seek(0)  # Reset the position to the start
             exceldoc = load_workbook(self.file_path)
             self.metadata.update({"active_sheet": exceldoc.active.title})
             self.metadata.update({"sheet_names": exceldoc.sheetnames})
             self.metadata.update({"data":self.read_all_data(exceldoc)})
             self.metadata.update({"last_modified_by": exceldoc.properties.lastModifiedBy})
             self.metadata.update({"creator": exceldoc.properties.creator})
-        except BadZipFile:
-            self.metadata['has_password'] = True
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while processing {self.file_path}: {e}")
+
    
     def save(self, output_path: str = None) -> None:
-        exceldoc = load_workbook(self.file_path)
-        cp = exceldoc.properties
-        # Update the core properties (metadata)
-        cp.creator = self.metadata.get('creator', cp.creator)
-        cp.last_modified_by = self.metadata.get('last_modified_by', cp.lastModifiedBy)
-        
-        save_path = output_path or self.file_path
-        exceldoc.save(save_path)
+        try:
+            exceldoc = load_workbook(self.file_path)
+            cp = exceldoc.properties
+            cp.creator = self.metadata.get('creator', cp.creator)
+            cp.last_modified_by = self.metadata.get('last_modified_by', cp.lastModifiedBy)
+            
+            save_path = output_path or self.file_path
+            exceldoc.save(save_path)
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while saving {self.file_path}: {e}")
+
  
     @staticmethod
     def read_all_data(exceldoc):
-        data = {}
-        for sheet_name in exceldoc.sheetnames:
-            sheet = exceldoc[sheet_name]
-            sheet_data = []
-            for row in sheet.iter_rows(values_only=True):
-                cleaned_row = [str(cell) if cell else None for cell in row]
-                sheet_data.append(cleaned_row)
-            data[sheet_name] = sheet_data
-        return data
+        try:
+            data = {}
+            for sheet_name in exceldoc.sheetnames:
+                sheet = exceldoc[sheet_name]
+                sheet_data = []
+                for row in sheet.iter_rows(values_only=True):
+                    sheet_data.append(row)
+                data[sheet_name] = sheet_data
+            return data
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while reading data from Excel document: {e}")

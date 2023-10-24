@@ -13,6 +13,7 @@ from xml_processor import XmlFileProcessor
 from jpeg_processor import JpegFileProcessor
 from csv_processor import CsvFileProcessor
 from zip_processor import ZipFileProcessor
+from errors import UnsupportedFileTypeError, NotOCRApplciableError
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
@@ -44,13 +45,13 @@ class File:
 
         processor_class = File.PROCESSORS.get(extension)
         if not processor_class:
-            raise ValueError(f"No processor for file type {extension}")
+            raise UnsupportedFileTypeError(f"No processor for file type {extension}")
 
         processor = processor_class(str(self.path))
 
         if use_ocr:
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
-                raise ValueError(f"OCR is not applicable for file type {extension}.")
+                raise NotOCRApplciableError(f"OCR is not applicable for file type {extension}.")
             return OCRDecorator(processor)
 
         return processor

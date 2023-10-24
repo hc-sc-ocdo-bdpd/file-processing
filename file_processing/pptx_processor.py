@@ -1,6 +1,9 @@
 from file_processor_strategy import FileProcessorStrategy
 from pptx import Presentation
 from zipfile import BadZipFile
+from errors import FileProcessingFailedError, FileCorruptionError
+import msoffcrypto
+from io import BytesIO
 
 class PptxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str) -> None:
@@ -19,28 +22,42 @@ class PptxFileProcessor(FileProcessorStrategy):
 
 
     def process(self) -> None:
+        with open(self.file_path, 'rb') as f:
+            file_content = BytesIO(f.read())
+
         try:
-            ppt = Presentation(self.file_path)
+            office_file = msoffcrypto.OfficeFile(file_content)
+            if office_file.is_encrypted():
+                self.metadata["has_password"] = True
+                return
+        except Exception as e:
+            raise FileCorruptionError(f"File is corrupted: {self.file_path}")
+
+        try:
+            ppt = Presentation(file_content)
             self.metadata.update({'text': self.extract_text_from_pptx(ppt)})
             self.metadata.update({'author': ppt.core_properties.author})
             self.metadata.update({'last_modified_by': ppt.core_properties.last_modified_by})
             self.metadata.update({"num_slides": len(ppt.slides)})
-        except BadZipFile:
-            self.metadata['has_password'] = True
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while processing {self.file_path}: {e}")
 
-        # Other core properties to include: https://python-pptx.readthedocs.io/en/latest/api/presentation.html#coreproperties-objects
-        # keywords, language, subject, version
 
     def save(self, output_path: str = None) -> None:
-        ppt = Presentation(self.file_path)
-
-        # Update the core properties (metadata)
-        cp = ppt.core_properties
-        cp.author = self.metadata.get('author', cp.author)
-        cp.last_modified_by = self.metadata.get('last_modified_by', cp.last_modified_by)
-        
         save_path = output_path or self.file_path
-        ppt.save(save_path)
+        try:
+            ppt = Presentation(self.file_path)
+
+            # Update the core properties (metadata)
+            cp = ppt.core_properties
+            cp.author = self.metadata.get('author', cp.author)
+            cp.last_modified_by = self.metadata.get('last_modified_by', cp.last_modified_by)
+
+            ppt.save(save_path)
+        except Exception as e:
+            raise FileProcessingFailedError(f"Error encountered while saving to {save_path}: {e}")
+
+
 
     @staticmethod
     def extract_text_from_pptx(ppt: Presentation) -> str:
@@ -58,5 +75,4 @@ class PptxFileProcessor(FileProcessorStrategy):
                             full_text.append(s)
             return '\n'.join(full_text)
         except Exception as e:
-            print(f"Error encountered while opening or processing {file_path}: {e}")
-            return None
+            raise FileProcessingFailedError(f"Error encountered while extracting text from pptx: {e}")
