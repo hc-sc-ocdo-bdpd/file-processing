@@ -5,7 +5,6 @@ import json
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.directory import Directory
 
-
 variable_names = "include_text, filters, keywords"
 values = [(True, None, None), 
           (False, None, None),
@@ -27,17 +26,12 @@ def mk_get_rm_dir(include_text, filters, keywords, tmp_path_factory):
 
 
 @pytest.mark.parametrize(variable_names, values)
-def test_directory_report(mk_get_rm_dir, include_text, filters, keywords):
-    assert mk_get_rm_dir.size > 1
-
-
-@pytest.mark.parametrize(variable_names, values)
-def test_text(mk_get_rm_dir, include_text, filters, keywords):
+def test_text(mk_get_rm_dir, include_text):
     assert mk_get_rm_dir['Metadata'].str.contains("\"text\":").any() == include_text
 
 
 @pytest.mark.parametrize(variable_names, values)
-def test_filters(mk_get_rm_dir, include_text, filters, keywords):
+def test_filters(mk_get_rm_dir, filters):
     if filters:
         if "extensions" in filters.keys():
             assert mk_get_rm_dir["Extension"].str.contains(r'\b(?:{})\b'.format("|".join(filters.get("extensions")))).count() == mk_get_rm_dir.shape[0]
@@ -46,7 +40,7 @@ def test_filters(mk_get_rm_dir, include_text, filters, keywords):
         if "max_size" in filters.keys():
             assert (mk_get_rm_dir["Size"] <= filters.get("max_size")).all()
     else:
-        assert mk_get_rm_dir.size > 1
+        assert mk_get_rm_dir.shape[0] == 18 # number of files in directory_test_files folder
 
 
 @pytest.mark.parametrize(variable_names, values)
@@ -57,5 +51,18 @@ def test_keywords(mk_get_rm_dir, keywords):
     else:
         assert "Keywords" not in mk_get_rm_dir.columns
 
-# add invalid output test
-# add corrupted folder test
+
+invalid_location = [('non_existent_folder/test_output.csv')]
+@pytest.mark.parametrize("output_path", invalid_location)
+def test_output_location(output_path):
+    dir1 = Directory('tests/resources/directory_test_files')
+    with pytest.raises(FileNotFoundError):
+        dir1.generate_report(output_path)
+
+
+corrupted_dir = [('tests/resources/directory_test_files_corrupted')]
+@pytest.mark.parametrize("path", corrupted_dir)
+def test_corrupted_dir(path):
+    dir1 = Directory(path)
+    with pytest.raises(UnicodeDecodeError):
+        dir1.generate_report("test_output.csv")
