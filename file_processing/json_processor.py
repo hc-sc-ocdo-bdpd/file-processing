@@ -16,34 +16,51 @@ class JsonFileProcessor(FileProcessorStrategy):
                try:
                    data = json.load(f)
                    text = json.dumps(data)
-                   num_objects = len(data)
-                   num_keys = 0
-                   empty_values = 0
-                   for obj in data:
-                       num_keys += len(obj.keys())
-                       for key in obj.keys():
-                           if obj[key] == '':
-                               empty_values += 1
+                   num_keys = self.count_keys(data)
+                   empty_values = self.count_empty_values(data)
+                   key_names = self.get_key_names(data)
                except JSONDecodeError:
                    text = f.read()
-                   num_objects = 0
                    num_keys = 0
                    empty_values = 0
                self.metadata.update({
                    'text': text,
                    'encoding': encoding,
-                   'num_objects': num_objects,
                    'num_keys': num_keys,
+                   'key_names': key_names,
                    'empty_values': empty_values,
                })
        except Exception as e:
            raise FileProcessingFailedError(f"Error encountered while processing {self.file_path}: {e}")
-  
+
+   def count_empty_values(self, data: dict) -> int:
+       empty_values = 0
+       for key in data.keys():
+           if data[key] == '':
+               empty_values += 1
+           elif isinstance(data[key], dict):
+               empty_values += self.count_empty_values(data[key])
+       return empty_values
+
+   def count_keys(self, data: dict) -> int:
+       num_keys = len(data.keys())
+       for key in data.keys():
+           if isinstance(data[key], dict):
+               num_keys += self.count_keys(data[key])
+       return num_keys
+
+   def get_key_names(self, data: dict) -> list:
+       key_names = []
+       for key in data.keys():
+           key_names.append(key)
+           if isinstance(data[key], dict):
+               key_names += self.get_key_names(data[key])
+       return key_names
 
    def save(self, output_path: str = None) -> None:
        try:
            save_path = output_path or self.file_path
            with open(save_path, 'w', encoding = self.metadata['encoding']) as f:
-               json.dump(self.metadata['text'], f)
+               json.dump(json.loads(self.metadata['text']), f, indent=4)
        except Exception as e:
            raise FileProcessingFailedError(f"Error encountered while saving file {self.file_path} to {save_path}: {e}")
