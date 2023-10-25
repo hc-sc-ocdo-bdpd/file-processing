@@ -5,6 +5,7 @@ from pathlib import Path
 import io
 import getpass
 from file_processor_strategy import FileProcessorStrategy
+from errors import OCRProcessingError
 
 # Init for tesseract
 pytesseract.pytesseract.tesseract_cmd = Path('C:/Users') / getpass.getuser() / 'AppData/Local/Programs/Tesseract-OCR/tesseract.exe'
@@ -39,8 +40,8 @@ class OCRDecorator:
             ocr_result = pytesseract.image_to_string(image)
             return ocr_result
         except Exception as e:
-            print(f"Error during OCR processing for image: {e}")
-            return ""
+            raise OCRProcessingError(f"Error during OCR processing: {e}")
+
 
     def _ocr_pdf(self) -> str:
         text = ''
@@ -67,8 +68,7 @@ class OCRDecorator:
                 return combined_text
 
         except Exception as e:
-            print(f"Error during OCR processing for PDF: {e}")
-            return ""
+            raise OCRProcessingError(f"Error during OCR processing: {e}")
 
     @property
     def file_name(self) -> str:

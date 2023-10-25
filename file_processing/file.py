@@ -3,7 +3,7 @@ from txt_processor import TextFileProcessor
 from pdf_processor import PdfFileProcessor
 from docx_processor import DocxFileProcessor
 from ocr_decorator import OCRDecorator
-from msg_processor import msgFileProcessor
+from msg_processor import MsgFileProcessor
 from png_processor import PngFileProcessor
 from xlsx_processor import xlsxFileProcessor
 from pptx_processor import PptxFileProcessor
@@ -13,6 +13,7 @@ from xml_processor import XmlFileProcessor
 from jpeg_processor import JpegFileProcessor
 from csv_processor import CsvFileProcessor
 from zip_processor import ZipFileProcessor
+from errors import UnsupportedFileTypeError, NotOCRApplciableError
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
@@ -22,7 +23,7 @@ class File:
         ".txt": TextFileProcessor,
         ".pdf": PdfFileProcessor,
         ".docx": DocxFileProcessor,
-        ".msg": msgFileProcessor,
+        ".msg": MsgFileProcessor,
         ".pptx": PptxFileProcessor,
         ".rtf": RtfFileProcessor,
         ".html": HtmlFileProcessor,
@@ -31,7 +32,7 @@ class File:
         ".xlsx": xlsxFileProcessor,
         ".jpeg": JpegFileProcessor,
         ".jpg": JpegFileProcessor,
-        ".zip": ZipFileProcessor,
+        ".zip": ZipFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False) -> None:
@@ -44,13 +45,13 @@ class File:
 
         processor_class = File.PROCESSORS.get(extension)
         if not processor_class:
-            raise ValueError(f"No processor for file type {extension}")
+            raise UnsupportedFileTypeError(f"No processor for file type {extension}")
 
         processor = processor_class(str(self.path))
 
         if use_ocr:
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
-                raise ValueError(f"OCR is not applicable for file type {extension}.")
+                raise NotOCRApplciableError(f"OCR is not applicable for file type {extension}.")
             return OCRDecorator(processor)
 
         return processor
@@ -63,11 +64,32 @@ class File:
     def process(self) -> None:
         return self.processor.process()
 
+    
+    @property
+    def file_path(self) -> str:
+        return self.processor.file_path
+
 
     @property
     def file_name(self) -> str:
         return self.processor.file_name
 
+
+    @property
+    def extension(self) -> str:
+        return self.processor.extension
+
+    @property
+    def size(self) -> str:
+        return self.processor.size
+
+    @property
+    def modification_time(self) -> str:
+        return self.processor.modification_time
+
+    @property
+    def access_time(self) -> str:
+        return self.processor.access_time
 
     @property
     def metadata(self) -> dict:
