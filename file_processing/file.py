@@ -12,6 +12,7 @@ from html_processor import HtmlFileProcessor
 from xml_processor import XmlFileProcessor
 from jpeg_processor import JpegFileProcessor
 from csv_processor import CsvFileProcessor
+from json_processor import JsonFileProcessor
 from zip_processor import ZipFileProcessor
 from errors import UnsupportedFileTypeError, NotOCRApplciableError
 
@@ -32,6 +33,7 @@ class File:
         ".xlsx": xlsxFileProcessor,
         ".jpeg": JpegFileProcessor,
         ".jpg": JpegFileProcessor,
+        ".json": JsonFileProcessor,
         ".zip": ZipFileProcessor,
     }
 
