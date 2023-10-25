@@ -2,6 +2,7 @@ import pytest
 import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
+from tests.file_test import copy_file
 from errors import FileProcessingFailedError, FileCorruptionError
 
 variable_names = "path, text_length, num_lines, num_words"
@@ -19,15 +20,7 @@ def test_txt_metadata(path, text_length, num_lines, num_words):
     assert file_obj.metadata['num_words'] == num_words
 
 
-@pytest.fixture()
-def copy_file(path, tmp_path_factory):
-    from pathlib import Path
-    copy_path = str(tmp_path_factory.mktemp("copy") / Path(path).name)
-    file_obj = File(path)
-    file_obj.save(copy_path)
-    yield copy_path
-
-
+@pytest.mark.usefixtures('copy_file')
 @pytest.mark.parametrize(variable_names, values)
 def test_save_txt_metadata(copy_file, text_length, num_lines, num_words):
     test_txt_metadata(copy_file, text_length, num_lines, num_words)
