@@ -4,6 +4,7 @@ import pytest
 import json
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.directory import Directory
+from errors import FileProcessingFailedError
 
 variable_names = "include_text, filters, keywords"
 values = [(True, None, None), 
@@ -64,5 +65,5 @@ corrupted_dir = [('tests/resources/directory_test_files_corrupted')]
 @pytest.mark.parametrize("path", corrupted_dir)
 def test_corrupted_dir(path):
     dir1 = Directory(path)
-    with pytest.raises(UnicodeDecodeError):
+    with pytest.raises(FileProcessingFailedError):
         dir1.generate_report("test_output.csv")
