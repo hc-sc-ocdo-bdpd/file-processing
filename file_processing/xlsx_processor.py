@@ -38,7 +38,7 @@ class xlsxFileProcessor(FileProcessorStrategy):
         try:
             file_content.seek(0)  # Reset the position to the start
             exceldoc = load_workbook(self.file_path)
-            self.metadata.update({"active_sheet": exceldoc.active})
+            self.metadata.update({"active_sheet": exceldoc.active.title})
             self.metadata.update({"sheet_names": exceldoc.sheetnames})
             self.metadata.update({"data":self.read_all_data(exceldoc)})
             self.metadata.update({"last_modified_by": exceldoc.properties.lastModifiedBy})
