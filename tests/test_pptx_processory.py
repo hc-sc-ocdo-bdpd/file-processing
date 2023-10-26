@@ -25,14 +25,14 @@ def test_pptx_metadata(path, text_length, num_slides, last_modified_by, author):
 
 @pytest.mark.usefixtures('copy_file')
 @pytest.mark.parametrize('path', [x[0] for x in values])
-def test_save_pptx_metadata(copy_file):
+def test_change_save_pptx_metadata(copy_file):
         
         # Load and change metadata via File object
         ppt_file = File(copy_file)
         ppt_file.metadata['author'] = 'New Author'
         ppt_file.metadata['last_modified_by'] = 'Modified New'
 
-        #Save the updated file and load as Presentation
+        # Save the updated file and load as Presentation
         ppt_file.save()
         ppt = Presentation(copy_file)
 
@@ -48,10 +48,13 @@ def test_pptx_author_last_modified_by(copy_file):
         ppt_file = Presentation(copy_file)
         ppt_file.core_properties.author = "New Author"
         ppt_file.core_properties.last_modified_by = "Modified New"
-        ppt_file.save(copy_file)
 
-        # Load via File object and check if metadata was correctly changed
+        # Save the updated file and load as File object
+        ppt_file.save(copy_file)
         ppt = File(copy_file)
+
+        # Assert metadata was correctly changed
+
         assert ppt.metadata['author'] == "New Author"
         assert ppt.metadata['last_modified_by'] == "Modified New"
 
