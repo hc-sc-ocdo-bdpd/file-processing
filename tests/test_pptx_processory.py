@@ -6,7 +6,6 @@ from tests.file_test import copy_file
 from errors import FileProcessingFailedError, FileCorruptionError
 from pptx import Presentation
 
-# Tests from file_test To add: test_pptx_last_modified_by(), test_pptx_author()
 
 variable_names = "path, text_length, num_slides, last_modified_by, author"
 values = [
@@ -41,6 +40,20 @@ def test_save_pptx_metadata(copy_file):
         assert ppt.core_properties.author == "New Author"
         assert ppt.core_properties.last_modified_by == "Modified New"
 
+@pytest.mark.usefixtures('copy_file')
+@pytest.mark.parametrize('path', [x[0] for x in values])
+def test_pptx_author_last_modified_by(copy_file):
+        
+        # Change metadata via Presentation object
+        ppt_file = Presentation(copy_file)
+        ppt_file.core_properties.author = "New Author"
+        ppt_file.core_properties.last_modified_by = "Modified New"
+        ppt_file.save(copy_file)
+
+        # Load via File object and check if metadata was correctly changed
+        ppt = File(copy_file)
+        assert ppt.metadata['author'] == "New Author"
+        assert ppt.metadata['last_modified_by'] == "Modified New"
 
 
 invalid_save_locations = [
