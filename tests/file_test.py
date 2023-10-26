@@ -917,3 +917,65 @@ def test_zip_corrupted_file_processing():
     from errors import FileProcessingFailedError
     with pytest.raises(FileProcessingFailedError) as exc_info:
         File("tests/resources/test_files/SampleReport_corrupted.zip")
+
+def test_json_num_keys():
+    from file_processing.file import File
+    json_1 = File('tests/resources/test_files/coffee.json')
+    json_2 = File('tests/resources/test_files/sample.json')
+    assert json_1.metadata['num_keys'] == 15
+    assert json_2.metadata['num_keys'] == 9
+
+def test_json_key_names():
+    from file_processing.file import File
+    json_1 = File('tests/resources/test_files/coffee.json')
+    json_2 = File('tests/resources/test_files/sample.json')
+    assert json_1.metadata['key_names'] == ['quiz', 'sport', 'q1', 'question', 'options', 'answer', 'maths', 'q1', 'question', 'options', 'answer', 'q2', 'question', 'options', 'answer']
+    assert json_2.metadata['key_names'] == ['array', 'boolean', 'color', 'null', 'number', 'object', 'a', 'c', 'string']
+
+def test_json_empty_values():
+    from file_processing.file import File
+    json_1 = File('tests/resources/test_files/coffee.json')
+    json_2 = File('tests/resources/test_files/sample.json')
+    assert json_1.metadata['empty_values'] == 0
+    assert json_2.metadata['empty_values'] == 1
+
+def test_save_json_metadata():
+    from file_processing.file import File
+
+    test_json_path = 'tests/resources/test_files/coffee.json'
+    copy_test_json_path = 'tests/resources/test_files/coffee_copy.json'
+
+    # Copying file
+    with open(test_json_path, 'rb') as src_file:
+        with open(copy_test_json_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+    try:
+
+        # Load via File object
+        json_file = File(copy_test_json_path)
+        
+        # Save
+        json_file.save()
+        
+        # Assert if changes correctly saved
+        assert json_file.metadata['num_keys'] == 15
+
+    finally:
+        # Clean up by removing the copied file after the test is done
+        os.remove(copy_test_json_path)
+
+def test_json_invalid_save_location():
+    import pytest
+    from file_processing.file import File
+    from errors import FileProcessingFailedError
+    json_file = File('tests/resources/test_files/coffee.json')
+    with pytest.raises(FileProcessingFailedError):
+        json_file.processor.save('/non_existent_folder/coffee.json')
+
+def test_json_corrupted_file_processing():
+    import pytest
+    from file_processing.file import File
+    from errors import FileCorruptionError
+    with pytest.raises(FileCorruptionError) as exc_info:
+        File("tests/resources/test_files/coffee_corrupted.json")
