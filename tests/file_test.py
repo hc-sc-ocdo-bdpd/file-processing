@@ -318,7 +318,7 @@ def test_xlsx_activesheet():
     from file_processing.file import File
     exceldoc = File('tests/resources/test_files/Test_excel_file.xlsx')
     exceldoc_activesheet = exceldoc.metadata['active_sheet']
-    assert str(exceldoc_activesheet) == "<Worksheet \"Sheet3\">"
+    assert str(exceldoc_activesheet) == "Sheet3"
 
 def test_xlsx_data():
     from file_processing.file import File

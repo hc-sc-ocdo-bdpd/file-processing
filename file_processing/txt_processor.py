@@ -24,6 +24,8 @@ class TextFileProcessor(FileProcessorStrategy):
                 'num_lines': len(lines),
                 'num_words': len(words),
             })
+        except UnicodeDecodeError as ude:
+            raise FileProcessingFailedError(f"Unicode decoding error encountered while processing {self.file_path}: {ude}")
         except Exception as e:
             raise FileProcessingFailedError(f"Error encountered while processing {self.file_path}: {e}")
 

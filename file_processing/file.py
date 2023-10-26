@@ -3,7 +3,7 @@ from txt_processor import TextFileProcessor
 from pdf_processor import PdfFileProcessor
 from docx_processor import DocxFileProcessor
 from ocr_decorator import OCRDecorator
-from msg_processor import msgFileProcessor
+from msg_processor import MsgFileProcessor
 from png_processor import PngFileProcessor
 from xlsx_processor import xlsxFileProcessor
 from pptx_processor import PptxFileProcessor
@@ -24,7 +24,7 @@ class File:
         ".txt": TextFileProcessor,
         ".pdf": PdfFileProcessor,
         ".docx": DocxFileProcessor,
-        ".msg": msgFileProcessor,
+        ".msg": MsgFileProcessor,
         ".pptx": PptxFileProcessor,
         ".rtf": RtfFileProcessor,
         ".html": HtmlFileProcessor,
@@ -66,11 +66,32 @@ class File:
     def process(self) -> None:
         return self.processor.process()
 
+    
+    @property
+    def file_path(self) -> str:
+        return self.processor.file_path
+
 
     @property
     def file_name(self) -> str:
         return self.processor.file_name
 
+
+    @property
+    def extension(self) -> str:
+        return self.processor.extension
+
+    @property
+    def size(self) -> str:
+        return self.processor.size
+
+    @property
+    def modification_time(self) -> str:
+        return self.processor.modification_time
+
+    @property
+    def access_time(self) -> str:
+        return self.processor.access_time
 
     @property
     def metadata(self) -> dict:
