@@ -3,7 +3,10 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from tests.file_test import copy_file
+from errors import FileProcessingFailedError, FileCorruptionError
 from pptx import Presentation
+
+# Tests from file_test To add: test_pptx_last_modified_by(), test_pptx_author()
 
 variable_names = "path, text_length, num_slides, last_modified_by, author"
 values = [
@@ -20,10 +23,10 @@ def test_pptx_metadata(path, text_length, num_slides, last_modified_by, author):
     assert file_obj.metadata['last_modified_by'] == last_modified_by
     assert file_obj.metadata['author'] == author
 
-    
+
 @pytest.mark.usefixtures('copy_file')
-@pytest.mark.parametrize(variable_names, values)
-def test_save_pptx_metadata(copy_file, text_length, num_slides, last_modified_by, author):
+@pytest.mark.parametrize('path', [x[0] for x in values])
+def test_save_pptx_metadata(copy_file):
         
         # Load and change metadata via File object
         ppt_file = File(copy_file)
@@ -37,3 +40,33 @@ def test_save_pptx_metadata(copy_file, text_length, num_slides, last_modified_by
         # Check if modified metadata was correctly saved
         assert ppt.core_properties.author == "New Author"
         assert ppt.core_properties.last_modified_by == "Modified New"
+
+
+
+invalid_save_locations = [
+    ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx', '/non_existent_folder/HealthCanadaOverviewFromWikipedia_Locked.pptx')
+]
+
+@pytest.mark.parametrize("path, save_path", invalid_save_locations)
+def test_pptx_invalid_save_location(path, save_path):
+    file_obj = File(path)
+    with pytest.raises(FileProcessingFailedError):
+        file_obj.processor.save(save_path)
+
+corrupted_files = [
+    'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.pptx'
+]
+
+@pytest.mark.parametrize("path", corrupted_files)
+def test_pptx_corrupted_file_processing(path):
+    with pytest.raises(FileCorruptionError):
+        File(path)
+
+
+locked_files = [
+     ('tests/resources/test_files/SampleReport_Locked.pptx'), ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
+]
+
+@pytest.mark.parametrize("path", locked_files)
+def test_pptx_locked(path):
+    assert File(path).metadata["has_password"] == True
