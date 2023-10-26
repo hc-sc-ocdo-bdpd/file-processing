@@ -2,7 +2,6 @@ import pytest
 import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
-from tests.file_test import copy_file
 from errors import FileProcessingFailedError, FileCorruptionError
 
 variable_names = "path, text_length, num_lines, num_words"
