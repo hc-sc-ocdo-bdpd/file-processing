@@ -7,18 +7,18 @@ from errors import OCRProcessingError, NotOCRApplciableError
 # TO DO:
 # Files and ocr results need to be created and filled in.
 
-PDF_SAMPLES = ["sample1.pdf", "sample2.pdf"]
-JPEG_SAMPLES = ["sample1.jpeg", "sample2.jpeg"]
-PNG_SAMPLES = ["sample1.png", "sample2.png"]
-NON_OCR_APPLICABLE_SAMPLES = ["sample1.txt", "sample2.txt"]
+PDF_SAMPLES = ["tests/resources/test_files/test_ocr_text.pdf", "tests/resources/test_files/test_ocr_text_2.pdf"]
+JPEG_SAMPLES = ["tests/resources/test_files/test_ocr_text.jpg", "tests/resources/test_files/test_ocr_text_2.jpg"]
+PNG_SAMPLES = ["tests/resources/test_files/test_ocr_text.png", "tests/resources/test_files/test_ocr_text_2.png"]
+NON_OCR_APPLICABLE_SAMPLES = ["tests/resources/test_files/Empty.zip", "tests/resources/test_files/Sample.xml"]
 
 EXPECTED_OCR_RESULTS = {
-    PDF_SAMPLES[0]: "Expected OCR result for PDF 1",
-    PDF_SAMPLES[1]: "Expected OCR result for PDF 2",
-    JPEG_SAMPLES[0]: "Expected OCR result for JPEG 1",
-    JPEG_SAMPLES[1]: "Expected OCR result for JPEG 2",
-    PNG_SAMPLES[0]: "Expected OCR result for PNG 1",
-    PNG_SAMPLES[1]: "Expected OCR result for PNG 2",
+    PDF_SAMPLES[0]: '\nTest OCR text successful!\n',
+    PDF_SAMPLES[1]: '\nTest OCR text successful!\n',
+    JPEG_SAMPLES[0]: 'Test OCR text successful!\n',
+    JPEG_SAMPLES[1]: 'Test OCR text successful!\n',
+    PNG_SAMPLES[0]: 'Test OCR text successful!\n',
+    PNG_SAMPLES[1]: 'Test OCR text successful!\n',
 }
 
 @pytest.fixture(params=PDF_SAMPLES + JPEG_SAMPLES + PNG_SAMPLES)
