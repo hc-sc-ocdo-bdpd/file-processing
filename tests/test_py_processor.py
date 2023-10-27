@@ -33,15 +33,17 @@ def copy_file(path, tmp_path_factory):
 def test_save_python_metadata(copy_file, num_lines, num_functions, num_classes, num_imports, num_docstrings):
     test_python_metadata(copy_file, num_lines, num_functions, num_classes, num_imports, num_docstrings)
 
-# invalid_save_locations = [
-#     ('/non_existent_folder/sample1.py')
-# ]
+invalid_save_locations_python = [
+    ('tests/resources/test_files/backend.py', '/non_existent_folder/backend.py')
+]
 
-# @pytest.mark.parametrize("path, save_path", invalid_save_locations)
-# def test_python_invalid_save_location(path, save_path):
-#     file_obj = File(path)
-#     with pytest.raises(FileProcessingFailedError):
-#         file_obj.save(save_path)
+
+@pytest.mark.parametrize("path, save_path", invalid_save_locations_python)
+def test_py_invalid_save_location(path, save_path):
+    file_obj = File(path)
+    with pytest.raises(FileProcessingFailedError):
+        file_obj.save(save_path)
+
 
 # corrupted_files = [
 #     'tests/resources/test_files/sample1_corrupted.py'
