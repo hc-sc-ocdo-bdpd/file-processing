@@ -16,7 +16,7 @@ from zip_processor import ZipFileProcessor
 from errors import UnsupportedFileTypeError, NotOCRApplciableError
 
 class File:
-    OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
+    OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png"}
 
     PROCESSORS = {
         ".csv": CsvFileProcessor,
