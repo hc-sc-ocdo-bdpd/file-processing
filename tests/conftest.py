@@ -26,3 +26,9 @@ def invalid_save_location(path):
 def corrupted_file_processing(path):
     with pytest.raises(FileProcessingFailedError):
         File(path)
+
+# corrupted_file_processing_lock fixture to be used in test_..._processor.py file (for files that could be potentially locked)
+@pytest.fixture()
+def corrupted_file_processing_lock(path):
+    with pytest.raises(FileCorruptionError):
+        File(path)

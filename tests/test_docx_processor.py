@@ -2,7 +2,6 @@ import pytest
 import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
-from errors import FileProcessingFailedError, FileCorruptionError
 from docx import Document
 
 
@@ -21,51 +20,35 @@ def test_docx_metadata(path, text_length, last_modified_by, author):
     assert file_obj.metadata['author'] == author
 
 
-@pytest.mark.usefixtures('copy_file')
-@pytest.mark.parametrize('path', [x[0] for x in values])
-def test_save_docx_metadata(copy_file):
+@pytest.mark.parametrize("path, text_length", map(lambda x: x[:2], values))
+def test_save_docx_metadata(copy_file, text_length):
         
         # Load and change metadata via File object
         docx_file = File(copy_file)
-        docx_file.metadata['author'] = 'New Author'
         docx_file.metadata['last_modified_by'] = 'Modified New'
+        docx_file.metadata['author'] = 'New Author'
 
-        # Save the updated file and load as Document
+        # Save the updated file
         docx_file.save()
-        docx = Document(copy_file)
+        test_docx_metadata(copy_file, text_length, 'Modified New', 'New Author')
 
-        # Check if modified metadata was correctly saved
-        assert docx.core_properties.author == "New Author"
-        assert docx.core_properties.last_modified_by == "Modified New"
 
-@pytest.mark.usefixtures('copy_file')
-@pytest.mark.parametrize('path', [x[0] for x in values])
-def test_change_docx_author_last_modified_by(copy_file):
+@pytest.mark.parametrize("path, text_length", map(lambda x: x[:2], values))
+def test_change_docx_author_last_modified_by(copy_file, text_length):
         
         # Change metadata via Document object
         docx_file = Document(copy_file)
-        docx_file.core_properties.author = "New Author"
         docx_file.core_properties.last_modified_by = "Modified New"
+        docx_file.core_properties.author = "New Author"
         
-        # Save the file and load as File object
+        # Save the file
         docx_file.save(copy_file)
-        docx = File(copy_file)
-
-        # Assert metadata was correctly changed
-        assert docx.metadata['author'] == "New Author"
-        assert docx.metadata['last_modified_by'] == "Modified New"
+        test_docx_metadata(copy_file, text_length, 'Modified New', 'New Author')
 
 
-
-invalid_save_locations = [
-    ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.docx', '/non_existent_folder/HealthCanadaOverviewFromWikipedia.docx')
-]
-
-@pytest.mark.parametrize("path, save_path", invalid_save_locations)
-def test_docx_invalid_save_location(path, save_path):
-    file_obj = File(path)
-    with pytest.raises(FileProcessingFailedError):
-        file_obj.processor.save(save_path)
+@pytest.mark.parametrize("path", map(lambda x: x[0], values))
+def test_docx_invalid_save_location(invalid_save_location):
+    invalid_save_location
 
 
 corrupted_files = [
@@ -73,12 +56,12 @@ corrupted_files = [
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_docx_corrupted_file_processing(path):
-    with pytest.raises(FileCorruptionError):
-        File(path)
+def test_docx_corrupted_file_processing(corrupted_file_processing_lock):
+    corrupted_file_processing_lock
 
 locked_files = [
-     ('tests/resources/test_files/SampleReport_Locked.docx'), ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.docx')
+     ('tests/resources/test_files/SampleReport_Locked.docx'), 
+     ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.docx')
 ]
 
 @pytest.mark.parametrize("path", locked_files)

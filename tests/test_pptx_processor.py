@@ -2,7 +2,6 @@ import pytest
 import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
-from errors import FileProcessingFailedError, FileCorruptionError
 from pptx import Presentation
 
 
@@ -22,64 +21,47 @@ def test_pptx_metadata(path, text_length, num_slides, last_modified_by, author):
     assert file_obj.metadata['author'] == author
 
 
-@pytest.mark.usefixtures('copy_file')
-@pytest.mark.parametrize('path', [x[0] for x in values])
-def test_change_save_pptx_metadata(copy_file):
+@pytest.mark.parametrize("path, text_length, num_slides", map(lambda x: x[:3], values))
+def test_change_save_pptx_metadata(copy_file, text_length, num_slides):
         
         # Load and change metadata via File object
         ppt_file = File(copy_file)
-        ppt_file.metadata['author'] = 'New Author'
         ppt_file.metadata['last_modified_by'] = 'Modified New'
+        ppt_file.metadata['author'] = 'New Author'
 
-        # Save the updated file and load as Presentation
+        # Save the updated file
         ppt_file.save()
-        ppt = Presentation(copy_file)
+        test_pptx_metadata(copy_file, text_length, num_slides, 'Modified New', 'New Author')
 
-        # Check if modified metadata was correctly saved
-        assert ppt.core_properties.author == "New Author"
-        assert ppt.core_properties.last_modified_by == "Modified New"
 
-@pytest.mark.usefixtures('copy_file')
-@pytest.mark.parametrize('path', [x[0] for x in values])
-def test_pptx_author_last_modified_by(copy_file):
+@pytest.mark.parametrize("path, text_length, num_slides", map(lambda x: x[:3], values))
+def test_change_pptx_author_last_modified_by(copy_file, text_length, num_slides):
         
         # Change metadata via Presentation object
         ppt_file = Presentation(copy_file)
-        ppt_file.core_properties.author = "New Author"
         ppt_file.core_properties.last_modified_by = "Modified New"
+        ppt_file.core_properties.author = "New Author"
 
         # Save the updated file and load as File object
         ppt_file.save(copy_file)
-        ppt = File(copy_file)
-
-        # Assert metadata was correctly changed
-
-        assert ppt.metadata['author'] == "New Author"
-        assert ppt.metadata['last_modified_by'] == "Modified New"
+        test_pptx_metadata(copy_file, text_length, num_slides, 'Modified New', 'New Author')
 
 
-invalid_save_locations = [
-    ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx', '/non_existent_folder/HealthCanadaOverviewFromWikipedia_Locked.pptx')
-]
-
-@pytest.mark.parametrize("path, save_path", invalid_save_locations)
-def test_pptx_invalid_save_location(path, save_path):
-    file_obj = File(path)
-    with pytest.raises(FileProcessingFailedError):
-        file_obj.processor.save(save_path)
+@pytest.mark.parametrize("path", map(lambda x: x[0], values))
+def test_pptx_invalid_save_location(invalid_save_location):
+    invalid_save_location
 
 corrupted_files = [
     'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.pptx'
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_pptx_corrupted_file_processing(path):
-    with pytest.raises(FileCorruptionError):
-        File(path)
-
+def test_pptx_corrupted_file_processing(corrupted_file_processing_lock):
+    corrupted_file_processing_lock
 
 locked_files = [
-     ('tests/resources/test_files/SampleReport_Locked.pptx'), ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
+     ('tests/resources/test_files/SampleReport_Locked.pptx'), 
+     ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
 ]
 
 @pytest.mark.parametrize("path", locked_files)
