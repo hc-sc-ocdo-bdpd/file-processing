@@ -41,7 +41,9 @@ class PyFileProcessor(FileProcessorStrategy):
             elif isinstance(node, ast.Import) or isinstance(node, ast.ImportFrom):
                 self.metadata['imports'].append(ast.unparse(node))
 
-    def save(self, output_path: str = self.file_path) -> None:
+    def save(self, output_path: str = None) -> None:
+        if output_path is None:
+            output_path = self.file_path
         try:
             shutil.copy2(self.file_path, output_path)
         except Exception as e:
