@@ -4,13 +4,13 @@ sys.path.append(os.path.join(sys.path[0], 'file_processing'))
 from file import File
 from errors import FileProcessingFailedError
 
-# Need to create corrupted python file
 
 variable_names = "path, num_lines, num_functions, num_classes, num_imports, num_docstrings"
 values = [
    ('tests/resources/test_files/backend.py', 6503, 224, 5, 69, 194),
    ('tests/resources/test_files/align.py', 213, 8, 0, 16, 3)
 ]
+
 
 @pytest.mark.parametrize(variable_names, values)
 def test_python_metadata(path, num_lines, num_functions, num_classes, num_imports, num_docstrings):
@@ -21,6 +21,7 @@ def test_python_metadata(path, num_lines, num_functions, num_classes, num_import
     assert len(file_obj.metadata['imports']) == num_imports
     assert len(file_obj.metadata['docstrings']) == num_docstrings
 
+
 @pytest.fixture()
 def copy_file(path, tmp_path_factory):
     from pathlib import Path
@@ -28,6 +29,7 @@ def copy_file(path, tmp_path_factory):
     file_obj = File(path)
     file_obj.save(copy_path)
     yield copy_path
+
 
 @pytest.mark.parametrize(variable_names, values)
 def test_save_python_metadata(copy_file, num_lines, num_functions, num_classes, num_imports, num_docstrings):
@@ -45,11 +47,11 @@ def test_py_invalid_save_location(path, save_path):
         file_obj.save(save_path)
 
 
-# corrupted_files = [
-#     'tests/resources/test_files/sample1_corrupted.py'
-# ]
+corrupted_files = [
+    'tests/resources/test_files/callbacks_corrupted.py'
+]
 
-# @pytest.mark.parametrize("path", corrupted_files)
-# def test_python_corrupted_file_processing(path):
-#     with pytest.raises(FileProcessingFailedError):
-#         File(path)
+@pytest.mark.parametrize("path", corrupted_files)
+def test_python_corrupted_file_processing(path):
+    with pytest.raises(FileProcessingFailedError):
+        File(path)
