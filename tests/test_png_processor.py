@@ -31,7 +31,7 @@ def test_save_png_metadata(copy_file, original_format, mode, width, height):
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_docx_invalid_save_location(invalid_save_location):
+def test_png_invalid_save_location(invalid_save_location):
     invalid_save_location
 
 corrupted_files = [
@@ -39,6 +39,6 @@ corrupted_files = [
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_docx_corrupted_file_processing(corrupted_file_processing_lock):
+def test_png_corrupted_file_processing(corrupted_file_processing_lock):
     corrupted_file_processing_lock
 
