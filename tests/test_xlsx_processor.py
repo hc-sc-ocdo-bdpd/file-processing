@@ -5,7 +5,8 @@ from file_processing.file import File
 
 variable_names = "path, sheet_names, active_sheet, data, last_modified_by, creator"
 values = [
-   ('tests/resources/test_files/Test_excel_file.xlsx', ['Sheet1', 'Sheet2', 'Sheet3'], "Sheet3", 42, 'Burnett, Taylen (HC/SC)', 'Burnett, Taylen (HC/SC)')
+   ('tests/resources/test_files/Test_excel_file.xlsx', ['Sheet1', 'Sheet2', 'Sheet3'], "Sheet3", 42, 'Burnett, Taylen (HC/SC)', 'Burnett, Taylen (HC/SC)'),
+   ('tests/resources/test_files/Government.xlsx', ['Health Canada', 'Government of Canada'], "Government of Canada", 49, 'Prazuch, Karolina (HC/SC)', 'Prazuch, Karolina (HC/SC)')
 ]
 
 
