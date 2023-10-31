@@ -6,8 +6,8 @@ import msoffcrypto
 from io import BytesIO
 
 class PptxFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path: str) -> None:
-        super().__init__(file_path)
+    def __init__(self, file_path: str, open_file: bool = True) -> None:
+        super().__init__(file_path, open_file)
         self.metadata = self._default_metadata()
 
 
@@ -22,6 +22,9 @@ class PptxFileProcessor(FileProcessorStrategy):
 
 
     def process(self) -> None:
+        if not self.open_file:
+            return
+
         with open(self.file_path, 'rb') as f:
             file_content = BytesIO(f.read())
 

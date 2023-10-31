@@ -3,11 +3,14 @@ from striprtf.striprtf import rtf_to_text
 from errors import FileProcessingFailedError, UnsupportedFileTypeError
 
 class RtfFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path: str) -> None:
-        super().__init__(file_path)
+    def __init__(self, file_path: str, open_file: bool = True) -> None:
+        super().__init__(file_path, open_file)
         self.metadata = {}
 
     def process(self) -> None:
+        if not self.open_file:
+            return
+
         try:
             with open(self.file_path, 'r', encoding='utf-8') as file:
                 file_content = file.read()

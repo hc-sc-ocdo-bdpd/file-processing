@@ -4,11 +4,14 @@ from errors import FileProcessingFailedError
 
 
 class TextFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path: str) -> None:
-        super().__init__(file_path)
+    def __init__(self, file_path: str, open_file: bool = True) -> None:
+        super().__init__(file_path, open_file)
         self.metadata = {}
 
     def process(self) -> None:
+        if not self.open_file:
+            return
+
         try:
             encoding = chardet.detect(open(self.file_path, "rb").read())['encoding']
             with open(self.file_path, 'r', encoding=encoding) as f:

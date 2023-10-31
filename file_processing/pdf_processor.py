@@ -3,8 +3,8 @@ from PyPDF2 import PdfReader, PdfWriter
 from errors import FileProcessingFailedError
 
 class PdfFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path: str) -> None:
-        super().__init__(file_path)
+    def __init__(self, file_path: str, open_file: bool = True) -> None:
+        super().__init__(file_path, open_file)
         self.metadata = self._default_metadata()
         self.reader = None
 
@@ -17,6 +17,9 @@ class PdfFileProcessor(FileProcessorStrategy):
 
 
     def process(self) -> None:
+        if not self.open_file:
+            return
+
         try:
             reader = PdfReader(self.file_path)
         except Exception as e:

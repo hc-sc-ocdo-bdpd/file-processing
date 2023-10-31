@@ -3,11 +3,14 @@ from PIL import Image
 from errors import FileProcessingFailedError
 
 class PngFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path: str) -> None:
-        super().__init__(file_path)
+    def __init__(self, file_path: str, open_file: bool = True) -> None:
+        super().__init__(file_path, open_file)
         self.metadata = {}
 
     def process(self) -> None:
+        if not self.open_file:
+            return
+
         try:
             image = Image.open(self.file_path)
             image.load()
