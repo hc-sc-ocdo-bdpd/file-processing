@@ -19,11 +19,11 @@ def test_html_metadata(path, text_length, num_lines, num_words):
     assert file_obj.metadata['num_words'] == num_words
 
 
-@pytest.mark.usefixtures('copy_file')
+
 @pytest.mark.parametrize(variable_names, values)
 def test_save_html_metadata(copy_file, text_length, num_lines, num_words):
-        png = File(copy_file)
-        png.save()
+        html = File(copy_file)
+        html.save()
         test_html_metadata(copy_file, text_length, num_lines, num_words)
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -35,6 +35,7 @@ corrupted_files = [
     'tests/resources/test_files/Health - Canada.ca_corrupted.html'
 ]
 
-@pytest.mark.parametrize("path", corrupted_files)
-def test_html_corrupted_file_processing(corrupted_file_processing_lock):
-    corrupted_file_processing_lock
+def test_html_corrupted_file_processing():
+    from errors import FileProcessingFailedError
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File("tests/resources/test_files/Health - Canada.ca_corrupted.html")
