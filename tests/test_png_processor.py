@@ -22,12 +22,10 @@ def test_png_metadata(path, original_format, mode, width, height):
     assert file_obj.metadata['width'] == width
     assert file_obj.metadata['height'] == height
 
-@pytest.mark.usefixtures('copy_file')
+
 @pytest.mark.parametrize(variable_names, values)
 def test_save_png_metadata(copy_file, original_format, mode, width, height):
-        png = File(copy_file)
-        png.save()
-        test_png_metadata(copy_file, 'PNG', mode, width, height)
+    test_png_metadata(copy_file, 'PNG', mode, width, height)
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
