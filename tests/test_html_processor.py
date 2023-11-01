@@ -3,8 +3,6 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 
-#To do: Fix test_html_corrupted_file_processing
-
 variable_names = "path, text_length, num_lines, num_words"
 values = [
    ('tests/resources/test_files/Health - Canada.ca.html', 165405, 3439, 11162)
@@ -35,7 +33,6 @@ corrupted_files = [
     'tests/resources/test_files/Health - Canada.ca_corrupted.html'
 ]
 
-def test_html_corrupted_file_processing():
-    from errors import FileProcessingFailedError
-    with pytest.raises(FileProcessingFailedError) as exc_info:
-        File("tests/resources/test_files/Health - Canada.ca_corrupted.html")
+@pytest.mark.parametrize("path", corrupted_files)
+def test_html_corrupted_file_processing(corrupted_file_processing):
+    corrupted_file_processing
