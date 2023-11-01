@@ -47,10 +47,24 @@ def test_filters(mk_get_rm_dir, filters):
 @pytest.mark.parametrize(variable_names, values)
 def test_keywords(mk_get_rm_dir, keywords):
     if keywords:
-        assert (mk_get_rm_dir["Metadata"].apply(lambda x: json.loads(x).get('text')).fillna('').str.lower().apply(lambda x: sum(x.count(key.lower()) for key in keywords)) 
-                == mk_get_rm_dir["Keywords"].apply(lambda x : sum(json.loads(x).values()))).all()
+        assert "Keywords" in mk_get_rm_dir.columns, "The 'Keywords' column is missing from the DataFrame."
+        
+        keyword_counts = (
+            mk_get_rm_dir["Keywords"]
+            .fillna('{}')
+            .apply(lambda x: sum(json.loads(x).values()))
+        )
+        
+        metadata_keyword_counts = (
+            mk_get_rm_dir["Metadata"]
+            .apply(lambda x: json.loads(x).get('text', '') or '')
+            .str.lower()
+            .apply(lambda x: sum(x.count(key.lower()) for key in keywords))
+        )
+        
+        assert (metadata_keyword_counts == keyword_counts).all(), "Keyword counts do not match."
     else:
-        assert "Keywords" not in mk_get_rm_dir.columns
+        assert "Keywords" not in mk_get_rm_dir.columns, "The 'Keywords' column should not be present in the DataFrame."
 
 
 invalid_location = [('non_existent_folder/test_output.csv')]
