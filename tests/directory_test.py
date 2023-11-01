@@ -41,7 +41,7 @@ def test_filters(mk_get_rm_dir, filters):
         if "max_size" in filters.keys():
             assert (mk_get_rm_dir["Size"] <= filters.get("max_size")).all()
     else:
-        assert mk_get_rm_dir.shape[0] == 18 # number of files in directory_test_files folder
+        assert mk_get_rm_dir.shape[0] == sum(len(files) for _, _, files in os.walk(r'tests/resources/directory_test_files'))
 
 
 @pytest.mark.parametrize(variable_names, values)
