@@ -2,7 +2,7 @@ from file_processor_strategy import FileProcessorStrategy
 import shutil
 
 class GenericFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path: str) -> None:
+    def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path)
         self.metadata = {
             'message': 'This is a generic processor. Limited functionality available.'
