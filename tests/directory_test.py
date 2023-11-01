@@ -5,6 +5,7 @@ import json
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.directory import Directory
 from errors import FileProcessingFailedError
+from unittest.mock import patch
 
 variable_names = "include_text, filters, keywords"
 values = [(True, None, None), 
@@ -81,3 +82,21 @@ def test_corrupted_dir(path):
     dir1 = Directory(path)
     with pytest.raises(FileProcessingFailedError):
         dir1.generate_report("test_output.csv")
+
+
+
+variable_names = "directory_path"
+directories = [
+    'tests/resources/directory_test_files',
+    'tests/resources',
+    'file_processing'
+]
+@pytest.mark.parametrize(variable_names, directories)
+def test_not_opening_files_in_directory(directory_path, tmp_path):
+    output_path = tmp_path / "test_output.csv"
+    with patch('file_processing.file.File', autospec=True) as mock_file:
+        dir1 = Directory(directory_path)
+        dir1.generate_report(str(output_path), open_files=False)
+        for call in mock_file.mock_calls:
+            args, kwargs = call[1], call[2]
+            assert kwargs.get('open_file') == False, "File was opened when it should not have been"
