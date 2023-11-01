@@ -2,6 +2,7 @@ import pytest
 import sys, os
 sys.path.append(os.path.join(sys.path[0], 'file_processing'))
 from file import File
+from unittest.mock import patch
 from errors import FileProcessingFailedError
 
 
@@ -20,6 +21,13 @@ def test_python_metadata(path, num_lines, num_functions, num_classes, num_import
     assert file_obj.metadata['num_classes'] == num_classes
     assert len(file_obj.metadata['imports']) == num_imports
     assert len(file_obj.metadata['docstrings']) == num_docstrings
+
+
+@pytest.mark.parametrize(variable_names, values)
+def test_not_opening_file(path, num_lines, num_functions, num_classes, num_imports, num_docstrings):
+    with patch('builtins.open', autospec=True) as mock_open:
+        File(path, open_file=False)
+        mock_open.assert_not_called()
 
 
 @pytest.fixture()
