@@ -20,8 +20,6 @@ def test_html_metadata(path, text_length, num_lines, num_words):
 
 @pytest.mark.parametrize(variable_names, values)
 def test_save_html_metadata(copy_file, text_length, num_lines, num_words):
-        html = File(copy_file)
-        html.save()
         test_html_metadata(copy_file, text_length, num_lines, num_words)
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
