@@ -35,5 +35,5 @@ corrupted_files = [
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_png_corrupted_file_processing(corrupted_file_processing):
+def test_jpeg_corrupted_file_processing(corrupted_file_processing):
     corrupted_file_processing
