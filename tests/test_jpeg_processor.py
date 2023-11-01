@@ -3,4 +3,37 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 
-# To implement
+
+variable_names = "path, original_format, mode, width, height"
+values = [
+   ('tests/resources/test_files/HealthCanada.jpeg', 'JPEG', 'RGB', 474, 262),
+   ('tests/resources/test_files/MapCanada.jpg', 'JPEG', 'RGB', 4489, 2896)
+]
+
+
+@pytest.mark.parametrize(variable_names, values)
+def test_jpeg_metadata(path, original_format, mode, width, height):
+    file_obj = File(path)
+    assert file_obj.metadata['original_format'] == original_format
+    assert file_obj.metadata['mode'] == mode
+    assert file_obj.metadata['width'] == width
+    assert file_obj.metadata['height'] == height
+
+
+@pytest.mark.parametrize(variable_names, values)
+def test_save_jpeg_metadata(copy_file, original_format, mode, width, height):
+    test_jpeg_metadata(copy_file, original_format, mode, width, height)
+
+
+@pytest.mark.parametrize("path", map(lambda x: x[0], values))
+def test_jpeg_invalid_save_location(invalid_save_location):
+    invalid_save_location
+
+
+corrupted_files = [
+    'tests/resources/test_files/MapCanada_corrupted.jpg'
+]
+
+@pytest.mark.parametrize("path", corrupted_files)
+def test_png_corrupted_file_processing(corrupted_file_processing):
+    corrupted_file_processing
