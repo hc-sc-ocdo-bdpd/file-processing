@@ -100,3 +100,17 @@ def test_not_opening_files_in_directory(directory_path, tmp_path):
         for call in mock_file.mock_calls:
             args, kwargs = call[1], call[2]
             assert kwargs.get('open_file') == False, "File was opened when it should not have been"
+
+
+@pytest.mark.parametrize(variable_names, directories)
+def test_metadata_when_not_opening_files(directory_path, tmp_path):
+    output_path = tmp_path / "test_output.csv"
+    dir1 = Directory(directory_path)
+    dir1.generate_report(str(output_path), open_files=False)
+    
+    data = pd.read_csv(str(output_path))
+    for metadata_str in data['Metadata']:
+        metadata = json.loads(metadata_str)
+        assert len(metadata) == 1, "There should be only one key in the metadata"
+        assert 'message' in metadata, "'message' key should be present in the metadata"
+        assert "File was not opened" in metadata['message'], "'File was not opened' should be part of the message"

@@ -5,7 +5,7 @@ from errors import FileProcessingFailedError, UnsupportedFileTypeError
 class RtfFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
-        self.metadata = {}
+        self.metadata = {'message': 'File was not opened'} if not open_file else {}
 
     def process(self) -> None:
         if not self.open_file:
