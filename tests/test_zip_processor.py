@@ -17,11 +17,11 @@ def test_zip_extraction(file_obj):
     import shutil
     file_obj.processor.extract()
 
-    extraction_dir = 'tests/resources/test_files/SampleReport'
+    extraction_dir = os.path.splitext(file_obj.path)[0]
     assert os.path.isdir(extraction_dir)
 
     extracted_files = os.listdir(extraction_dir)
-    expected_files = ['SampleReport.docx', 'SampleReport.pptx', 'HealthCanadaOverviewFromWikipedia.docx']
+    expected_files = file_obj.metadata['file_names']
     assert set(extracted_files) == set(expected_files)
 
     shutil.rmtree(extraction_dir)
@@ -46,7 +46,7 @@ def test_zip_invalid_save_location(invalid_save_location):
 @pytest.mark.parametrize(variable_names, values)
 def test_zip_metadata(path, num_files, file_types, file_names):
     file_obj = File(path)
-    assert len(file_obj.metadata['num_files']) == num_files
+    assert file_obj.metadata['num_files'] == num_files
     assert file_obj.metadata['file_types'] == file_types
     assert file_obj.metadata['file_names'] == file_names
 
