@@ -2,6 +2,7 @@ import pytest
 import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
+from unittest.mock import patch
 
 variable_names = "path, sheet_names, active_sheet, data, last_modified_by, creator"
 values = [
@@ -18,6 +19,14 @@ def test_xlsx_metadata(path, sheet_names, active_sheet, data, last_modified_by, 
     assert sum(len(file_obj.metadata["data"][x]) for x in file_obj.metadata["data"].keys()) == data
     assert file_obj.metadata['last_modified_by'] == last_modified_by
     assert file_obj.metadata['creator'] == creator
+
+
+@pytest.mark.parametrize("path", map(lambda x: x[0], values))
+def test_not_opening_file(path):
+    with patch('builtins.open', autospec=True) as mock_open:
+        File(path, open_file=False)
+        mock_open.assert_not_called()
+
 
 
 locked_files = [

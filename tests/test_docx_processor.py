@@ -3,6 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from docx import Document
+from unittest.mock import patch
 
 
 variable_names = "path, text_length, last_modified_by, author"
@@ -49,6 +50,13 @@ def test_change_docx_author_last_modified_by(copy_file, text_length):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_docx_invalid_save_location(invalid_save_location):
     invalid_save_location
+
+
+@pytest.mark.parametrize("path", map(lambda x: x[0], values))
+def test_not_opening_file(path):
+    with patch('builtins.open', autospec=True) as mock_open:
+        File(path, open_file=False)
+        mock_open.assert_not_called()
 
 
 corrupted_files = [
