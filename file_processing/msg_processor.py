@@ -3,11 +3,14 @@ import extract_msg
 from errors import FileProcessingFailedError
 
 class MsgFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path: str) -> None:
-        super().__init__(file_path)
-        self.metadata = {}
+    def __init__(self, file_path: str, open_file: bool = True) -> None:
+        super().__init__(file_path, open_file)
+        self.metadata = {'message': 'File was not opened'} if not open_file else {}
     
     def process(self) -> None:
+        if not self.open_file:
+            return
+
         try:
             msg = extract_msg.Message(self.file_path)
             self.metadata.update({'text': msg.body})

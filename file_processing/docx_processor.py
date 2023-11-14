@@ -7,9 +7,10 @@ from errors import FileProcessingFailedError, FileCorruptionError
 from io import BytesIO
 
 class DocxFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path: str) -> None:
-        super().__init__(file_path)
-        self.metadata = self._default_metadata()
+    def __init__(self, file_path: str, open_file: bool = True) -> None:
+        super().__init__(file_path, open_file)
+        self.metadata = {'message': 'File was not opened'} if not open_file else self._default_metadata()
+
 
 
     def _default_metadata(self) -> dict:
@@ -22,6 +23,9 @@ class DocxFileProcessor(FileProcessorStrategy):
 
 
     def process(self) -> None:
+        if not self.open_file:
+            return
+
         with open(self.file_path, 'rb') as f:
             file_content = BytesIO(f.read())
 

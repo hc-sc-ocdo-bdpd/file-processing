@@ -2,6 +2,8 @@ import pytest
 import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
+from unittest.mock import patch
+from errors import FileProcessingFailedError, FileCorruptionError
 
 variable_names = "path, text_length, num_lines, num_words"
 values = [
@@ -18,6 +20,23 @@ def test_txt_metadata(path, text_length, num_lines, num_words):
     assert file_obj.metadata['num_words'] == num_words
 
 
+
+@pytest.mark.parametrize(variable_names, values)
+def test_not_opening_file(path, text_length, num_lines, num_words):
+    with patch('builtins.open', autospec=True) as mock_open:
+        File(path, open_file=False)
+        mock_open.assert_not_called()
+
+
+@pytest.fixture()
+def copy_file(path, tmp_path_factory):
+    from pathlib import Path
+    copy_path = str(tmp_path_factory.mktemp("copy") / Path(path).name)
+    file_obj = File(path)
+    file_obj.save(copy_path)
+    yield copy_path
+
+    
 @pytest.mark.parametrize(variable_names, values)
 def test_save_txt_metadata(copy_file, text_length, num_lines, num_words):
     test_txt_metadata(copy_file, text_length, num_lines, num_words)
