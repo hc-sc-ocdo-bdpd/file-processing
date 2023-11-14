@@ -23,7 +23,7 @@ def test_processor_is_generic(file_path):
 def test_metadata_has_message(file_path):
     file_obj = File(file_path)
     assert 'message' in file_obj.processor.metadata
-    assert file_obj.processor.metadata['message'] == "This is a generic processor. Limited functionality available."
+    assert file_obj.processor.metadata['message'] == "This is a generic processor. Limited functionality available. File was not opened"
 
 
 @pytest.mark.parametrize("file_path", unsupported_files)
