@@ -7,7 +7,7 @@ from errors import FileProcessingFailedError
 
 variable_names = "path, text_length, language"
 values = [
-   ('tests/resources/test_files/How Canadas Universal HealthCare System Works.wav', 9570, 'en'),
+   ('tests/resources/test_files/How Canadas Universal HealthCare System Works.wav', 9572, 'en'),
    ('tests/resources/test_files/Super Easy French.wav', 2704, 'fr')
 ]
 

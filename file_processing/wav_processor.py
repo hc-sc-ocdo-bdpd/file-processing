@@ -12,7 +12,7 @@ class WavFileProcessor(FileProcessorStrategy):
         try:
             model = whisper.load_model('base')
             text = model.transcribe(str(self.file_path))
-            audiofile = wave.open(self.file_path, 'rb')
+            audiofile = wave.open(str(self.file_path), 'rb')
             self.metadata.update({
                 'text': text['text'],
                 'language': text['language'],
