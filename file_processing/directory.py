@@ -11,12 +11,12 @@ class Directory:
         self.use_ocr = use_ocr
 
 
-    def _file_generator(self, filters: dict = None):
+    def _file_generator(self, filters: dict = None, open_files: bool = True):
         filters = filters or {}
         for root, _, filenames in os.walk(self.path):
             for filename in filenames:
                 file_path = os.path.join(root, filename)
-                file = File(file_path, use_ocr=self.use_ocr)
+                file = File(file_path, use_ocr=self.use_ocr, open_file=open_files)
                 if not self._apply_filters(file, filters):
                     continue
                 yield file
@@ -40,7 +40,7 @@ class Directory:
         return self._file_generator(filters)
 
 
-    def generate_report(self, report_file: str, include_text: bool = True, filters: Optional[dict] = None, keywords: Optional[list] = None) -> None:
+    def generate_report(self, report_file: str, include_text: bool = True, filters: Optional[dict] = None, keywords: Optional[list] = None, open_files: bool = True) -> None:
         """
         Generates a report of the directory and writes it to a CSV file.
 
@@ -48,11 +48,12 @@ class Directory:
         :param include_text: Whether to include the 'text' attribute in the metadata column.
         :param filters: A dictionary of filters to apply to the files.
         :param keywords: A list of keywords to count in the 'text' attribute of the metadata.
+        :param open_files: Whether to open the files for extracting metadata. If False, files won't be opened.
         """
-        
+
         try:
             # Count the total number of files that match the filters
-            total_files = sum(1 for _ in self._file_generator(filters))
+            total_files = sum(1 for _ in self._file_generator(filters, open_files=open_files))
             
             with open(report_file, mode='w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
@@ -66,10 +67,10 @@ class Directory:
                 
                 # Iterate over each file in the directory and write the information to the CSV file
                 with tqdm(total=total_files, desc='Generating Report', unit='file') as pbar:
-                    for file in self._file_generator(filters):
+                    for file in self._file_generator(filters, open_files=open_files):
                         metadata = file.metadata.copy()
-                        if not include_text:
-                            metadata.pop('text', None)  # Remove the 'text' attribute if it exists and include_text is False
+                        if not include_text or not open_files:
+                            metadata.pop('text', None)  # Remove the 'text' attribute if it exists and include_text is False or files are not opened
                         
                         row_data = [
                             file.file_path,
@@ -81,7 +82,7 @@ class Directory:
                             json.dumps(metadata, ensure_ascii=False)  # Convert metadata to a JSON string
                         ]
                         
-                        if keywords:
+                        if keywords and include_text and open_files:
                             text = metadata.get('text', '')
                             if text is None: # if {text: null} in metadata
                                 text = ''

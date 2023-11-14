@@ -14,6 +14,7 @@ from jpeg_processor import JpegFileProcessor
 from csv_processor import CsvFileProcessor
 from json_processor import JsonFileProcessor
 from zip_processor import ZipFileProcessor
+from generic_processor import GenericFileProcessor
 from py_processor import PyFileProcessor
 from errors import UnsupportedFileTypeError, NotOCRApplciableError
 
@@ -39,19 +40,16 @@ class File:
         ".py": PyFileProcessor
     }
 
-    def __init__(self, path: str, use_ocr: bool = False) -> None:
+    def __init__(self, path: str, use_ocr: bool = False, open_file: bool = True) -> None:
         self.path = Path(path)
-        self.processor = self._get_processor(use_ocr)
-        self.process()
+        self.processor = self._get_processor(use_ocr, open_file)
+        if open_file:
+            self.process()
 
-    def _get_processor(self, use_ocr: bool) -> 'FileProcessorStrategy':
+    def _get_processor(self, use_ocr: bool, open_file: bool) -> 'FileProcessorStrategy':
         extension = self.path.suffix
-
-        processor_class = File.PROCESSORS.get(extension)
-        if not processor_class:
-            raise UnsupportedFileTypeError(f"No processor for file type {extension}")
-
-        processor = processor_class(str(self.path))
+        processor_class = File.PROCESSORS.get(extension, GenericFileProcessor)
+        processor = processor_class(str(self.path), open_file)
 
         if use_ocr:
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
@@ -59,6 +57,7 @@ class File:
             return OCRDecorator(processor)
 
         return processor
+
 
 
     def save(self, output_path: str = None) -> None:

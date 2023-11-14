@@ -4,11 +4,14 @@ import chardet
 from errors import FileProcessingFailedError
 
 class CsvFileProcessor(FileProcessorStrategy):
-    def __init__(self, file_path: str) -> None:
-        super().__init__(file_path)
+    def __init__(self, file_path: str, open_file: bool = True) -> None:
+        super().__init__(file_path, open_file)
         self.metadata = {}
+        self.metadata = {'message': 'File was not opened'} if not open_file else {}
 
     def process(self) -> None:
+        if not self.open_file:
+            return
         try:
             encoding = chardet.detect(open(self.file_path, 'rb').read())['encoding']
             with open(self.file_path, 'r', encoding=encoding) as f:

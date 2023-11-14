@@ -2,6 +2,7 @@ import pytest
 import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
+from unittest.mock import patch
 from errors import FileProcessingFailedError, FileCorruptionError
 
 variable_names = "path, text_length, num_lines, num_words"
@@ -17,6 +18,13 @@ def test_txt_metadata(path, text_length, num_lines, num_words):
     assert len(file_obj.metadata['text']) == text_length
     assert file_obj.metadata['num_lines'] == num_lines
     assert file_obj.metadata['num_words'] == num_words
+
+
+@pytest.mark.parametrize(variable_names, values)
+def test_not_opening_file(path, text_length, num_lines, num_words):
+    with patch('builtins.open', autospec=True) as mock_open:
+        File(path, open_file=False)
+        mock_open.assert_not_called()
 
 
 @pytest.fixture()

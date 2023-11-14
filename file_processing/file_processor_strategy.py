@@ -2,8 +2,9 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 class FileProcessorStrategy(ABC):
-    def __init__(self, file_path: str) -> None:
+    def __init__(self, file_path: str, open_file: bool = True) -> None:
         self.file_path = Path(file_path)
+        self.open_file = open_file
         self.file_name = self.file_path.name
         self.extension = self.file_path.suffix
         self.size = self.file_path.stat().st_size
@@ -18,6 +19,8 @@ class FileProcessorStrategy(ABC):
     @abstractmethod
     def process(self) -> None:
         # Abstract method to be implemented by subclasses for file processing
+        if not self.open_file:
+            return
         pass
 
     @abstractmethod
