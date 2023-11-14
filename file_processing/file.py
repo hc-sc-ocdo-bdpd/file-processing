@@ -14,6 +14,7 @@ from jpeg_processor import JpegFileProcessor
 from csv_processor import CsvFileProcessor
 from json_processor import JsonFileProcessor
 from zip_processor import ZipFileProcessor
+from py_processor import PyFileProcessor
 from errors import UnsupportedFileTypeError, NotOCRApplciableError
 
 class File:
@@ -34,7 +35,8 @@ class File:
         ".jpeg": JpegFileProcessor,
         ".jpg": JpegFileProcessor,
         ".json": JsonFileProcessor,
-        ".zip": ZipFileProcessor
+        ".zip": ZipFileProcessor,
+        ".py": PyFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False) -> None:
