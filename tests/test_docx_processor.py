@@ -4,6 +4,7 @@ sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from docx import Document
 from unittest.mock import patch
+from errors import FileCorruptionError, FileProcessingFailedError
 
 
 variable_names = "path, text_length, last_modified_by, author"
@@ -48,9 +49,11 @@ def test_change_docx_author_last_modified_by(copy_file, text_length):
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_docx_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
+def test_docx_invalid_save_location(path):
+    docx_file = File(path)
+    invalid_save_path = '/non_existent_folder/' + os.path.basename(path)
+    with pytest.raises(FileProcessingFailedError):
+        docx_file.processor.save(invalid_save_path)
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -60,14 +63,16 @@ def test_not_opening_file(path):
         mock_open.assert_not_called()
 
 
+
 corrupted_files = [
-    'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.pptx'
+    "tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.docx"
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_docx_corrupted_file_processing(corrupted_file_processing_lock):
-    corrupted_file_processing_lock
-    pytest.fail("Test not yet implemented")
+def test_docx_corrupted_file_processing(path):
+    with pytest.raises(FileCorruptionError) as exc_info:
+        File(path)
+
 
 locked_files = [
      ('tests/resources/test_files/SampleReport_Locked.docx'), 
