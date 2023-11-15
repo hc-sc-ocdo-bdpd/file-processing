@@ -50,6 +50,7 @@ def test_change_docx_author_last_modified_by(copy_file, text_length):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_docx_invalid_save_location(invalid_save_location):
     invalid_save_location
+    pytest.fail("Test not yet implemented")
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -66,6 +67,7 @@ corrupted_files = [
 @pytest.mark.parametrize("path", corrupted_files)
 def test_docx_corrupted_file_processing(corrupted_file_processing_lock):
     corrupted_file_processing_lock
+    pytest.fail("Test not yet implemented")
 
 locked_files = [
      ('tests/resources/test_files/SampleReport_Locked.docx'), 

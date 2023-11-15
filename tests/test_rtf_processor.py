@@ -17,11 +17,12 @@ def test_rtf_metadata(path, text_length):
 
 @pytest.mark.parametrize(variable_names, values)
 def test_save_rtf_metadata(copy_file, text_length):
-        test_rtf_metadata(copy_file, text_length)
+    test_rtf_metadata(copy_file, text_length)
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_rtf_invalid_save_location(invalid_save_location):
     invalid_save_location
+    pytest.fail("Test not yet implemented")
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -38,3 +39,4 @@ corrupted_files = [
 @pytest.mark.parametrize("path", corrupted_files)
 def test_rtf_corrupted_file_processing(corrupted_file_processing):
     corrupted_file_processing
+    pytest.fail("Test not yet implemented")

@@ -24,6 +24,7 @@ def test_save_xml_metadata(copy_file, text_length, num_lines, num_words):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_xml_invalid_save_location(invalid_save_location):
     invalid_save_location
+    pytest.fail("Test not yet implemented")
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -40,4 +41,5 @@ corrupted_files = [
 @pytest.mark.parametrize("path", corrupted_files)
 def test_xml_corrupted_file_processing(corrupted_file_processing):
     corrupted_file_processing
+    pytest.fail("Test not yet implemented")
 

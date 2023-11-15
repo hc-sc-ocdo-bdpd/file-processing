@@ -29,6 +29,7 @@ def test_save_msg_metadata(copy_file, text_length, subject, date, sender):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_msg_invalid_save_location(invalid_save_location):
     invalid_save_location
+    pytest.fail("Test not yet implemented")
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -45,3 +46,4 @@ corrupted_files = [
 @pytest.mark.parametrize("path", corrupted_files)
 def test_msg_corrupted_file_processing(corrupted_file_processing):
     corrupted_file_processing
+    pytest.fail("Test not yet implemented")

@@ -30,6 +30,7 @@ def test_save_csv_metadata(copy_file, text_length, encoding, num_rows, num_cols,
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_csv_invalid_save_location(invalid_save_location):
     invalid_save_location
+    pytest.fail("Test not yet implemented")
 
 @pytest.mark.parametrize(variable_names, values)
 def test_not_opening_file(path, text_length, encoding, num_rows, num_cols, num_cells, empty_cells):
@@ -45,3 +46,4 @@ corrupted_files = [
 @pytest.mark.parametrize("path", corrupted_files)
 def test_csv_corrupted_file_processing(corrupted_file_processing):
     corrupted_file_processing
+    pytest.fail("Test not yet implemented")

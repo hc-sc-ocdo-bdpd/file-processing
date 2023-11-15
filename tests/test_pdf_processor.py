@@ -31,6 +31,7 @@ def test_pdf_locked(path):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_pdf_invalid_save_location(invalid_save_location):
     invalid_save_location
+    pytest.fail("Test not yet implemented")
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -47,3 +48,4 @@ corrupted_files = [
 @pytest.mark.parametrize("path", corrupted_files)
 def test_pdf_corrupted_file_processing(corrupted_file_processing):
     corrupted_file_processing
+    pytest.fail("Test not yet implemented")

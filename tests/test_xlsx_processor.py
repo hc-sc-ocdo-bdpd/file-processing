@@ -55,6 +55,7 @@ def test_save_xlsx_metadata(copy_file, sheet_names, active_sheet, data):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_xlsx_invalid_save_location(invalid_save_location):
     invalid_save_location
+    pytest.fail("Test not yet implemented")
 
 
 corrupted_files = [
@@ -64,3 +65,4 @@ corrupted_files = [
 @pytest.mark.parametrize("path", corrupted_files)
 def test_xlsx_corrupted_file_processing(corrupted_file_processing_lock):
     corrupted_file_processing_lock
+    pytest.fail("Test not yet implemented")

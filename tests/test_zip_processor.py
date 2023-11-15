@@ -42,7 +42,8 @@ def test_zip_save(file_obj):
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_zip_invalid_save_location(invalid_save_location):
-            invalid_save_location
+    invalid_save_location
+    pytest.fail("Test not yet implemented")
 
 @pytest.mark.parametrize(variable_names, values)
 def test_zip_metadata(path, num_files, file_types, file_names):
@@ -59,6 +60,7 @@ def test_save_zip_metadata(copy_file, num_files, file_types, file_names):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_zip_invalid_save_location(invalid_save_location):
     invalid_save_location
+    pytest.fail("Test not yet implemented")
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -75,3 +77,4 @@ corrupted_files = [
 @pytest.mark.parametrize("path", corrupted_files)
 def test_zip_corrupted_file_processing(corrupted_file_processing):
         corrupted_file_processing
+        pytest.fail("Test not yet implemented")

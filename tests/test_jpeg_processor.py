@@ -29,6 +29,7 @@ def test_save_jpeg_metadata(copy_file, original_format, mode, width, height):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_jpeg_invalid_save_location(invalid_save_location):
     invalid_save_location
+    pytest.fail("Test not yet implemented")
     
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -45,3 +46,4 @@ corrupted_files = [
 @pytest.mark.parametrize("path", corrupted_files)
 def test_jpeg_corrupted_file_processing(corrupted_file_processing):
     corrupted_file_processing
+    pytest.fail("Test not yet implemented")

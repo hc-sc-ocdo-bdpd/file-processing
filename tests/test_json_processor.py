@@ -27,6 +27,7 @@ def test_save_json_metadata(copy_file, num_keys, key_names, empty_values):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_json_invalid_save_location(invalid_save_location):
     invalid_save_location
+    pytest.fail("Test not yet implemented")
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -43,3 +44,4 @@ corrupted_files = [
 @pytest.mark.parametrize("path", corrupted_files)
 def test_json_corrupted_file_processing(corrupted_file_processing_lock):
     corrupted_file_processing_lock
+    pytest.fail("Test not yet implemented")
