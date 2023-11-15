@@ -3,6 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from unittest.mock import patch
+from errors import FileProcessingFailedError
 
 variable_names = "path, text_length, encoding, num_rows, num_cols, num_cells, empty_cells"
 values = [
@@ -27,10 +28,13 @@ def test_save_csv_metadata(copy_file, text_length, encoding, num_rows, num_cols,
     test_csv_metadata(copy_file, text_length, encoding, num_rows, num_cols, num_cells, empty_cells)
 
 
-@pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_csv_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
+@pytest.mark.parametrize("valid_path", [path for path, *_ in values])
+def test_csv_invalid_save_location(valid_path):
+    csv_file = File(valid_path)
+    invalid_save_path = '/non_existent_folder/' + os.path.basename(valid_path)
+    with pytest.raises(FileProcessingFailedError):
+        csv_file.processor.save(invalid_save_path)
+
 
 @pytest.mark.parametrize(variable_names, values)
 def test_not_opening_file(path, text_length, encoding, num_rows, num_cols, num_cells, empty_cells):
@@ -44,6 +48,6 @@ corrupted_files = [
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_csv_corrupted_file_processing(corrupted_file_processing):
-    corrupted_file_processing
-    pytest.fail("Test not yet implemented")
+def test_csv_corrupted_file_processing(path):
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File(path)
