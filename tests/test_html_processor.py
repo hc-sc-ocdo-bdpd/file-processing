@@ -3,6 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from unittest.mock import patch
+from errors import FileProcessingFailedError
 
 
 variable_names = "path, text_length, num_lines, num_words"
@@ -25,9 +26,11 @@ def test_save_html_metadata(copy_file, text_length, num_lines, num_words):
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_html_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
+def test_html_invalid_save_location(path):
+    html_file = File(path)
+    invalid_save_path = '/non_existent_folder/' + os.path.basename(path)
+    with pytest.raises(FileProcessingFailedError):
+        html_file.processor.save(invalid_save_path)
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -42,6 +45,6 @@ corrupted_files = [
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_html_corrupted_file_processing(corrupted_file_processing):
-    corrupted_file_processing
-    pytest.fail("Test not yet implemented")
+def test_html_corrupted_file_processing(path):
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File(path)
