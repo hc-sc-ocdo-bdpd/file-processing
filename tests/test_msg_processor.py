@@ -3,6 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from unittest.mock import patch
+from errors import FileProcessingFailedError
 
 
 variable_names = "path, text_length, subject, date, sender"
@@ -27,9 +28,11 @@ def test_save_msg_metadata(copy_file, text_length, subject, date, sender):
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_msg_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
+def test_msg_invalid_save_location(path):
+    msg_file = File(path)
+    invalid_save_path = '/non_existent_folder/' + os.path.basename(path)
+    with pytest.raises(FileProcessingFailedError):
+        msg_file.processor.save(invalid_save_path)
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -44,6 +47,6 @@ corrupted_files = [
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_msg_corrupted_file_processing(corrupted_file_processing):
-    corrupted_file_processing
-    pytest.fail("Test not yet implemented")
+def test_msg_corrupted_file_processing(path):
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File(path)
