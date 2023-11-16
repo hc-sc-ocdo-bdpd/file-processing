@@ -3,6 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from unittest.mock import patch
+from errors import FileCorruptionError, FileProcessingFailedError
 
 variable_names = "path, num_keys, key_names, empty_values"
 values = [
@@ -24,10 +25,13 @@ def test_save_json_metadata(copy_file, num_keys, key_names, empty_values):
     test_json_metadata(copy_file, num_keys, key_names, empty_values)
 
 
+
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_json_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
+def test_html_invalid_save_location(path):
+    json_file = File(path)
+    invalid_save_path = '/non_existent_folder/' + os.path.basename(path)
+    with pytest.raises(FileProcessingFailedError):
+        json_file.processor.save(invalid_save_path)
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -42,6 +46,6 @@ corrupted_files = [
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_json_corrupted_file_processing(corrupted_file_processing_lock):
-    corrupted_file_processing_lock
-    pytest.fail("Test not yet implemented")
+def test_json_corrupted_file_processing(path):
+    with pytest.raises(FileCorruptionError) as exc_info:
+        File(path)
