@@ -4,6 +4,7 @@ sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from pptx import Presentation
 from unittest.mock import patch
+from errors import FileCorruptionError, FileProcessingFailedError
 
 
 variable_names = "path, text_length, num_slides, last_modified_by, author"
@@ -49,9 +50,11 @@ def test_change_pptx_author_last_modified_by(copy_file, text_length, num_slides)
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_pptx_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
+def test_pptx_invalid_save_location(path):
+    pptx_file = File(path)
+    invalid_save_path = '/non_existent_folder/' + os.path.basename(path)
+    with pytest.raises(FileProcessingFailedError):
+        pptx_file.processor.save(invalid_save_path)
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -66,9 +69,9 @@ corrupted_files = [
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_pptx_corrupted_file_processing(corrupted_file_processing_lock):
-    corrupted_file_processing_lock
-    pytest.fail("Test not yet implemented")
+def test_pptx_corrupted_file_processing(path):
+    with pytest.raises(FileCorruptionError) as exc_info:
+        File(path)
 
 locked_files = [
      ('tests/resources/test_files/SampleReport_Locked.pptx'), 
