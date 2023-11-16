@@ -3,6 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from unittest.mock import patch
+from errors import FileProcessingFailedError
 
 # Note: test_save_png_metadata tests both files for "original_format == 'PNG'
 # when creating a copy, the original_format metadata for Health_Canada_logo.png
@@ -30,9 +31,11 @@ def test_save_png_metadata(copy_file, original_format, mode, width, height):
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_png_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
+def test_png_invalid_save_location(path):
+    png_file = File(path)
+    invalid_save_path = '/non_existent_folder/' + os.path.basename(path)
+    with pytest.raises(FileProcessingFailedError):
+        png_file.processor.save(invalid_save_path)
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
@@ -43,12 +46,11 @@ def test_not_opening_file(path):
 
 
 corrupted_files = [
-    'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.pptx'
+    'tests/resources/test_files/MapCanada_corrupted.png'
 ]
 
 @pytest.mark.parametrize("path", corrupted_files)
-def test_png_corrupted_file_processing(corrupted_file_processing_lock):
-    corrupted_file_processing_lock
-    pytest.fail("Test not yet implemented")
-    # Also pptx currently???
+def test_png_corrupted_file_processing(path):
+    with pytest.raises(FileProcessingFailedError) as exc_info:
+        File(path)
 
