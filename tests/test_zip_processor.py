@@ -68,13 +68,3 @@ def test_not_opening_file(path):
     with patch('builtins.open', autospec=True) as mock_open:
         File(path, open_file=False)
         mock_open.assert_not_called()
-
-
-corrupted_files = [
-    'tests/resources/test_files/SampleReport_corrupted.zip'
-]
-
-@pytest.mark.parametrize("path", corrupted_files)
-def test_zip_corrupted_file_processing(corrupted_file_processing):
-        corrupted_file_processing
-        pytest.fail("Test not yet implemented")

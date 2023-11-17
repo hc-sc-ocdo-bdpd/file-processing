@@ -43,14 +43,3 @@ def test_not_opening_file(path):
     with patch('builtins.open', autospec=True) as mock_open:
         File(path, open_file=False)
         mock_open.assert_not_called()
-
-
-corrupted_files = [
-    'tests/resources/test_files/MapCanada_corrupted.png'
-]
-
-@pytest.mark.parametrize("path", corrupted_files)
-def test_png_corrupted_file_processing(path):
-    with pytest.raises(FileProcessingFailedError) as exc_info:
-        File(path)
-

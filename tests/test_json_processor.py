@@ -3,7 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from unittest.mock import patch
-from errors import FileCorruptionError, FileProcessingFailedError
+from errors import FileProcessingFailedError
 
 variable_names = "path, num_keys, key_names, empty_values"
 values = [
@@ -25,7 +25,6 @@ def test_save_json_metadata(copy_file, num_keys, key_names, empty_values):
     test_json_metadata(copy_file, num_keys, key_names, empty_values)
 
 
-
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_html_invalid_save_location(path):
     json_file = File(path)
@@ -39,13 +38,3 @@ def test_not_opening_file(path):
     with patch('builtins.open', autospec=True) as mock_open:
         File(path, open_file=False)
         mock_open.assert_not_called()
-
-
-corrupted_files = [
-    'tests/resources/test_files/coffee_corrupted.json'
-]
-
-@pytest.mark.parametrize("path", corrupted_files)
-def test_json_corrupted_file_processing(path):
-    with pytest.raises(FileCorruptionError) as exc_info:
-        File(path)

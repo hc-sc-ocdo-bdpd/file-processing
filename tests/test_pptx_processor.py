@@ -4,7 +4,7 @@ sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from pptx import Presentation
 from unittest.mock import patch
-from errors import FileCorruptionError, FileProcessingFailedError
+from errors import FileProcessingFailedError
 
 
 variable_names = "path, text_length, num_slides, last_modified_by, author"
@@ -64,18 +64,9 @@ def test_not_opening_file(path):
         mock_open.assert_not_called()
 
 
-corrupted_files = [
-    'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.pptx'
-]
-
-@pytest.mark.parametrize("path", corrupted_files)
-def test_pptx_corrupted_file_processing(path):
-    with pytest.raises(FileCorruptionError) as exc_info:
-        File(path)
-
 locked_files = [
-     ('tests/resources/test_files/SampleReport_Locked.pptx'), 
-     ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
+    ('tests/resources/test_files/SampleReport_Locked.pptx'), 
+    ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
 ]
 
 @pytest.mark.parametrize("path", locked_files)

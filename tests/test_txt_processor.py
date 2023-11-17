@@ -3,7 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from unittest.mock import patch
-from errors import FileProcessingFailedError, FileCorruptionError
+from errors import FileProcessingFailedError
 
 variable_names = "path, text_length, num_lines, num_words"
 values = [
@@ -18,7 +18,6 @@ def test_txt_metadata(path, text_length, num_lines, num_words):
     assert len(file_obj.metadata['text']) == text_length
     assert file_obj.metadata['num_lines'] == num_lines
     assert file_obj.metadata['num_words'] == num_words
-
 
 
 @pytest.mark.parametrize(variable_names, values)
@@ -45,14 +44,4 @@ def test_save_txt_metadata(copy_file, text_length, num_lines, num_words):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_txt_invalid_save_location(invalid_save_location):
     invalid_save_location
-    pytest.fail("Test not yet implemented")
-
-
-corrupted_files = [
-    'tests/resources/test_files/government_of_canada_wikipedia_corrupted.txt'
-]
-
-@pytest.mark.parametrize("path", corrupted_files)
-def test_txt_corrupted_file_processing(corrupted_file_processing):
-    corrupted_file_processing
     pytest.fail("Test not yet implemented")

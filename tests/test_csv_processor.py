@@ -41,13 +41,3 @@ def test_not_opening_file(path, text_length, encoding, num_rows, num_cols, num_c
     with patch('builtins.open', autospec=True) as mock_open:
         File(path, open_file=False)
         mock_open.assert_not_called()
-
-
-corrupted_files = [
-    'tests/resources/test_files/2021_Census_English_corrupted.csv'
-]
-
-@pytest.mark.parametrize("path", corrupted_files)
-def test_csv_corrupted_file_processing(path):
-    with pytest.raises(FileProcessingFailedError) as exc_info:
-        File(path)

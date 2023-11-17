@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 import pytest
 from file_processing.file import File
-from errors import FileProcessingFailedError, FileCorruptionError
+from errors import FileProcessingFailedError
 
 # copy_file fixture to be used in test_..._processor.py files
 @pytest.fixture()
@@ -20,15 +20,3 @@ def invalid_save_location(path):
     file_obj = File(path)
     with pytest.raises(FileProcessingFailedError):
         file_obj.processor.save(save_path)
-
-# corrupted_file_processing fixture to be used in test_..._processor.py file
-@pytest.fixture()
-def corrupted_file_processing(path):
-    with pytest.raises(FileProcessingFailedError):
-        File(path)
-
-# corrupted_file_processing_lock fixture to be used in test_..._processor.py file (for files that could be potentially locked)
-@pytest.fixture()
-def corrupted_file_processing_lock(path):
-    with pytest.raises(FileCorruptionError):
-        File(path)

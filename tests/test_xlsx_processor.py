@@ -28,10 +28,9 @@ def test_not_opening_file(path):
         mock_open.assert_not_called()
 
 
-
 locked_files = [
-     ('tests/resources/test_files/Test_excel_file_Locked.xlsx'), 
-     ('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
+    ('tests/resources/test_files/Test_excel_file_Locked.xlsx'), 
+    ('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
 ]
 
 @pytest.mark.parametrize("path", locked_files)
@@ -55,14 +54,4 @@ def test_save_xlsx_metadata(copy_file, sheet_names, active_sheet, data):
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_xlsx_invalid_save_location(invalid_save_location):
     invalid_save_location
-    pytest.fail("Test not yet implemented")
-
-
-corrupted_files = [
-    'tests/resources/test_files/Test_excel_file_corrupted.xlsx'
-]
-
-@pytest.mark.parametrize("path", corrupted_files)
-def test_xlsx_corrupted_file_processing(corrupted_file_processing_lock):
-    corrupted_file_processing_lock
     pytest.fail("Test not yet implemented")
