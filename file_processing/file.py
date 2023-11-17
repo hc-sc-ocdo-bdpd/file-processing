@@ -15,11 +15,13 @@ from csv_processor import CsvFileProcessor
 from json_processor import JsonFileProcessor
 from zip_processor import ZipFileProcessor
 from audio_processor import AudioFileProcessor
+from transcription_decorator import TranscriptionDecorator
 from py_processor import PyFileProcessor
-from errors import UnsupportedFileTypeError, NotOCRApplciableError
+from errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
+    TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac"}
 
     PROCESSORS = {
         ".csv": CsvFileProcessor,
@@ -38,15 +40,16 @@ class File:
         ".json": JsonFileProcessor,
         ".zip": ZipFileProcessor,
         ".mp3": AudioFileProcessor,
+        ".wav": AudioFileProcessor,
         ".py": PyFileProcessor
     }
 
-    def __init__(self, path: str, use_ocr: bool = False) -> None:
+    def __init__(self, path: str, use_ocr: bool = False, use_transcriber: bool = False) -> None:
         self.path = Path(path)
-        self.processor = self._get_processor(use_ocr)
+        self.processor = self._get_processor(use_ocr, use_transcriber)
         self.process()
 
-    def _get_processor(self, use_ocr: bool) -> 'FileProcessorStrategy':
+    def _get_processor(self, use_ocr: bool, use_transcriber: bool) -> 'FileProcessorStrategy':
         extension = self.path.suffix
 
         processor_class = File.PROCESSORS.get(extension)
@@ -59,6 +62,11 @@ class File:
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
                 raise NotOCRApplciableError(f"OCR is not applicable for file type {extension}.")
             return OCRDecorator(processor)
+        
+        if use_transcriber:
+            if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
+                raise NotTranscriptionApplicableError(f"Transcription is not applicable for file type {extension}.")
+            return TranscriptionDecorator(processor)
 
         return processor
 
