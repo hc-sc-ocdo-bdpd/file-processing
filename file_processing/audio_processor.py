@@ -22,6 +22,7 @@ class AudioFileProcessor(FileProcessorStrategy):
 
 
     def save(self, output_path: str = None) -> None:
+        save_path = output_path or self.file_path
         try:
             metadata = audio_metadata.load(self.file_path)
 
@@ -30,8 +31,6 @@ class AudioFileProcessor(FileProcessorStrategy):
             metadata.tags.date = self.metadata.get('date', metadata.tags.date)    
             metadata.tags.title = self.metadata.get('title', metadata.tags.title)
             metadata.tags.save()
-
-            save_path = output_path or self.file_path
 
             main_file = open(self.file_path, "rb").read()
             dest_file = open(save_path, 'wb+')
