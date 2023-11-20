@@ -51,7 +51,7 @@ def test_change_audio_artist_title_date(copy_file, bitrate, duration):
    # Change metadata via Document object
    audio_file = audio_metadata.load(copy_file)
    audio_file.tags.artist = "New Artist"
-   audio_file.tags.artist = "New Date"
+   audio_file.tags.date = "New Date"
    audio_file.tags.title = "New Title"
 
    # Save the file

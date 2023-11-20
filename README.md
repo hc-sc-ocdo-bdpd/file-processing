@@ -8,6 +8,9 @@ This project has dependencies defined in `requirements.txt`. These dependencies 
 
 Additionally, this project uses tesseract for OCR. This must be installed at: `C:/Users/USERNAME/AppData/Local/Programs/Tesseract-OCR/tesseract.exe`. See https://github.com/UB-Mannheim/tesseract/wiki.
 
+This project also uses ffmpeg for audio/video file transcripting. You can download it from https://ffmpeg.org/download.html or install via Terminal using the following steps: 
+1. Install scoop: `iwr -useb get.scoop.sh | iex` 
+2. Install ffmpeg: `scoop install ffmpeg`
 
 ## Structure
 
