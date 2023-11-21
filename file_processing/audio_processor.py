@@ -1,5 +1,5 @@
 from file_processor_strategy import FileProcessorStrategy
-import audio_metadata
+from mutagen import File
 from errors import FileProcessingFailedError
 
 class AudioFileProcessor(FileProcessorStrategy):
@@ -9,28 +9,27 @@ class AudioFileProcessor(FileProcessorStrategy):
 
     def process(self) -> None:
         try:
-            metadata = audio_metadata.load(self.file_path)
+            audio = File(self.file_path)
             self.metadata.update({
-                'bitrate': metadata.streaminfo.bitrate,
-                'duration': metadata.streaminfo.duration,
-                'artist': getattr(metadata.tags, 'artist', None),
-                'date': getattr(metadata.tags, 'date', None),
-                'title': getattr(metadata.tags, 'title', None),
+                'bitrate': audio.info.bitrate,
+                'duration_seconds': audio.info.length,
+                'artist': audio.get('artist'),
+                'date': audio.get('date'),
+                'title': audio.get('title')
             })
         except Exception as e:
             raise FileProcessingFailedError(f"Error encountered while processing: {e}")
 
-
     def save(self, output_path: str = None) -> None:
         save_path = output_path or self.file_path
         try:
-            metadata = audio_metadata.load(self.file_path)
+            audio = File(self.file_path)
 
-            #Update the core metadata
-            metadata.tags.artist = self.metadata.get('artist', metadata.tags.artist)
-            metadata.tags.date = self.metadata.get('date', metadata.tags.date)    
-            metadata.tags.title = self.metadata.get('title', metadata.tags.title)
-            metadata.tags.save()
+            # Update the core properties (metadata)
+            audio['artist'] = self.metadata.get('artist', audio.get('artist'))
+            audio['date'] = self.metadata.get('date', audio.get('date'))
+            audio['title'] = self.metadata.get('title', audio.get('title'))
+            audio.save()
 
             main_file = open(self.file_path, "rb").read()
             dest_file = open(save_path, 'wb+')

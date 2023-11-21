@@ -2,7 +2,7 @@ import pytest
 import sys, os
 sys.path.append(os.path.join(sys.path[0], 'file_processing'))
 from file_processing.file import File
-import audio_metadata
+from mutagen import MutagenFile
 from errors import FileProcessingFailedError
 
 
@@ -49,13 +49,13 @@ def test_save_audio_metadata(copy_file, bitrate, duration):
 def test_change_audio_artist_title_date(copy_file, bitrate, duration):
 
    # Change metadata via Document object
-   audio_file = audio_metadata.load(copy_file)
-   audio_file.tags.artist = "New Artist"
-   audio_file.tags.date = "New Date"
-   audio_file.tags.title = "New Title"
+   audio_file = MutagenFile(copy_file)
+   audio_file['artist'] = "New Artist"
+   audio_file['date'] = "New Date"
+   audio_file['title'] = "New Title"
 
    # Save the file
-   audio_file.tags.save()
+   audio_file.save()
    test_audio_metadata(copy_file, bitrate, duration, 'New Artist', 'New Date', 'New Title')
 
 
