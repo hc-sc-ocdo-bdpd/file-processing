@@ -8,17 +8,18 @@ from mutagen.mp3 import MP3
 from errors import FileProcessingFailedError
 
 
-variable_names = "path, bitrate, length, artist, date, title"
+variable_names = "path, length, artist, date, title"
 values = [
-   ('tests/resources/test_files/How Canadas Universal HealthCare System Works.mp3', 230679, 576.048, '', '', ''),
-   ('tests/resources/test_files/Super Easy French.mp3', 199147, 219.0, '', '', '')
+   ('tests/resources/test_files/How Canadas Universal HealthCare System Works.mp3', 576.048, '', '', ''),
+   ('tests/resources/test_files/Super Easy French.mp3', 219.0, '', '', ''),
+   ('tests/resources/test_files/How Canadas Universal HealthCare System Works.wav', 576.0123263888889, '', '', ''),
+   ('tests/resources/test_files/Super Easy French.wav', 218.9706875, '', '', '')
 ]
 
 
 @pytest.mark.parametrize(variable_names, values)
-def test_audio_metadata(path, bitrate, length, artist, date, title):
+def test_audio_metadata(path, length, artist, date, title):
    file_obj = File(path)
-   assert file_obj.metadata['bitrate'] == bitrate
    assert file_obj.metadata['length'] == length
    assert file_obj.metadata['artist'] == artist
    assert file_obj.metadata['date'] == date
@@ -33,7 +34,7 @@ def copy_file(path, tmp_path_factory):
    yield copy_path
 
 
-@pytest.mark.parametrize("path, bitrate, length", map(lambda x: x[:3], values))
+@pytest.mark.parametrize("path, length", map(lambda x: x[:2], values))
 def test_save_audio_metadata(copy_file, bitrate, length):
 
    # Load and change metadata via File object
@@ -47,7 +48,7 @@ def test_save_audio_metadata(copy_file, bitrate, length):
    test_audio_metadata(copy_file, bitrate, length, 'New Artist', 'New Date', 'New Title')
 
 
-@pytest.mark.parametrize("path, bitrate, length", map(lambda x: x[:3], values))
+@pytest.mark.parametrize("path, length", map(lambda x: x[:2], values))
 def test_change_audio_artist_title_date(copy_file, bitrate, length):
 
    # Change metadata via Document object
@@ -60,7 +61,7 @@ def test_change_audio_artist_title_date(copy_file, bitrate, length):
 
    # Save the file
    audio_file.save()
-   test_audio_metadata(copy_file, bitrate, length, 'New Artist', 'New Date', 'New Title')
+   test_audio_metadata(copy_file, length, 'New Artist', 'New Date', 'New Title')
 
 
 invalid_save_locations = [

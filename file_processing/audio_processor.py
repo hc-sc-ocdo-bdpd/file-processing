@@ -5,7 +5,7 @@ from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
 from mutagen.oggvorbis import OggVorbis
 from mutagen.aiff import AIFF
-from mutagen.wavpack import WavPack
+from mutagen.wave import WAVE
 from mutagen.mp4 import MP4
 from errors import FileProcessingFailedError
 
@@ -20,13 +20,12 @@ class AudioFileProcessor(FileProcessorStrategy):
             if isinstance(audio, MP3):
                 audio_tags = EasyID3(self.file_path)
                 self.metadata.update({
-                    'bitrate': audio.info.bitrate,
                     'length': audio.info.length,
                     'artist': audio_tags.get('artist', [''])[0],
                     'date': audio_tags.get('date', [''])[0],
                     'title': audio_tags.get('title', [''])[0]
                 })
-            elif isinstance(audio, (FLAC, OggVorbis, AIFF, WavPack, MP4)):
+            elif isinstance(audio, (FLAC, OggVorbis, AIFF, WAVE, MP4)):
                 self.metadata.update({
                     'length': audio.info.length,
                     'artist': audio.get('ARTIST', [''])[0],
@@ -45,7 +44,7 @@ class AudioFileProcessor(FileProcessorStrategy):
                 audio['artist'] = self.metadata.get('artist', audio.get('artist', [''])[0])
                 audio['date'] = self.metadata.get('date', audio.get('date', [''])[0])
                 audio['title'] = self.metadata.get('title', audio.get('title', [''])[0])
-            elif isinstance(audio, (FLAC, OggVorbis, AIFF, WavPack, MP4)):
+            elif isinstance(audio, (FLAC, OggVorbis, AIFF, WAVE, MP4)):
                 audio['ARTIST'] = self.metadata.get('artist', audio.get('ARTIST', [''])[0])
                 audio['DATE'] = self.metadata.get('date', audio.get('DATE', [''])[0])
                 audio['TITLE'] = self.metadata.get('title', audio.get('TITLE', [''])[0])
