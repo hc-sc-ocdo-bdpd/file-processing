@@ -35,7 +35,7 @@ def copy_file(path, tmp_path_factory):
 
 
 @pytest.mark.parametrize("path, length", map(lambda x: x[:2], values))
-def test_save_audio_metadata(copy_file, bitrate, length):
+def test_save_audio_metadata(copy_file, length):
 
    # Load and change metadata via File object
    audio_file = File(copy_file)
@@ -45,11 +45,11 @@ def test_save_audio_metadata(copy_file, bitrate, length):
 
    # Save the updated file
    audio_file.save()
-   test_audio_metadata(copy_file, bitrate, length, 'New Artist', 'New Date', 'New Title')
+   test_audio_metadata(copy_file, length, 'New Artist', 'New Date', 'New Title')
 
 
 @pytest.mark.parametrize("path, length", map(lambda x: x[:2], values))
-def test_change_audio_artist_title_date(copy_file, bitrate, length):
+def test_change_audio_artist_title_date(copy_file, length):
 
    # Change metadata via Document object
    audio_file = MutagenFile(copy_file)
