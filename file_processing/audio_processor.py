@@ -18,20 +18,20 @@ class AudioFileProcessor(FileProcessorStrategy):
         try:
             audio = File(self.file_path)
             if isinstance(audio, MP3):
-                audio = EasyID3(self.file_path)
+                audio_tags = EasyID3(self.file_path)
                 self.metadata.update({
                     'bitrate': audio.info.bitrate,
                     'length': audio.info.length,
-                    'artist': audio.get('artist', ''),
-                    'date': audio.get('date', ''),
-                    'title': audio.get('title', '')
+                    'artist': audio_tags.get('artist', [''])[0],
+                    'date': audio_tags.get('date', [''])[0],
+                    'title': audio_tags.get('title', [''])[0]
                 })
             elif isinstance(audio, (FLAC, OggVorbis, AIFF, WavPack, MP4)):
                 self.metadata.update({
                     'length': audio.info.length,
-                    'artist': audio.get('ARTIST', ''),
-                    'date': audio.get('DATE', ''),
-                    'title': audio.get('TITLE', '')
+                    'artist': audio.get('ARTIST', [''])[0],
+                    'date': audio.get('DATE', [''])[0],
+                    'title': audio.get('TITLE', [''])[0]
                 })
         except Exception as e:
             raise FileProcessingFailedError(f"Error encountered while processing: {e}")
@@ -42,13 +42,13 @@ class AudioFileProcessor(FileProcessorStrategy):
             audio = File(self.file_path)
             if isinstance(audio, MP3):
                 audio = EasyID3(self.file_path)
-                audio['artist'] = self.metadata.get('artist', audio.get('artist', ''))
-                audio['date'] = self.metadata.get('date', audio.get('date', ''))
-                audio['title'] = self.metadata.get('title', audio.get('title', ''))
+                audio['artist'] = self.metadata.get('artist', audio.get('artist', [''])[0])
+                audio['date'] = self.metadata.get('date', audio.get('date', [''])[0])
+                audio['title'] = self.metadata.get('title', audio.get('title', [''])[0])
             elif isinstance(audio, (FLAC, OggVorbis, AIFF, WavPack, MP4)):
-                audio['ARTIST'] = self.metadata.get('artist', audio.get('ARTIST', ''))
-                audio['DATE'] = self.metadata.get('date', audio.get('DATE', ''))
-                audio['TITLE'] = self.metadata.get('title', audio.get('TITLE', ''))
+                audio['ARTIST'] = self.metadata.get('artist', audio.get('ARTIST', [''])[0])
+                audio['DATE'] = self.metadata.get('date', audio.get('DATE', [''])[0])
+                audio['TITLE'] = self.metadata.get('title', audio.get('TITLE', [''])[0])
             audio.save()
             main_file = open(self.file_path, "rb").read()
             dest_file = open(save_path, 'wb+')
