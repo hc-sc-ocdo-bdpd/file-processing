@@ -40,12 +40,12 @@ def test_save_audio_metadata(copy_file, length):
    # Load and change metadata via File object
    audio_file = File(copy_file)
    audio_file.metadata['artist'] = 'New Artist'
-   audio_file.metadata['date'] = 'New Date'
+   audio_file.metadata['date'] = '2023/11/22'
    audio_file.metadata['title'] = 'New Title'
 
    # Save the updated file
    audio_file.save()
-   test_audio_metadata(copy_file, length, 'New Artist', 'New Date', 'New Title')
+   test_audio_metadata(copy_file, length, 'New Artist', '2023-11-22', 'New Title')
 
 
 @pytest.mark.parametrize("path, length", map(lambda x: x[:2], values))
@@ -56,12 +56,12 @@ def test_change_audio_artist_title_date(copy_file, length):
    if isinstance(audio_file, MP3):
       audio_file = EasyID3(copy_file)
    audio_file['artist'] = "New Artist"
-   audio_file['date'] = "New Date"
+   audio_file['date'] = "2023-11-22"
    audio_file['title'] = "New Title"
 
    # Save the file
    audio_file.save()
-   test_audio_metadata(copy_file, length, 'New Artist', 'New Date', 'New Title')
+   test_audio_metadata(copy_file, length, 'New Artist', '2023-11-22', 'New Title')
 
 
 invalid_save_locations = [
