@@ -8,22 +8,26 @@ from mutagen.mp3 import MP3
 from errors import FileProcessingFailedError
 
 
-variable_names = "path, length, artist, date, title"
+variable_names = "path, bitrate, length, author, date, title, organization"
 values = [
-   ('tests/resources/test_files/How Canadas Universal HealthCare System Works.mp3', 576.048, '', '', ''),
-   ('tests/resources/test_files/Super Easy French.mp3', 219.0, '', '', ''),
-   ('tests/resources/test_files/How Canadas Universal HealthCare System Works.wav', 576.0123263888889, '', '', ''),
-   ('tests/resources/test_files/Super Easy French.wav', 218.9706875, '', '', '')
+   ('tests/resources/test_files/How Canadas Universal HealthCare System Works.mp3', 230679, 576.048, '', '', '', ''),
+   ('tests/resources/test_files/Super Easy French.wav', 1536000 , 218.9706875, '', '', '', ''),
+   ('tests/resources/test_files/Taylor Swift.mp4', 0, 228.4843537414966, '', '', '', ''),
+   ('tests/resources/test_files/Jingle Bell Rock.flac', 710366 , 145.61233560090702, '', '', '', ''),
+   ('tests/resources/test_files/Katy Perry.aiff', 1411200, 289.9243537414966, '', '', '', ''),
+   ('tests/resources/test_files/Frosty the Snowman.ogg', 112000 , 137.71755102040817, '', '', '', '')
 ]
 
 
 @pytest.mark.parametrize(variable_names, values)
-def test_audio_metadata(path, length, artist, date, title):
+def test_audio_metadata(path, bitrate, length, author, date, title, organization):
    file_obj = File(path)
+   assert file_obj.metadata['bitrate'] == bitrate
    assert file_obj.metadata['length'] == length
-   assert file_obj.metadata['artist'] == artist
+   assert file_obj.metadata['author'] == author
    assert file_obj.metadata['date'] == date
    assert file_obj.metadata['title'] == title
+   assert file_obj.metadata['organization'] == organization
 
 @pytest.fixture()
 def copy_file(path, tmp_path_factory):
@@ -34,34 +38,36 @@ def copy_file(path, tmp_path_factory):
    yield copy_path
 
 
-@pytest.mark.parametrize("path, length", map(lambda x: x[:2], values))
-def test_save_audio_metadata(copy_file, length):
+@pytest.mark.parametrize("path, bitrate, length", map(lambda x: x[:3], values))
+def test_save_audio_metadata(copy_file, bitrate, length):
 
    # Load and change metadata via File object
    audio_file = File(copy_file)
-   audio_file.metadata['artist'] = 'New Artist'
+   audio_file.metadata['author'] = 'New Author'
    audio_file.metadata['date'] = '2023/11/22'
    audio_file.metadata['title'] = 'New Title'
+   audio_file.metadata['title'] = 'Health Canada'
 
    # Save the updated file
    audio_file.save()
-   test_audio_metadata(copy_file, length, 'New Artist', '2023-11-22', 'New Title')
+   test_audio_metadata(copy_file, bitrate, length, 'New Artist', '2023-11-22', 'New Title', 'Health Canada')
 
 
-@pytest.mark.parametrize("path, length", map(lambda x: x[:2], values))
-def test_change_audio_artist_title_date(copy_file, length):
+@pytest.mark.parametrize("path, bitrate, length", map(lambda x: x[:3], values))
+def test_change_audio_artist_title_date(copy_file, bitrate, length):
 
    # Change metadata via Document object
    audio_file = MutagenFile(copy_file)
    if isinstance(audio_file, MP3):
       audio_file = EasyID3(copy_file)
-   audio_file['artist'] = "New Artist"
+   # audio_file['author'] = "New Author"
    audio_file['date'] = "2023-11-22"
    audio_file['title'] = "New Title"
+   audio_file['organization'] = "Health Canada"
 
    # Save the file
    audio_file.save()
-   test_audio_metadata(copy_file, length, 'New Artist', '2023-11-22', 'New Title')
+   test_audio_metadata(copy_file, bitrate, length, 'New Author', '2023-11-22', 'New Title', 'Health Canada')
 
 
 invalid_save_locations = [

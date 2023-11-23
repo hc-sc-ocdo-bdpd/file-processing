@@ -20,17 +20,21 @@ class AudioFileProcessor(FileProcessorStrategy):
             if isinstance(audio, MP3):
                 audio_tags = EasyID3(self.file_path)
                 self.metadata.update({
+                    'bitrate': audio.info.bitrate,
                     'length': audio.info.length,
-                    'artist': audio_tags.get('artist', [''])[0],
+                    'author': audio_tags.get('author', [''])[0],
                     'date': audio_tags.get('date', [''])[0],
-                    'title': audio_tags.get('title', [''])[0]
+                    'title': audio_tags.get('title', [''])[0],
+                    'organization': audio_tags.get('organization', [''])[0]
                 })
-            elif isinstance(audio, (FLAC, OggVorbis, AIFF, WAVE, MP4)):
+            elif isinstance(audio, (WAVE, MP4, FLAC, AIFF, OggVorbis)):
                 self.metadata.update({
+                    'bitrate': audio.info.bitrate,
                     'length': audio.info.length,
-                    'artist': audio.get('ARTIST', [''])[0],
+                    'author': audio.get('ARTIST', [''])[0],
                     'date': audio.get('DATE', [''])[0],
-                    'title': audio.get('TITLE', [''])[0]
+                    'title': audio.get('TITLE', [''])[0],
+                    'organization': audio.get('ORGANIZATION', [''])[0]
                 })
         except Exception as e:
             raise FileProcessingFailedError(f"Error encountered while processing: {e}")
@@ -41,17 +45,18 @@ class AudioFileProcessor(FileProcessorStrategy):
             audio = File(self.file_path)
             if isinstance(audio, MP3):
                 audio = EasyID3(self.file_path)
-                audio['artist'] = self.metadata.get('artist', audio.get('artist', [''])[0])
+                audio['author'] = self.metadata.get('author', audio.get('author', [''])[0])
                 audio['date'] = self.metadata.get('date', audio.get('date', [''])[0])
                 audio['title'] = self.metadata.get('title', audio.get('title', [''])[0])
-            elif isinstance(audio, (FLAC, OggVorbis, AIFF, WAVE, MP4)):
-                audio['ARTIST'] = self.metadata.get('artist', audio.get('ARTIST', [''])[0])
+                audio['organization'] = self.metadata.get('organization', audio.get('organization', [''])[0])
+            elif isinstance(audio, (WAVE, MP4, FLAC, AIFF, OggVorbis)):
+                audio['AUTHOR'] = self.metadata.get('author', audio.get('AUTHOR', [''])[0])
                 audio['DATE'] = self.metadata.get('date', audio.get('DATE', [''])[0])
                 audio['TITLE'] = self.metadata.get('title', audio.get('TITLE', [''])[0])
+                audio['ORGANIZATION'] = self.metadata.get('organization', audio.get('ORGANIZATION', [''])[0])
             audio.save()
-            main_file = open(self.file_path, "rb").read()
-            dest_file = open(save_path, 'wb+')
-            dest_file.write(main_file)
-            dest_file.close()
+            with open(self.file_path, "rb") as main_file, open(save_path, 'wb+') as dest_file:
+                dest_file.write(main_file.read())
+                dest_file.close()
         except Exception as e:
             raise FileProcessingFailedError(f"Error encountered while saving to {save_path}: {e}")

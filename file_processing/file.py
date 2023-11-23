@@ -41,6 +41,10 @@ class File:
         ".zip": ZipFileProcessor,
         ".mp3": AudioFileProcessor,
         ".wav": AudioFileProcessor,
+        ".mp4": AudioFileProcessor,
+        ".flac": AudioFileProcessor,
+        ".aiff": AudioFileProcessor,
+        ".ogg": AudioFileProcessor,
         ".py": PyFileProcessor
     }
 
