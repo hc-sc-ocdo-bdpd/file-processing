@@ -5,10 +5,13 @@ from file_processing.file import File
 from mutagen import File as MutagenFile
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
+from mutagen.flac import FLAC
+from mutagen.oggvorbis import OggVorbis
+from mutagen.mp4 import MP4
 from errors import FileProcessingFailedError
 
 
-variable_names = "path, bitrate, length, author, date, title, organization"
+variable_names = "path, bitrate, length, artist, date, title, organization"
 values = [
    ('tests/resources/test_files/How Canadas Universal HealthCare System Works.mp3', 230679, 576.048, '', '', '', ''),
    ('tests/resources/test_files/Super Easy French.wav', 1536000 , 218.9706875, '', '', '', ''),
@@ -20,11 +23,11 @@ values = [
 
 
 @pytest.mark.parametrize(variable_names, values)
-def test_audio_metadata(path, bitrate, length, author, date, title, organization):
+def test_audio_metadata(path, bitrate, length, artist, date, title, organization):
    file_obj = File(path)
    assert file_obj.metadata['bitrate'] == bitrate
    assert file_obj.metadata['length'] == length
-   assert file_obj.metadata['author'] == author
+   assert file_obj.metadata['artist'] == artist
    assert file_obj.metadata['date'] == date
    assert file_obj.metadata['title'] == title
    assert file_obj.metadata['organization'] == organization
@@ -43,14 +46,14 @@ def test_save_audio_metadata(copy_file, bitrate, length):
 
    # Load and change metadata via File object
    audio_file = File(copy_file)
-   audio_file.metadata['author'] = 'New Author'
+   audio_file.metadata['artist'] = 'New artist'
    audio_file.metadata['date'] = '2023/11/22'
    audio_file.metadata['title'] = 'New Title'
    audio_file.metadata['title'] = 'Health Canada'
 
    # Save the updated file
    audio_file.save()
-   test_audio_metadata(copy_file, bitrate, length, 'New Artist', '2023-11-22', 'New Title', 'Health Canada')
+   test_audio_metadata(copy_file, bitrate, length, 'New Artist', '2023/11/22', 'New Title', 'Health Canada')
 
 
 @pytest.mark.parametrize("path, bitrate, length", map(lambda x: x[:3], values))
@@ -58,16 +61,28 @@ def test_change_audio_artist_title_date(copy_file, bitrate, length):
 
    # Change metadata via Document object
    audio_file = MutagenFile(copy_file)
-   if isinstance(audio_file, MP3):
+   if isinstance(audio_file, (MP3)):
       audio_file = EasyID3(copy_file)
-   # audio_file['author'] = "New Author"
-   audio_file['date'] = "2023-11-22"
-   audio_file['title'] = "New Title"
-   audio_file['organization'] = "Health Canada"
-
+      audio_file['artist'] = "New Artist"
+      audio_file['date'] = "2023-11-22"
+      audio_file['title'] = "New Title"
+      audio_file['organization'] = "Health Canada"
+   elif isinstance(audio_file, (FLAC, OggVorbis)):
+      audio_file['ARTIST'] = "New Artist"
+      audio_file['DATE'] = "2023-11-22"
+      audio_file['TITLE'] = "New Title"
+      audio_file['ORGANIZATION'] = "Health Canada"
+   elif isinstance(audio_file, MP4):
+      audio_file.tags['\xa9ART'] = "New Artist"
+      audio_file.tags['\xa9day'] = "2023-11-22"
+      audio_file.tags['\xa9nam'] = "New Title"
+      audio_file.tags['\xa9wrk'] = "Health Canada"
+      
    # Save the file
    audio_file.save()
-   test_audio_metadata(copy_file, bitrate, length, 'New Author', '2023-11-22', 'New Title', 'Health Canada')
+
+   if isinstance(audio_file, (MP3,FLAC, OggVorbis, MP4)):
+      test_audio_metadata(copy_file, bitrate, length, 'New Artist', '2023-11-22', 'New Title', 'Health Canada')
 
 
 invalid_save_locations = [
