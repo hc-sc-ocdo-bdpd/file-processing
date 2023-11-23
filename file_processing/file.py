@@ -21,7 +21,7 @@ from errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscrip
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".png"}
-    TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac"}
+    TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
     PROCESSORS = {
         ".csv": CsvFileProcessor,
