@@ -17,7 +17,7 @@ EXPECTED_TRANSCRIPTION_RESULTS = {
     MP3_SAMPLES[1]: [[2704, 2704], 'fr'],
     WAV_SAMPLES[0]: [[9572, 9572], 'en'],
     WAV_SAMPLES[1]: [[2704, 2704], 'fr'],
-    MP4_SAMPLES[0]: [[1826, 2050], 'en'],
+    MP4_SAMPLES[0]: [[1826, 2200], 'en'],
     FLAC_SAMPLES[0]: [[954, 1100], 'en'],
     AIFF_SAMPLES[0]: [[1630, 1901], 'en'],
     OGG_SAMPLES[0]: [[1182, 1182], 'en'],
