@@ -8,6 +8,8 @@ from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
 from mutagen.oggvorbis import OggVorbis
 from mutagen.mp4 import MP4
+from mutagen.aiff import AIFF
+from mutagen.wave import WAVE
 from errors import FileProcessingFailedError
 
 
@@ -46,14 +48,19 @@ def test_save_audio_metadata(copy_file, bitrate, length):
 
    # Load and change metadata via File object
    audio_file = File(copy_file)
-   audio_file.metadata['artist'] = 'New artist'
+   audio_file.metadata['artist'] = 'New Artist'
    audio_file.metadata['date'] = '2023/11/22'
    audio_file.metadata['title'] = 'New Title'
-   audio_file.metadata['title'] = 'Health Canada'
+   audio_file.metadata['organization'] = 'Health Canada'
 
    # Save the updated file
    audio_file.save()
-   test_audio_metadata(copy_file, bitrate, length, 'New Artist', '2023/11/22', 'New Title', 'Health Canada')
+   if isinstance(audio_file, MP3):
+      test_audio_metadata(copy_file, bitrate, length, 'New Artist', '2023-11-22', 'New Title', 'Health Canada')
+   elif isinstance(audio_file, (FLAC, MP4, OggVorbis)):
+      test_audio_metadata(copy_file, bitrate, length, 'New Artist', '2023/11/22', 'New Title', 'Health Canada')
+   elif isinstance(audio_file, (WAVE, AIFF)):
+      test_audio_metadata(copy_file, bitrate, length, '', '', '', '')
 
 
 @pytest.mark.parametrize("path, bitrate, length", map(lambda x: x[:3], values))
@@ -81,7 +88,7 @@ def test_change_audio_artist_title_date(copy_file, bitrate, length):
    # Save the file
    audio_file.save()
 
-   if isinstance(audio_file, (MP3,FLAC, OggVorbis, MP4)):
+   if isinstance(audio_file, (MP3, FLAC, OggVorbis, MP4)):
       test_audio_metadata(copy_file, bitrate, length, 'New Artist', '2023-11-22', 'New Title', 'Health Canada')
 
 

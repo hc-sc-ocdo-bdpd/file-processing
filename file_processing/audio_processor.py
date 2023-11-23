@@ -62,16 +62,17 @@ class AudioFileProcessor(FileProcessorStrategy):
     def save(self, output_path: str = None) -> None:
         save_path = output_path or self.file_path
         try:
-             # Copy the file first
-            with open(self.file_path, "rb") as main_file, open(save_path, 'wb+') as dest_file:
-                dest_file.write(main_file.read())
-                dest_file.close()
+            # Copy the file first
+            main_file = open(self.file_path, "rb").read()
+            dest_file = open(save_path, 'wb+')
+            dest_file.write(main_file)
+            dest_file.close()
 
             # Update the metadata of the copied file
             audio = File(save_path)
 
             if isinstance(audio, MP3):
-                audio = EasyID3(self.file_path)
+                audio = EasyID3(save_path)
                 audio['artist'] = self.metadata.get('artist', audio.get('artist', [''])[0])
                 audio['date'] = self.metadata.get('date', audio.get('date', [''])[0])
                 audio['title'] = self.metadata.get('title', audio.get('title', [''])[0])
