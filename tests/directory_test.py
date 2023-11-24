@@ -5,6 +5,7 @@ import json
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.directory import Directory
 from errors import FileProcessingFailedError
+from unittest.mock import patch
 
 variable_names = "include_text, filters, keywords"
 values = [(True, None, None), 
@@ -47,10 +48,24 @@ def test_filters(mk_get_rm_dir, filters):
 @pytest.mark.parametrize(variable_names, values)
 def test_keywords(mk_get_rm_dir, keywords):
     if keywords:
-        assert (mk_get_rm_dir["Metadata"].apply(lambda x: json.loads(x).get('text')).fillna('').str.lower().apply(lambda x: sum(x.count(key.lower()) for key in keywords)) 
-                == mk_get_rm_dir["Keywords"].apply(lambda x : sum(json.loads(x).values()))).all()
+        assert "Keywords" in mk_get_rm_dir.columns, "The 'Keywords' column is missing from the DataFrame."
+        
+        keyword_counts = (
+            mk_get_rm_dir["Keywords"]
+            .fillna('{}')
+            .apply(lambda x: sum(json.loads(x).values()))
+        )
+        
+        metadata_keyword_counts = (
+            mk_get_rm_dir["Metadata"]
+            .apply(lambda x: json.loads(x).get('text', '') or '')
+            .str.lower()
+            .apply(lambda x: sum(x.count(key.lower()) for key in keywords))
+        )
+        
+        assert (metadata_keyword_counts == keyword_counts).all(), "Keyword counts do not match."
     else:
-        assert "Keywords" not in mk_get_rm_dir.columns
+        assert "Keywords" not in mk_get_rm_dir.columns, "The 'Keywords' column should not be present in the DataFrame."
 
 
 invalid_location = [('non_existent_folder/test_output.csv')]
@@ -67,3 +82,35 @@ def test_corrupted_dir(path):
     dir1 = Directory(path)
     with pytest.raises(FileProcessingFailedError):
         dir1.generate_report("test_output.csv")
+
+
+
+variable_names = "directory_path"
+directories = [
+    'tests/resources/directory_test_files',
+    'tests/resources',
+    'file_processing'
+]
+@pytest.mark.parametrize(variable_names, directories)
+def test_not_opening_files_in_directory(directory_path, tmp_path):
+    output_path = tmp_path / "test_output.csv"
+    with patch('file_processing.file.File', autospec=True) as mock_file:
+        dir1 = Directory(directory_path)
+        dir1.generate_report(str(output_path), open_files=False)
+        for call in mock_file.mock_calls:
+            args, kwargs = call[1], call[2]
+            assert kwargs.get('open_file') == False, "File was opened when it should not have been"
+
+
+@pytest.mark.parametrize(variable_names, directories)
+def test_metadata_when_not_opening_files(directory_path, tmp_path):
+    output_path = tmp_path / "test_output.csv"
+    dir1 = Directory(directory_path)
+    dir1.generate_report(str(output_path), open_files=False)
+    
+    data = pd.read_csv(str(output_path))
+    for metadata_str in data['Metadata']:
+        metadata = json.loads(metadata_str)
+        assert len(metadata) == 1, "There should be only one key in the metadata"
+        assert 'message' in metadata, "'message' key should be present in the metadata"
+        assert "File was not opened" in metadata['message'], "'File was not opened' should be part of the message"

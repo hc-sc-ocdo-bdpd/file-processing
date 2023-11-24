@@ -16,6 +16,7 @@ from json_processor import JsonFileProcessor
 from zip_processor import ZipFileProcessor
 from audio_processor import AudioFileProcessor
 from transcription_decorator import TranscriptionDecorator
+from generic_processor import GenericFileProcessor
 from py_processor import PyFileProcessor
 from errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
 
@@ -55,12 +56,8 @@ class File:
 
     def _get_processor(self, use_ocr: bool, use_transcriber: bool) -> 'FileProcessorStrategy':
         extension = self.path.suffix
-
-        processor_class = File.PROCESSORS.get(extension)
-        if not processor_class:
-            raise UnsupportedFileTypeError(f"No processor for file type {extension}")
-
-        processor = processor_class(str(self.path))
+        processor_class = File.PROCESSORS.get(extension, GenericFileProcessor)
+        processor = processor_class(str(self.path), open_file)
 
         if use_ocr:
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
@@ -73,6 +70,7 @@ class File:
             return TranscriptionDecorator(processor)
 
         return processor
+
 
 
     def save(self, output_path: str = None) -> None:
