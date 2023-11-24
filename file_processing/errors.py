@@ -33,3 +33,18 @@ class OCRProcessingError(OCRError):
 class NotOCRApplciableError(OCRError):
     """Raised when attempting OCR on a file type that doesn't support it."""
     pass
+
+
+class TranscriptionError(FileProcessorError):
+    """Base exception for transcription related issues."""
+    pass
+
+
+class TranscriptionProcessingError(TranscriptionError):
+    """Raised when there's an issue during transcription processing."""
+    pass
+
+
+class NotTranscriptionApplicableError(TranscriptionError):
+    """Raised when attempting transcription on a file type that doesn't support it."""
+    pass
