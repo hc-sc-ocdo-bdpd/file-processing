@@ -11,6 +11,7 @@ from mutagen.mp4 import MP4
 from mutagen.aiff import AIFF
 from mutagen.wave import WAVE
 from errors import FileProcessingFailedError
+from unittest.mock import patch
 
 
 variable_names = "path, bitrate, length, artist, date, title, organization"
@@ -90,6 +91,13 @@ def test_change_audio_artist_title_date(copy_file, bitrate, length):
 
    if isinstance(audio_file, (MP3, FLAC, OggVorbis, MP4)):
       test_audio_metadata(copy_file, bitrate, length, 'New Artist', '2023-11-22', 'New Title', 'Health Canada')
+
+
+@pytest.mark.parametrize(variable_names, values)
+def test_not_opening_file(path, bitrate, length, artist, date, title, organization):
+    with patch('builtins.open', autospec=True) as mock_open:
+        file_obj = File(path, open_file=False)
+        mock_open.assert_not_called()
 
 
 invalid_save_locations = [
