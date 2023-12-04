@@ -11,7 +11,7 @@ class TranscriptionDecorator:
         """Processes the file using the wrapped processor and then applies transcription."""
         self._processor.process()
         transcribed_text, language = self.extract_text_with_whisper()
-        self._processor.metadata['transcribed_text'] = transcribed_text
+        self._processor.metadata['text'] = transcribed_text
         self._processor.metadata['language'] = language
 
     def extract_text_with_whisper(self) -> str:
