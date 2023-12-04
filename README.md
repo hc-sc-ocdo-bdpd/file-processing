@@ -11,6 +11,7 @@ Additionally, this project uses tesseract for OCR. This must be installed at: `C
 This project also uses ffmpeg for audio/video file transcripting. You can install it via PowerShell using the following steps: 
 1. Install scoop: `iwr -useb get.scoop.sh | iex` 
 2. Install ffmpeg: `scoop install ffmpeg`
+3. It may be necessary to restart the IDE and computer after these installs have been completed
 
 ## Structure
 
