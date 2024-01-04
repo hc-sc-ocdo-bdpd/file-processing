@@ -14,12 +14,15 @@ from jpeg_processor import JpegFileProcessor
 from csv_processor import CsvFileProcessor
 from json_processor import JsonFileProcessor
 from zip_processor import ZipFileProcessor
+from audio_processor import AudioFileProcessor
+from transcription_decorator import TranscriptionDecorator
 from generic_processor import GenericFileProcessor
 from py_processor import PyFileProcessor
-from errors import UnsupportedFileTypeError, NotOCRApplciableError
+from errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png"}
+    TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
     PROCESSORS = {
         ".csv": CsvFileProcessor,
@@ -37,16 +40,21 @@ class File:
         ".jpg": JpegFileProcessor,
         ".json": JsonFileProcessor,
         ".zip": ZipFileProcessor,
+        ".mp3": AudioFileProcessor,
+        ".wav": AudioFileProcessor,
+        ".mp4": AudioFileProcessor,
+        ".flac": AudioFileProcessor,
+        ".aiff": AudioFileProcessor,
+        ".ogg": AudioFileProcessor,
         ".py": PyFileProcessor
     }
 
-    def __init__(self, path: str, use_ocr: bool = False, open_file: bool = True) -> None:
+    def __init__(self, path: str, use_ocr: bool = False, use_transcriber: bool = False, open_file: bool = True) -> None:
         self.path = Path(path)
-        self.processor = self._get_processor(use_ocr, open_file)
-        if open_file:
-            self.process()
+        self.processor = self._get_processor(use_ocr, use_transcriber, open_file)
+        self.process()
 
-    def _get_processor(self, use_ocr: bool, open_file: bool) -> 'FileProcessorStrategy':
+    def _get_processor(self, use_ocr: bool, use_transcriber: bool, open_file: bool) -> 'FileProcessorStrategy':
         extension = self.path.suffix
         processor_class = File.PROCESSORS.get(extension, GenericFileProcessor)
         processor = processor_class(str(self.path), open_file)
@@ -55,6 +63,11 @@ class File:
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
                 raise NotOCRApplciableError(f"OCR is not applicable for file type {extension}.")
             return OCRDecorator(processor)
+        
+        if use_transcriber:
+            if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
+                raise NotTranscriptionApplicableError(f"Transcription is not applicable for file type {extension}.")
+            return TranscriptionDecorator(processor)
 
         return processor
 
