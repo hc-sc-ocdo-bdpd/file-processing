@@ -3,6 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from unittest.mock import patch
+from errors import FileProcessingFailedError
 
 variable_names = "path, sheet_names, active_sheet, data, last_modified_by, creator"
 values = [
@@ -52,6 +53,8 @@ def test_save_xlsx_metadata(copy_file, sheet_names, active_sheet, data):
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_xlsx_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
+def test_xlsx_invalid_save_location(path):
+    xlsx_file = File(path)
+    invalid_save_path = '/non_existent_folder/' + os.path.basename(path)
+    with pytest.raises(FileProcessingFailedError):
+        xlsx_file.save(invalid_save_path)

@@ -42,6 +42,8 @@ def test_save_txt_metadata(copy_file, text_length, num_lines, num_words):
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_txt_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
+def test_txt_invalid_save_location(path):
+    txt_file = File(path)
+    invalid_save_path = '/non_existent_folder/' + os.path.basename(path)
+    with pytest.raises(FileProcessingFailedError):
+        txt_file.save(invalid_save_path)

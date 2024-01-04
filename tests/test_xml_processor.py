@@ -3,6 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from unittest.mock import patch
+from errors import FileProcessingFailedError
 
 variable_names = "path, text_length, num_lines, num_words"
 values = [
@@ -23,9 +24,11 @@ def test_save_xml_metadata(copy_file, text_length, num_lines, num_words):
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_xml_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
+def test_xml_invalid_save_location(path):
+    xml_file = File(path)
+    invalid_save_path = '/non_existent_folder/' + os.path.basename(path)
+    with pytest.raises(FileProcessingFailedError):
+        xml_file.save(invalid_save_path)
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
