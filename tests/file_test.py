@@ -17,21 +17,29 @@ def test_docx_author():
     test_docx_1_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.docx'
     test_docx_2_path = 'tests/resources/test_files/SampleReport.docx'
 
+    # Save paths of output files
+    test_docx_1_save_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipediaModified.docx'
+    test_docx_2_save_path = 'tests/resources/test_files/SampleReportModified.docx'
+
     # Arbitrary test author names
     test_author_1 = 'Test Author One'
     test_author_2 = 'Second Test Author'
 
     # Update test docx files to have test names
-    for x in [(test_docx_1_path,test_author_1), (test_docx_2_path, test_author_2)]:
+    for x in [(test_docx_1_path, test_docx_1_save_path, test_author_1), 
+              (test_docx_2_path, test_docx_2_save_path, test_author_2)]:
         doc = Document(x[0])
-        doc.core_properties.author = x[1]
-        doc.save(x[0])
+        doc.core_properties.author = x[2]
+        doc.save(x[1])
 
     # Test author names match
-    docx_1 = File(test_docx_1_path)
-    docx_2 = File(test_docx_2_path)
+    docx_1 = File(test_docx_1_save_path)
+    docx_2 = File(test_docx_2_save_path)
     assert docx_1.metadata['author'] == test_author_1
     assert docx_2.metadata['author'] == test_author_2
+
+    os.remove(test_docx_1_save_path)
+    os.remove(test_docx_2_save_path)
 
 
 def test_docx_last_modified_by():
@@ -42,21 +50,29 @@ def test_docx_last_modified_by():
     test_docx_1_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.docx'
     test_docx_2_path = 'tests/resources/test_files/SampleReport.docx'
 
+    # Save paths of output files
+    test_docx_1_save_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipediaModified.docx'
+    test_docx_2_save_path = 'tests/resources/test_files/SampleReportModified.docx'
+
     # Arbitrary test last_modified_by names
     test_last_modified_by_1 = 'Test last_modified_by One'
     test_last_modified_by_2 = 'last_modified_by Test Author'
 
     # Update test docx files to have test names
-    for x in [(test_docx_1_path,test_last_modified_by_1), (test_docx_2_path, test_last_modified_by_2)]:
+    for x in [(test_docx_1_path, test_docx_1_save_path, test_last_modified_by_1), 
+              (test_docx_2_path, test_docx_2_save_path, test_last_modified_by_2)]:
         doc = Document(x[0])
-        doc.core_properties.last_modified_by = x[1]
-        doc.save(x[0])
+        doc.core_properties.last_modified_by = x[2]
+        doc.save(x[1])
 
     # Test last_modified_by names match
-    docx_1 = File(test_docx_1_path)
-    docx_2 = File(test_docx_2_path)
+    docx_1 = File(test_docx_1_save_path)
+    docx_2 = File(test_docx_2_save_path)
     assert docx_1.metadata['last_modified_by'] == test_last_modified_by_1
     assert docx_2.metadata['last_modified_by'] == test_last_modified_by_2
+
+    os.remove(test_docx_1_save_path)
+    os.remove(test_docx_2_save_path)
 
 
 def test_docx_locked():
@@ -415,21 +431,29 @@ def test_pptx_author():
     test_pptx_1_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx'
     test_pptx_2_path = 'tests/resources/test_files/SampleReport.pptx'
 
+    # Save paths of test files
+    test_pptx_1_save_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipediaModified.pptx'
+    test_pptx_2_save_path = 'tests/resources/test_files/SampleReportModified.pptx'
+
     # Arbitrary test author names
     test_author_1 = 'Test Author One'
     test_author_2 = 'Second Test Author'
 
     # Update test pptx files to have test names
-    for x in [(test_pptx_1_path,test_author_1), (test_pptx_2_path, test_author_2)]:
+    for x in [(test_pptx_1_path, test_pptx_1_save_path, test_author_1), 
+              (test_pptx_2_path, test_pptx_2_save_path, test_author_2)]:
         ppt = Presentation(x[0])
-        ppt.core_properties.author = x[1]
-        ppt.save(x[0])
+        ppt.core_properties.author = x[2]
+        ppt.save(x[1])
 
     # Test author names match
-    pptx_1 = File(test_pptx_1_path)
-    pptx_2 = File(test_pptx_2_path)
+    pptx_1 = File(test_pptx_1_save_path)
+    pptx_2 = File(test_pptx_2_save_path)
     assert pptx_1.metadata['author'] == test_author_1
     assert pptx_2.metadata['author'] == test_author_2
+
+    os.remove(test_pptx_1_save_path)
+    os.remove(test_pptx_2_save_path)
 
 
 def test_pptx_last_modified_by():
@@ -439,22 +463,30 @@ def test_pptx_last_modified_by():
     # Paths of test files
     test_pptx_1_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx'
     test_pptx_2_path = 'tests/resources/test_files/SampleReport.pptx'
+    
+    # Save paths of test files
+    test_pptx_1_save_path = 'tests/resources/test_files/HealthCanadaOverviewFromWikipediaModified.pptx'
+    test_pptx_2_save_path = 'tests/resources/test_files/SampleReportModified.pptx'
 
     # Arbitrary test last_modified_by names
     test_last_modified_by_1 = 'Test last_modified_by One'
     test_last_modified_by_2 = 'last_modified_by Test Author'
 
     # Update test pptx files to have test names
-    for x in [(test_pptx_1_path,test_last_modified_by_1), (test_pptx_2_path, test_last_modified_by_2)]:
+    for x in [(test_pptx_1_path, test_pptx_1_save_path, test_last_modified_by_1), 
+              (test_pptx_2_path, test_pptx_2_save_path, test_last_modified_by_2)]:
         ppt = Presentation(x[0])
-        ppt.core_properties.last_modified_by = x[1]
-        ppt.save(x[0])
+        ppt.core_properties.last_modified_by = x[2]
+        ppt.save(x[1])
 
     # Test last_modified_by names match
-    pptx_1 = File(test_pptx_1_path)
-    pptx_2 = File(test_pptx_2_path)
+    pptx_1 = File(test_pptx_1_save_path)
+    pptx_2 = File(test_pptx_2_save_path)
     assert pptx_1.metadata['last_modified_by'] == test_last_modified_by_1
     assert pptx_2.metadata['last_modified_by'] == test_last_modified_by_2
+
+    os.remove(test_pptx_1_save_path)
+    os.remove(test_pptx_2_save_path)
 
     
 def test_pptx_num_slides():
