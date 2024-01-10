@@ -15,6 +15,7 @@ values = [
 def file_obj(request):
     return File(request.param[0])
 
+
 def test_zip_extraction(file_obj):
     import shutil
     file_obj.processor.extract()
@@ -27,6 +28,7 @@ def test_zip_extraction(file_obj):
     assert set(extracted_files) == set(expected_files)
 
     shutil.rmtree(extraction_dir)
+
 
 def test_zip_save(file_obj):
     import tempfile, zipfile
@@ -41,10 +43,6 @@ def test_zip_save(file_obj):
         with zipfile.ZipFile(original_zip_path, 'r') as original_zip, zipfile.ZipFile(saved_zip_path, 'r') as saved_zip:
             assert set(original_zip.namelist()) == set(saved_zip.namelist()) # Check contents are still the same
 
-@pytest.mark.parametrize("path", map(lambda x: x[0], values))
-def test_zip_invalid_save_location(invalid_save_location):
-    invalid_save_location
-    pytest.fail("Test not yet implemented")
 
 @pytest.mark.parametrize(variable_names, values)
 def test_zip_metadata(path, num_files, file_types, file_names):
@@ -52,6 +50,7 @@ def test_zip_metadata(path, num_files, file_types, file_names):
     assert file_obj.metadata['num_files'] == num_files
     assert file_obj.metadata['file_types'] == file_types
     assert file_obj.metadata['file_names'] == file_names
+
 
 @pytest.mark.parametrize(variable_names, values)
 def test_save_zip_metadata(copy_file, num_files, file_types, file_names):

@@ -26,15 +26,6 @@ def test_not_opening_file(path, text_length, num_lines, num_words):
         File(path, open_file=False)
         mock_open.assert_not_called()
 
-
-@pytest.fixture()
-def copy_file(path, tmp_path_factory):
-    from pathlib import Path
-    copy_path = str(tmp_path_factory.mktemp("copy") / Path(path).name)
-    file_obj = File(path)
-    file_obj.save(copy_path)
-    yield copy_path
-
     
 @pytest.mark.parametrize(variable_names, values)
 def test_save_txt_metadata(copy_file, text_length, num_lines, num_words):
