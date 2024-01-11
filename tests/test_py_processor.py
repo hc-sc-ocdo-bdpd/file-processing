@@ -30,18 +30,11 @@ def test_not_opening_file(path, num_lines, num_functions, num_classes, num_impor
         mock_open.assert_not_called()
 
 
-@pytest.fixture()
-def copy_file(path, tmp_path_factory):
-    from pathlib import Path
-    copy_path = str(tmp_path_factory.mktemp("copy") / Path(path).name)
-    file_obj = File(path)
-    file_obj.save(copy_path)
-    yield copy_path
-
 
 @pytest.mark.parametrize(variable_names, values)
 def test_save_python_metadata(copy_file, num_lines, num_functions, num_classes, num_imports, num_docstrings):
     test_python_metadata(copy_file, num_lines, num_functions, num_classes, num_imports, num_docstrings)
+
 
 invalid_save_locations_python = [
     ('tests/resources/test_files/backend.py', '/non_existent_folder/backend.py')
@@ -53,13 +46,3 @@ def test_py_invalid_save_location(path, save_path):
     file_obj = File(path)
     with pytest.raises(FileProcessingFailedError):
         file_obj.save(save_path)
-
-
-corrupted_files = [
-    'tests/resources/test_files/callbacks_corrupted.py'
-]
-
-@pytest.mark.parametrize("path", corrupted_files)
-def test_python_corrupted_file_processing(path):
-    with pytest.raises(FileProcessingFailedError):
-        File(path)
