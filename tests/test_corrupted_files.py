@@ -17,7 +17,7 @@ corrupted_files_processing = [
     'tests/resources/test_files/Sample_corrupted.xml',
     'tests/resources/test_files/SampleReport_corrupted.zip',
     'tests/resources/test_files/MSEdgeIcon_corrupted.gif',
-    # 'tests/resources/test_files/sample_corrupted.pst',
+    'tests/resources/test_files/sample_corrupted.pst',
     'tests/resources/test_files/MSWordIcon_corrupted.tiff',
     'tests/resources/test_files/MapleLeaf_corrupted.heif',
     'tests/resources/test_files/MapleLeaf_corrupted.heic',
