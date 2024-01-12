@@ -21,7 +21,6 @@ from py_processor import PyFileProcessor
 from gif_processor import GifFileProcessor
 from tiff_processor import TiffFileProcessor
 from heic_processor import HeicFileProcessor
-from pst_processor import PstFileProcessor
 from errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
 
 class File:
@@ -55,8 +54,7 @@ class File:
         ".tif": TiffFileProcessor,
         ".tiff": TiffFileProcessor,
         ".heic": HeicFileProcessor,
-        ".heif": HeicFileProcessor,
-        ".pst": PstFileProcessor
+        ".heif": HeicFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False, use_transcriber: bool = False, open_file: bool = True) -> None:
