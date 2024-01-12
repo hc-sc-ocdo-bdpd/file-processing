@@ -10,6 +10,9 @@ from errors import OCRProcessingError, NotOCRApplciableError
 PDF_SAMPLES = ["tests/resources/test_files/test_ocr_text.pdf", "tests/resources/test_files/test_ocr_text_2.pdf"]
 JPEG_SAMPLES = ["tests/resources/test_files/test_ocr_text.jpg", "tests/resources/test_files/test_ocr_text_2.jpg"]
 PNG_SAMPLES = ["tests/resources/test_files/test_ocr_text.png", "tests/resources/test_files/test_ocr_text_2.png"]
+TIF_SAMPLES = ["tests/resources/test_files/test_ocr_text.tif", "tests/resources/test_files/test_ocr_text_2.tif"]
+TIFF_SAMPLES = ["tests/resources/test_files/test_ocr_text.tiff", "tests/resources/test_files/test_ocr_text_2.tiff"]
+# GIF_SAMPLES = ["tests/resources/test_files/test_ocr_text.gif", "tests/resources/test_files/test_ocr_text_2.gif"]
 NON_OCR_APPLICABLE_SAMPLES = ["tests/resources/test_files/Empty.zip", "tests/resources/test_files/Sample.xml"]
 
 EXPECTED_OCR_RESULTS = {
@@ -19,9 +22,16 @@ EXPECTED_OCR_RESULTS = {
     JPEG_SAMPLES[1]: 'Test OCR text successful!\n',
     PNG_SAMPLES[0]: 'Test OCR text successful!\n',
     PNG_SAMPLES[1]: 'Test OCR text successful!\n',
+    TIF_SAMPLES[0]: 'Test OCR text successful!\n',
+    TIF_SAMPLES[1]: 'Test OCR text successful!\n',
+    TIFF_SAMPLES[0]: 'Test OCR text successful!\n',
+    TIFF_SAMPLES[1]: 'Test OCR text successful!\n',
+    # GIF_SAMPLES[0]: 'Test OCR text successful!\n',
+    # GIF_SAMPLES[1]: 'Test OCR text successful!\n',
 }
 
-@pytest.fixture(params=PDF_SAMPLES + JPEG_SAMPLES + PNG_SAMPLES)
+# @pytest.fixture(params=PDF_SAMPLES + JPEG_SAMPLES + PNG_SAMPLES + TIF_SAMPLES + TIFF_SAMPLES + GIF_SAMPLES)
+@pytest.fixture(params=PDF_SAMPLES + JPEG_SAMPLES + PNG_SAMPLES + TIF_SAMPLES + TIFF_SAMPLES)
 def ocr_applicable_file(request):
     return request.param, EXPECTED_OCR_RESULTS[request.param]
 

@@ -18,10 +18,14 @@ from audio_processor import AudioFileProcessor
 from transcription_decorator import TranscriptionDecorator
 from generic_processor import GenericFileProcessor
 from py_processor import PyFileProcessor
+from gif_processor import GifFileProcessor
+from tiff_processor import TiffFileProcessor
+from heic_processor import HeicFileProcessor
+from pst_processor import PstFileProcessor
 from errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
 
 class File:
-    OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png"}
+    OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".gif", ".tiff", ".tif"}
     TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
     PROCESSORS = {
@@ -46,7 +50,13 @@ class File:
         ".flac": AudioFileProcessor,
         ".aiff": AudioFileProcessor,
         ".ogg": AudioFileProcessor,
-        ".py": PyFileProcessor
+        ".py": PyFileProcessor,
+        ".gif": GifFileProcessor,
+        ".tif": TiffFileProcessor,
+        ".tiff": TiffFileProcessor,
+        ".heic": HeicFileProcessor,
+        ".heif": HeicFileProcessor,
+        ".pst": PstFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False, use_transcriber: bool = False, open_file: bool = True) -> None:
