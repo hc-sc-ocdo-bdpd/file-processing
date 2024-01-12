@@ -8,7 +8,7 @@ striprtf==0.0.26
 chardet==5.2.0              # Character encodings
 Pillow>=10.0.0              # Images
 pillow-heif==0.14.0         # '.heic' file extension for iPhone images
-pywin32                     # '.pst' file extension for email folders
+pypiwin32                   # '.pst' file extension for email folders
 pytesseract==0.3.10         # OCR Connector
 openpyxl>=3.1.2             # Used To read excel files with pandas
 pandas>=2.0.3
