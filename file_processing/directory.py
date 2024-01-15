@@ -38,7 +38,7 @@ class Directory:
 
     def get_files(self, filters: dict = None):
         return self._file_generator(filters)
-
+    
 
     def generate_report(self, report_file: str, include_text: bool = True, filters: Optional[dict] = None, keywords: Optional[list] = None, open_files: bool = True) -> None:
         """
@@ -59,7 +59,8 @@ class Directory:
                 writer = csv.writer(file)
                 
                 # Modify the header row to include the 'Keywords' column if keywords are provided
-                header_row = ['File Path', 'File Name', 'Extension', 'Size', 'Modification Time', 'Access Time', 'Metadata']
+                header_row = ['File Path', 'File Name', 'Extension', 'Size', 'Modification Time', 'Access Time', 
+                              'Creation Time', 'Parent Directory', 'Is File?', 'Is Symlink?', 'Absolute Path', 'Metadata']
                 if keywords:
                     header_row.append('Keywords')
                 
@@ -71,6 +72,8 @@ class Directory:
                         metadata = file.metadata.copy()
                         if not include_text or not open_files:
                             metadata.pop('text', None)  # Remove the 'text' attribute if it exists and include_text is False or files are not opened
+                            metadata.pop('lines', None)
+                            metadata.pop('words', None)
                         
                         row_data = [
                             file.file_path,
@@ -79,6 +82,11 @@ class Directory:
                             file.size,
                             file.modification_time,
                             file.access_time,
+                            file.creation_time,
+                            file.parent_directory,
+                            file.is_file,
+                            file.is_symlink,
+                            file.absolute_path,
                             json.dumps(metadata, ensure_ascii=False)  # Convert metadata to a JSON string
                         ]
                         
