@@ -116,5 +116,25 @@ class File:
         return self.processor.access_time
 
     @property
+    def creation_time(self) -> str:
+        return self.processor.creation_time
+    
+    @property
+    def parent_directory(self) -> str:
+        return self.processor.parent_directory
+    
+    @property
+    def is_file(self) -> str:
+        return self.processor.is_file
+    
+    @property
+    def is_symlink(self) -> str:
+        return self.processor.is_symlink
+
+    @property
+    def absolute_path(self) -> str:
+        return self.processor.absolute_path
+
+    @property
     def metadata(self) -> dict:
         return self.processor.metadata
