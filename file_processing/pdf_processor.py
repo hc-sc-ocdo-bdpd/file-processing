@@ -7,9 +7,6 @@ class PdfFileProcessor(FileProcessorStrategy):
         super().__init__(file_path, open_file)
         self.metadata = {'message': 'File was not opened'} if not open_file else self._default_metadata()
 
-        self.reader = None
-
-
     def _default_metadata(self) -> dict:
         return {
             'text': None,
@@ -18,6 +15,8 @@ class PdfFileProcessor(FileProcessorStrategy):
 
 
     def process(self) -> None:
+        reader = None
+        
         if not self.open_file:
             return
 
