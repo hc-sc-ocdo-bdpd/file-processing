@@ -124,11 +124,11 @@ class File:
         return self.processor.parent_directory
     
     @property
-    def is_file(self) -> str:
+    def is_file(self) -> bool:
         return self.processor.is_file
     
     @property
-    def is_symlink(self) -> str:
+    def is_symlink(self) -> bool:
         return self.processor.is_symlink
 
     @property
