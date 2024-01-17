@@ -18,10 +18,13 @@ from audio_processor import AudioFileProcessor
 from transcription_decorator import TranscriptionDecorator
 from generic_processor import GenericFileProcessor
 from py_processor import PyFileProcessor
+from gif_processor import GifFileProcessor
+from tiff_processor import TiffFileProcessor
+from heic_processor import HeicFileProcessor
 from errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
 
 class File:
-    OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png"}
+    OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".gif", ".tiff", ".tif"}
     TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
     PROCESSORS = {
@@ -46,7 +49,12 @@ class File:
         ".flac": AudioFileProcessor,
         ".aiff": AudioFileProcessor,
         ".ogg": AudioFileProcessor,
-        ".py": PyFileProcessor
+        ".py": PyFileProcessor,
+        ".gif": GifFileProcessor,
+        ".tif": TiffFileProcessor,
+        ".tiff": TiffFileProcessor,
+        ".heic": HeicFileProcessor,
+        ".heif": HeicFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False, use_transcriber: bool = False, open_file: bool = True) -> None:
@@ -106,6 +114,26 @@ class File:
     @property
     def access_time(self) -> str:
         return self.processor.access_time
+
+    @property
+    def creation_time(self) -> str:
+        return self.processor.creation_time
+    
+    @property
+    def parent_directory(self) -> str:
+        return self.processor.parent_directory
+    
+    @property
+    def is_file(self) -> str:
+        return self.processor.is_file
+    
+    @property
+    def is_symlink(self) -> str:
+        return self.processor.is_symlink
+
+    @property
+    def absolute_path(self) -> str:
+        return self.processor.absolute_path
 
     @property
     def metadata(self) -> dict:
