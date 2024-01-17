@@ -63,7 +63,7 @@ class Directory:
         for file in self._file_generator(filters, open_files=False):
             if file.extension not in extension_data:
                 extension_data[file.extension] = {
-                    'Size': file.size,
+                    'Size (MB)': file.size/1e6,
                     'Count': 1
                 }
             else:
@@ -75,8 +75,7 @@ class Directory:
             try:
                 with open(report_file, mode='w', newline='', encoding='utf-8') as file:
 
-                    writer = csv.DictWriter(
-                        file, fieldnames=['Extension', 'Size', 'Count'])
+                    writer = csv.DictWriter(file, fieldnames=['Extension', 'Size', 'Count'])
                     writer.writeheader()
 
                     for key, val in sorted(extension_data.items()):
@@ -90,7 +89,8 @@ class Directory:
         return extension_data
 
     def generate_report(self, report_file: str, include_text: bool = False, filters: Optional[dict] = None,
-                        keywords: Optional[list] = None, migrate_filters: Optional[dict] = None, open_files: bool = True) -> None:
+                        keywords: Optional[list] = None, migrate_filters: Optional[dict] = None, 
+                        open_files: bool = True, split_metadata: bool = False) -> None:
         """
         Generates a report of the directory and writes it to a CSV file.
 
@@ -103,16 +103,24 @@ class Directory:
         """
 
         try:
+
+            files = self._file_generator(filters, open_files=open_files)
+
             # Count the total number of files that match the filters
-            total_files = sum(1 for _ in self._file_generator(
-                filters, open_files=open_files))
+            total_files = sum(1 for _ in files)
 
             with open(report_file, mode='w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
 
                 # Modify the header row to include the 'Keywords' column if keywords are provided
-                header_row = ['File Path', 'File Name', 'Extension', 'Size', 'Modification Time', 'Access Time',
-                              'Creation Time', 'Parent Directory', 'Is File?', 'Is Symlink?', 'Absolute Path', 'Metadata']
+                header_row = ['File Path', 'File Name', 'Extension', 'Size (MB)', 'Modification Time', 'Access Time',
+                              'Creation Time', 'Parent Directory', 'Is File?', 'Is Symlink?', 'Absolute Path']
+
+                if split_metadata:
+                    header_row.extend(list(set(sum([list(file.metadata.keys()) for file in files], []))))
+                else:
+                    header_row.append('Metadata')
+
                 if keywords:
                     header_row.append('Keywords')
 
@@ -123,7 +131,7 @@ class Directory:
 
                 # Iterate over each file in the directory and write the information to the CSV file
                 with tqdm(total=total_files, desc='Generating Report', unit='file') as pbar:
-                    for file in self._file_generator(filters, open_files=open_files):
+                    for file in files:
                         metadata = file.metadata.copy()
                         if not include_text or not open_files:
                             # Remove the 'text' attribute if it exists and include_text is False or files are not opened
@@ -137,30 +145,32 @@ class Directory:
                             file.file_path,
                             file.file_name,
                             file.extension,
-                            file.size,
-                            datetime.fromtimestamp(file.modification_time),
-                            datetime.fromtimestamp(file.access_time),
-                            datetime.fromtimestamp(file.creation_time),
+                            file.size / 1e6,
+                            datetime.fromtimestamp(round(file.modification_time)),
+                            datetime.fromtimestamp(round(file.access_time)),
+                            datetime.fromtimestamp(round(file.creation_time)),
                             file.parent_directory,
                             int(file.is_file),
                             int(file.is_symlink),
-                            file.absolute_path,
-                            # Convert metadata to a JSON string
-                            json.dumps(metadata, ensure_ascii=False)
+                            file.absolute_path
                         ]
+
+                        if split_metadata:
+                            pass
+                        else:
+                            # Convert metadata to a JSON string
+                            row_data.append(json.dumps(metadata, ensure_ascii=False))
+
 
                         if keywords and include_text and open_files:
                             text = metadata.get('text', '')
                             if text is None:  # if {text: null} in metadata
                                 text = ''
-                            keyword_counts = self._count_keywords(
-                                text, keywords)
-                            row_data.append(json.dumps(
-                                keyword_counts, ensure_ascii=False))
+                            keyword_counts = self._count_keywords(text, keywords)
+                            row_data.append(json.dumps(keyword_counts, ensure_ascii=False))
 
                         if migrate_filters:
-                            row_data.append(
-                                int(self._apply_filters(file, migrate_filters)))
+                            row_data.append(int(self._apply_filters(file, migrate_filters)))
 
                         writer.writerow(row_data)
                         pbar.update(1)
