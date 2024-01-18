@@ -12,6 +12,7 @@ class FileProcessorStrategy(ABC):
         self.access_time = self.file_path.stat().st_atime
         self.creation_time = self.file_path.stat().st_ctime
         self.parent_directory = self.file_path.parent
+        self.permissions = oct(self.file_path.stat().st_mode)[-3:]
         self.is_file = self.file_path.is_file()
         self.is_symlink = self.file_path.is_symlink()
         self.absolute_path = self.file_path.resolve()

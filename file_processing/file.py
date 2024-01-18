@@ -124,6 +124,10 @@ class File:
         return self.processor.parent_directory
     
     @property
+    def permissions(self) -> str:
+        return self.processor.permissions
+    
+    @property
     def is_file(self) -> bool:
         return self.processor.is_file
     
