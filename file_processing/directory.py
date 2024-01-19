@@ -111,7 +111,7 @@ class Directory:
         :param split_metadata: Whether to unpack the metadata dictionary into separate columns in the CSV file.
         """
 
-        CHAR_LIMIT = 500
+        CHAR_LIMIT = 3000
 
         # Extracting the attributes from the File object
         data = [file.processor.__dict__ for file in self._file_generator(filters, open_files)]
@@ -124,6 +124,8 @@ class Directory:
                 file['migrate'] = int(self._apply_filters(file['file_path'], migrate_filters))
             if include_text:
                 file['metadata'] = {k: str(v)[:CHAR_LIMIT] for k, v in file['metadata'].items()}
+                if keywords and file['metadata'].get('text'):
+                    file['keywords'] = self._count_keywords(file['metadata']['text'], keywords)
             elif not include_text:
                 for field in ['text', 'docstrings', 'imports', 'words', 'lines', 'data']:
                     file['metadata'].pop(field, None)
@@ -149,3 +151,21 @@ class Directory:
         df.rename(columns={'Size': 'Size (MB)'}, inplace=True)
 
         df.to_csv(report_file)
+
+    def _count_keywords(self, text: str, keywords: list) -> dict:
+        """
+        Counts the occurrences of each keyword in the given text.
+
+        :param text: The text to search in.
+        :param keywords: The list of keywords to count.
+        :return: A dictionary with the keywords as keys and their counts as values.
+        """
+
+        keyword_dict = {}
+        text = text.lower()
+
+        for keyword in keywords:
+            count = text.count(keyword.lower())
+            keyword_dict[keyword] = count
+
+        return keyword_dict
