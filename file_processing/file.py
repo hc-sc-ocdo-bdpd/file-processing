@@ -104,6 +104,10 @@ class File:
         return self.processor.extension
 
     @property
+    def owner(self) -> str:
+        return self.processor.owner
+
+    @property
     def size(self) -> str:
         return self.processor.size
 

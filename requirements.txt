@@ -9,6 +9,7 @@ chardet==5.2.0              # Character encodings
 Pillow>=10.0.0              # Images
 pillow-heif==0.14.0         # '.heic' file extension for iPhone images
 pytesseract==0.3.10         # OCR Connector
+pywin32==306                # Extracting file 'Owner' information (Windows-exclusive)
 openpyxl>=3.1.2             # Used To read excel files with pandas
 pandas>=2.0.3
 python-Levenshtein==0.21.1  # Used for the utils (metrics)

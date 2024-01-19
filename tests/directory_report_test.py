@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from errors import FileProcessingFailedError
 import sys
-from file_processing.directory2 import Directory
+from file_processing.directory import Directory
 import os
 import pandas as pd
 import pytest

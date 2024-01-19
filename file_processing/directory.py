@@ -2,10 +2,9 @@ import os
 import csv
 from file import File
 from typing import Optional
-import json
+import pandas as pd
+from pathlib import Path
 from tqdm import tqdm
-from corrupted_file import CorruptedFile
-from datetime import datetime
 
 
 class Directory:
@@ -15,34 +14,42 @@ class Directory:
 
     def _file_generator(self, filters: dict = None, open_files: bool = True):
         filters = filters or {}
-        for root, _, filenames in os.walk(self.path):
-            for filename in filenames:
-                file_path = os.path.join(root, filename)
 
-                try:
-                    file = File(file_path, use_ocr=self.use_ocr,
-                                open_file=open_files)
-                    if not self._apply_filters(file, filters):
+        total_files = sum(len(files) for _, _, files in os.walk(self.path))
+
+        with tqdm(total=total_files, desc='Generating Report', unit='file') as pbar:
+            for root, _, filenames in os.walk(self.path):
+                for filename in filenames:
+                    file_path = os.path.join(root, filename)
+
+                    pbar.update(1)
+                    
+                    if filters and not self._apply_filters(file_path, filters):
                         continue
-                    yield file
-                except Exception as e:
-                    file = CorruptedFile(file_path)
-                    file.metadata.pop('message')
-                    file.metadata.update({'error': type(e).__name__})
-                    if not self._apply_filters(file, filters):
-                        continue
-                    yield file
 
-    def _apply_filters(self, file: File, filters: dict) -> bool:
-        if filters.get('extensions') and file.extension not in filters['extensions']:
-            return False
+                    try:
+                        file = File(file_path, use_ocr=self.use_ocr, open_file=open_files)
+                        yield file
+                    except Exception as e:
+                        file = File(file_path, open_file=False)
+                        file.metadata.pop('message')
+                        file.metadata.update({'error': type(e).__name__})
+                        yield file
 
-        if filters.get('min_size') and file.size < filters['min_size']:
+    def _apply_filters(self, file_path: str, filters: dict) -> bool:
+        file = Path(file_path)
+        if filters.get('exclude_str') and set(file_path.split('\\')) & set(filters['exclude_str']):
             return False
-        if filters.get('max_size') and file.size > filters['max_size']:
+        if filters.get('include_str') and not (set(file_path.split('\\')) & set(filters['include_str'])):
             return False
-
-        # Additional filter conditions can be added here as needed
+        if filters.get('extensions') and file.suffix not in filters['extensions']:
+            return False
+        if filters.get('exclude_extensions') and file.suffix in filters['exclude_extensions']:
+            return False
+        if filters.get('min_size') and file.stat().st_size < filters['min_size']:
+            return False
+        if filters.get('max_size') and file.stat().st_size > filters['max_size']:
+            return False
 
         return True  # Passes all filter conditions
 
@@ -60,22 +67,23 @@ class Directory:
         extension_data = {}
 
         # Grouping the files by extension and tracking their size (bytes) and count fields
-        for file in self._file_generator(filters, open_files=False):
+        for file in self._file_generator(filters, False):
             if file.extension not in extension_data:
                 extension_data[file.extension] = {
                     'Size (MB)': file.size/1e6,
                     'Count': 1
                 }
             else:
-                extension_data[file.extension]['Size'] += file.size
-                extension_data[file.extension]['Count'] += 1
+                if 'Size (MB)' in extension_data[file.extension]:
+                    extension_data[file.extension]['Size (MB)'] += file.size/1e6
+                    extension_data[file.extension]['Count'] += 1
 
         # Checks if an output file is specified and writes to it
         if report_file:
             try:
                 with open(report_file, mode='w', newline='', encoding='utf-8') as file:
 
-                    writer = csv.DictWriter(file, fieldnames=['Extension', 'Size', 'Count'])
+                    writer = csv.DictWriter(file, fieldnames=['Extension', 'Size (MB)', 'Count'])
                     writer.writeheader()
 
                     for key, val in sorted(extension_data.items()):
@@ -97,100 +105,47 @@ class Directory:
         :param report_file: The path to the output CSV file.
         :param include_text: Whether to include the 'text' attribute in the metadata column.
         :param filters: A dictionary of filters to apply to the files.
+        :param keywords: A list of keywords to count in the 'text' attribute of the metadata.   
         :param migrate_filters: A dictionary of filters to mark whether an item should be migrated (True) or not (False).
-        :param keywords: A list of keywords to count in the 'text' attribute of the metadata.
         :param open_files: Whether to open the files for extracting metadata. If False, files won't be opened.
+        :param split_metadata: Whether to unpack the metadata dictionary into separate columns in the CSV file.
         """
 
-        try:
+        CHAR_LIMIT = 500
 
-            files = self._file_generator(filters, open_files=open_files)
+        # Extracting the attributes from the File object
+        data = [file.processor.__dict__ for file in self._file_generator(filters, open_files)]
 
-            # Count the total number of files that match the filters
-            total_files = sum(1 for _ in files)
+        # Imposing a character limit on each metadata property or removing the verbose fields entirely
+        for file in data:
+            file.pop('open_file', None)
+            file['size'] = file['size'] / 1e6
+            if migrate_filters:
+                file['migrate'] = int(self._apply_filters(file['file_path'], migrate_filters))
+            if include_text:
+                file['metadata'] = {k: str(v)[:CHAR_LIMIT] for k, v in file['metadata'].items()}
+            elif not include_text:
+                for field in ['text', 'docstrings', 'imports', 'words', 'lines', 'data']:
+                    file['metadata'].pop(field, None)
 
-            with open(report_file, mode='w', newline='', encoding='utf-8') as file:
-                writer = csv.writer(file)
+        # Unpacking the metadata field so each metadata property becomes its own column
+        if split_metadata:
+            data = pd.json_normalize(data, max_level=1, sep='_')
+        
+        df = pd.DataFrame(data)
+        df.columns = df.columns.str.replace('metadata_', '')
 
-                # Modify the header row to include the 'Keywords' column if keywords are provided
-                header_row = ['File Path', 'File Name', 'Extension', 'Size (MB)', 'Modification Time', 'Access Time',
-                              'Creation Time', 'Parent Directory', 'Is File?', 'Is Symlink?', 'Absolute Path']
+        # Converting booleans to integers (True->1; False->0)
+        for boolean in ['is_file', 'is_symlink']:
+            df[boolean] = df[boolean].astype(int)
 
-                if split_metadata:
-                    header_row.extend(list(set(sum([list(file.metadata.keys()) for file in files], []))))
-                else:
-                    header_row.append('Metadata')
+        # Converting unix time to datetime
+        for time in ['modification_time', 'access_time', 'creation_time']:
+            df[time] = pd.to_datetime(df[time].round(0), unit='s')
 
-                if keywords:
-                    header_row.append('Keywords')
+        # df.replace(np.NaN, 'N/A', inplace=True)
+        df.columns = df.columns.str.replace('_', ' ')
+        df.columns = df.columns.str.title()
+        df.rename(columns={'Size': 'Size (MB)'}, inplace=True)
 
-                if migrate_filters:
-                    header_row.append('Migrate?')
-
-                writer.writerow(header_row)
-
-                # Iterate over each file in the directory and write the information to the CSV file
-                with tqdm(total=total_files, desc='Generating Report', unit='file') as pbar:
-                    for file in files:
-                        metadata = file.metadata.copy()
-                        if not include_text or not open_files:
-                            # Remove the 'text' attribute if it exists and include_text is False or files are not opened
-                            metadata.pop('text', None)
-                            metadata.pop('lines', None)
-                            metadata.pop('words', None)
-                            metadata.pop('docstrings', None)
-                            metadata.pop('imports', None)
-
-                        row_data = [
-                            file.file_path,
-                            file.file_name,
-                            file.extension,
-                            file.size / 1e6,
-                            datetime.fromtimestamp(round(file.modification_time)),
-                            datetime.fromtimestamp(round(file.access_time)),
-                            datetime.fromtimestamp(round(file.creation_time)),
-                            file.parent_directory,
-                            int(file.is_file),
-                            int(file.is_symlink),
-                            file.absolute_path
-                        ]
-
-                        if split_metadata:
-                            pass
-                        else:
-                            # Convert metadata to a JSON string
-                            row_data.append(json.dumps(metadata, ensure_ascii=False))
-
-
-                        if keywords and include_text and open_files:
-                            text = metadata.get('text', '')
-                            if text is None:  # if {text: null} in metadata
-                                text = ''
-                            keyword_counts = self._count_keywords(text, keywords)
-                            row_data.append(json.dumps(keyword_counts, ensure_ascii=False))
-
-                        if migrate_filters:
-                            row_data.append(int(self._apply_filters(file, migrate_filters)))
-
-                        writer.writerow(row_data)
-                        pbar.update(1)
-        except Exception as e:
-            raise
-
-    def _count_keywords(self, text: str, keywords: list) -> dict:
-        """
-        Counts the occurrences of each keyword in the given text.
-
-        :param text: The text to search in.
-        :param keywords: The list of keywords to count.
-        :return: A dictionary with the keywords as keys and their counts as values.
-        """
-
-        keyword_dict = {}
-        text = text.lower()
-
-        for keyword in keywords:
-            count = text.count(keyword.lower())
-            keyword_dict[keyword] = count
-
-        return keyword_dict
+        df.to_csv(report_file)
