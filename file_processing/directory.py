@@ -5,6 +5,7 @@ from typing import Optional
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
+import json
 
 
 class Directory:
@@ -37,10 +38,10 @@ class Directory:
                         yield file
 
     def _apply_filters(self, file_path: str, filters: dict) -> bool:
-        file = Path(file_path)
-        if filters.get('exclude_str') and set(file_path.split('\\')) & set(filters['exclude_str']):
+        file = Path(file_path).resolve()
+        if filters.get('exclude_str') and set(str(file).split('\\')) & set(filters['exclude_str']):
             return False
-        if filters.get('include_str') and not (set(file_path.split('\\')) & set(filters['include_str'])):
+        if filters.get('include_str') and not (set(str(file).split('\\')) & set(filters['include_str'])):
             return False
         if filters.get('extensions') and file.suffix not in filters['extensions']:
             return False
@@ -92,7 +93,7 @@ class Directory:
                         writer.writerow(row)
 
             except Exception as e:
-                raise
+                raise e
 
         return extension_data
 
@@ -126,6 +127,8 @@ class Directory:
                 file['metadata'] = {k: str(v)[:CHAR_LIMIT] for k, v in file['metadata'].items()}
                 if keywords and file['metadata'].get('text'):
                     file['keywords'] = self._count_keywords(file['metadata']['text'], keywords)
+                elif keywords:
+                    file['keywords'] = self._count_keywords('', keywords)
             elif not include_text:
                 for field in ['text', 'docstrings', 'imports', 'words', 'lines', 'data']:
                     file['metadata'].pop(field, None)
@@ -135,7 +138,15 @@ class Directory:
             data = pd.json_normalize(data, max_level=1, sep='_')
         
         df = pd.DataFrame(data)
+
+        if df.empty:
+            raise Exception('Filtered selection of files is empty. Please try different filters')
+
         df.columns = df.columns.str.replace('metadata_', '')
+        df.columns = df.columns.str.replace('keywords_', 'Keyword.')
+
+        if not split_metadata:
+            df['metadata'] = df['metadata'].apply(lambda x: json.dumps(x))
 
         # Converting booleans to integers (True->1; False->0)
         for boolean in ['is_file', 'is_symlink']:
@@ -169,3 +180,4 @@ class Directory:
             keyword_dict[keyword] = count
 
         return keyword_dict
+    
