@@ -1,5 +1,4 @@
 import os
-import csv
 from file import File
 from typing import Optional
 import pandas as pd
