@@ -79,7 +79,7 @@ class Directory:
 
     def generate_report(self, report_file: str, include_text: bool = False, filters: Optional[dict] = None,
                         keywords: Optional[list] = None, migrate_filters: Optional[dict] = None, 
-                        open_files: bool = True, split_metadata: bool = False) -> None:
+                        open_files: bool = True, split_metadata: bool = False, char_limit: int = 3000) -> None:
         """
         Generates a report of the directory and writes it to a CSV file.
 
@@ -90,9 +90,8 @@ class Directory:
         :param migrate_filters: A dictionary of filters to mark whether an item should be migrated (True) or not (False).
         :param open_files: Whether to open the files for extracting metadata. If False, files won't be opened.
         :param split_metadata: Whether to unpack the metadata dictionary into separate columns in the CSV file.
+        :param char_limit: The cut-off length for each metadata field.
         """
-
-        CHAR_LIMIT = 3000
 
         # Extracting the attributes from the File object
         data = [file.processor.__dict__ for file in self._file_generator(filters, open_files)]
@@ -104,7 +103,7 @@ class Directory:
             if migrate_filters:
                 file['migrate'] = int(self._apply_filters(file['file_path'], migrate_filters))
             if include_text and open_files:
-                file['metadata'] = {k: str(v)[:CHAR_LIMIT] for k, v in file['metadata'].items()}
+                file['metadata'] = {k: str(v)[:char_limit] for k, v in file['metadata'].items()}
                 if keywords and file['metadata'].get('text'):
                     file['keywords'] = self._count_keywords(file['metadata']['text'], keywords)
                 elif keywords:

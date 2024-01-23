@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-import win32security
 import sys
 
 class FileProcessorStrategy(ABC):
@@ -22,6 +21,7 @@ class FileProcessorStrategy(ABC):
 
     def _find_owner(self, file_path: str) -> str:
         if sys.platform == 'win32':
+            import win32security
             sd = win32security.GetFileSecurity(file_path, win32security.OWNER_SECURITY_INFORMATION)
             owner_sid = sd.GetSecurityDescriptorOwner()
             name, domain, _ = win32security.LookupAccountSid(None, owner_sid)
