@@ -5,9 +5,6 @@ import pandas as pd
 import pytest
 import json
 
-# TODO: Corrupted file
-# TODO: Full test coverage
-
 variable_names = "include_text, filters, keywords, migrate_filters, open_files, split_metadata"
 values = [
     (False, None, None, None, True, False),
@@ -77,9 +74,11 @@ def test_filters(mk_get_rm_dir, filters):
             assert not mk_get_rm_dir["Extension"].isin(
                 filters.get("exclude_extensions")).any()
         if "min_size" in filters.keys():
-            assert (mk_get_rm_dir["Size (MB)"] * 1e6 >= filters.get("min_size")).all()
+            assert (mk_get_rm_dir["Size (MB)"] * 1e6 >=
+                    filters.get("min_size")).all()
         if "max_size" in filters.keys():
-            assert (mk_get_rm_dir["Size (MB)"] * 1e6 <= filters.get("max_size")).all()
+            assert (mk_get_rm_dir["Size (MB)"] * 1e6 <=
+                    filters.get("max_size")).all()
         if "exclude_str" in filters.keys():
             assert not mk_get_rm_dir["Absolute Path"].str.contains(
                 "|".join(filters.get("exclude_str"))).any()
@@ -101,11 +100,15 @@ def test_migrate_filters(mk_get_rm_dir, migrate_filters):
             assert mk_get_rm_dir[~mk_get_rm_dir["Extension"].isin(
                 migrate_filters.get("extensions"))]["Migrate"].eq(0).all()
         if "min_size" in migrate_filters.keys():
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] >= migrate_filters["min_size"] / 1e6]["Migrate"].eq(1).all()
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] < migrate_filters["min_size"] / 1e6]["Migrate"].eq(0).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] >=
+                                 migrate_filters["min_size"] / 1e6]["Migrate"].eq(1).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] <
+                                 migrate_filters["min_size"] / 1e6]["Migrate"].eq(0).all()
         if "max_size" in migrate_filters.keys():
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] <= migrate_filters["max_size"] / 1e6]["Migrate"].eq(1).all()
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] > migrate_filters["max_size"] / 1e6]["Migrate"].eq(0).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] <=
+                                 migrate_filters["max_size"] / 1e6]["Migrate"].eq(1).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] >
+                                 migrate_filters["max_size"] / 1e6]["Migrate"].eq(0).all()
     else:
         assert "Migrate" not in mk_get_rm_dir.columns, "The 'Keywords' column should not be present in the DataFrame."
 
@@ -131,6 +134,21 @@ def test_keywords(mk_get_rm_dir, include_text, split_metadata, keywords):
         ), "Keyword counts do not match."
     else:
         assert "Keywords" not in mk_get_rm_dir.columns, "The 'Keywords' column should not be present in the DataFrame."
+
+
+def test_corrupted_dir(tmp_path):
+    temp_file = tmp_path / "test_output.csv"
+    dir1 = Directory('tests/resources/directory_test_files_corrupted')
+    dir1.generate_report(temp_file, split_metadata=True)
+    data = pd.read_csv(temp_file)
+    assert 'Error' in data
+    assert (data['Error'] == 'FileProcessingFailedError').all()
+
+
+def test_empty_report(tmp_path):
+    dir1 = Directory('tests/resources/empty_dir')
+    with pytest.raises(Exception):
+        dir1.generate_report(tmp_path / "test_output.csv")
 
 
 variable_names = "directory_path"

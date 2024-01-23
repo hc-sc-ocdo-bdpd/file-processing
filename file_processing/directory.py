@@ -65,37 +65,18 @@ class Directory:
         :param filters: A dictionary of filters to apply to the files.
         """
 
-        extension_data = {}
+        data = [file.processor.__dict__ for file in self._file_generator(filters, False)]
+        df = pd.DataFrame(data)
+        df = df.get(['size', 'extension'])
+        df['count'] = 1
+        df = df.groupby('extension').sum()
+        df['size'] = df['size'] / 1e6
+        df.rename(columns={'size': 'size (MB)'}, inplace=True)
 
-        # Grouping the files by extension and tracking their size (bytes) and count fields
-        for file in self._file_generator(filters, False):
-            if file.extension not in extension_data:
-                extension_data[file.extension] = {
-                    'Size (MB)': file.size/1e6,
-                    'Count': 1
-                }
-            else:
-                if 'Size (MB)' in extension_data[file.extension]:
-                    extension_data[file.extension]['Size (MB)'] += file.size/1e6
-                    extension_data[file.extension]['Count'] += 1
-
-        # Checks if an output file is specified and writes to it
         if report_file:
-            try:
-                with open(report_file, mode='w', newline='', encoding='utf-8') as file:
+            df.to_csv(report_file)
 
-                    writer = csv.DictWriter(file, fieldnames=['Extension', 'Size (MB)', 'Count'])
-                    writer.writeheader()
-
-                    for key, val in sorted(extension_data.items()):
-                        row = {'Extension': key}
-                        row.update(val)
-                        writer.writerow(row)
-
-            except Exception as e:
-                raise e
-
-        return extension_data
+        return df.to_dict()
 
     def generate_report(self, report_file: str, include_text: bool = False, filters: Optional[dict] = None,
                         keywords: Optional[list] = None, migrate_filters: Optional[dict] = None, 
@@ -123,7 +104,7 @@ class Directory:
             file['size'] = file['size'] / 1e6
             if migrate_filters:
                 file['migrate'] = int(self._apply_filters(file['file_path'], migrate_filters))
-            if include_text:
+            if include_text and open_files:
                 file['metadata'] = {k: str(v)[:CHAR_LIMIT] for k, v in file['metadata'].items()}
                 if keywords and file['metadata'].get('text'):
                     file['keywords'] = self._count_keywords(file['metadata']['text'], keywords)
