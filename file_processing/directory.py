@@ -17,7 +17,7 @@ class Directory:
 
         total_files = sum(len(files) for _, _, files in os.walk(self.path))
 
-        with tqdm(total=total_files, desc='Generating Report', unit='file') as pbar:
+        with tqdm(total=total_files, desc='Processing files', unit='file') as pbar:
             for root, _, filenames in os.walk(self.path):
                 for filename in filenames:
                     file_path = os.path.join(root, filename)
