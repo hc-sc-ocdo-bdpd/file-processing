@@ -104,6 +104,10 @@ class File:
         return self.processor.extension
 
     @property
+    def owner(self) -> str:
+        return self.processor.owner
+
+    @property
     def size(self) -> str:
         return self.processor.size
 
@@ -124,11 +128,15 @@ class File:
         return self.processor.parent_directory
     
     @property
-    def is_file(self) -> str:
+    def permissions(self) -> str:
+        return self.processor.permissions
+    
+    @property
+    def is_file(self) -> bool:
         return self.processor.is_file
     
     @property
-    def is_symlink(self) -> str:
+    def is_symlink(self) -> bool:
         return self.processor.is_symlink
 
     @property

@@ -1,14 +1,11 @@
 from file_processor_strategy import FileProcessorStrategy
-from PyPDF2 import PdfReader, PdfWriter
+from pypdf import PdfReader, PdfWriter
 from errors import FileProcessingFailedError
 
 class PdfFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
         self.metadata = {'message': 'File was not opened'} if not open_file else self._default_metadata()
-
-        self.reader = None
-
 
     def _default_metadata(self) -> dict:
         return {
@@ -18,6 +15,9 @@ class PdfFileProcessor(FileProcessorStrategy):
 
 
     def process(self) -> None:
+        reader = None
+        metadata = {}
+        
         if not self.open_file:
             return
 
@@ -28,7 +28,12 @@ class PdfFileProcessor(FileProcessorStrategy):
 
 
         if not reader.is_encrypted:
-            self.metadata.update({'text': self.extract_text_from_pdf(self.file_path, reader)})
+            if reader:
+                metadata = reader.metadata
+                
+            self.metadata.update({'text': self.extract_text_from_pdf(self.file_path, reader),
+                                  'author': metadata.get('/Author'),
+                                  'producer': metadata.get('/Producer')})
         else:
             self.metadata['has_password'] = True
     
