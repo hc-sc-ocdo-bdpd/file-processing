@@ -48,3 +48,8 @@ class TranscriptionProcessingError(TranscriptionError):
 class NotTranscriptionApplicableError(TranscriptionError):
     """Raised when attempting transcription on a file type that doesn't support it."""
     pass
+
+
+class TesseractNotFound(Exception):
+    """Raised when Tesseract is either not installed or not added to PATH."""
+    pass

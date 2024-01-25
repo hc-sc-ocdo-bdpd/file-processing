@@ -1,4 +1,4 @@
-import PyPDF2
+import pypdf
 import pytesseract
 from PIL import Image
 from pathlib import Path
@@ -49,7 +49,7 @@ class OCRDecorator:
 
         try:
             with open(self._processor.file_path, 'rb') as pdfFileObj:
-                reader = PyPDF2.PdfReader(pdfFileObj)
+                reader = pypdf.PdfReader(pdfFileObj)
                 numPages = len(reader.pages)
 
                 startPage = 0

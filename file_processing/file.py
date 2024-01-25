@@ -1,3 +1,4 @@
+import pytesseract
 from pathlib import Path
 from file_processing.txt_processor import TextFileProcessor
 from file_processing.pdf_processor import PdfFileProcessor
@@ -21,7 +22,7 @@ from file_processing.py_processor import PyFileProcessor
 from file_processing.gif_processor import GifFileProcessor
 from file_processing.tiff_processor import TiffFileProcessor
 from file_processing.heic_processor import HeicFileProcessor
-from file_processing.errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
+from file_processing.errors import TesseractNotFound, NotOCRApplciableError, NotTranscriptionApplicableError
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".gif", ".tiff", ".tif"}
@@ -70,11 +71,18 @@ class File:
         if use_ocr:
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
                 raise NotOCRApplciableError(f"OCR is not applicable for file type {extension}.")
+            
+            try:
+                pytesseract.get_tesseract_version()
+            except Exception:
+                raise TesseractNotFound("Tesseract is not installed or not added to PATH")
+
             return OCRDecorator(processor)
         
         if use_transcriber:
             if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
                 raise NotTranscriptionApplicableError(f"Transcription is not applicable for file type {extension}.")
+            
             return TranscriptionDecorator(processor)
 
         return processor

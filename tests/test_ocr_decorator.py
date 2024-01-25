@@ -1,8 +1,6 @@
 import pytest
-import os
-from pathlib import Path
 from file_processing.file import File
-from file_processing.errors import OCRProcessingError, NotOCRApplciableError
+from file_processing.errors import NotOCRApplciableError
 
 # TO DO:
 # Files and ocr results need to be created and filled in.

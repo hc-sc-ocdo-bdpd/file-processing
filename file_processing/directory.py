@@ -76,16 +76,20 @@ class Directory:
         # Pre-processing data
         data = [file.processor.__dict__ for file in self._file_generator(filters, True)]
         data = pd.json_normalize(data, max_level=1, sep='_')
-        df = pd.DataFrame(data).get(['size', 'extension', 'file_name', 'metadata_text', 'absolute_path'])
+        df = pd.DataFrame(data)
+
+        if df.empty:
+            raise Exception('Filtered selection of files is empty. Please try a different directory, or new filters')
+        elif not df.empty:
+            df = df.get(['size', 'extension', 'file_name', 'metadata_text', 'absolute_path'])
+
         df['metadata_text'] = df['metadata_text'].str.strip()
         df['metadata_text'] = df['metadata_text'].str.replace('\n', '')
+
+        # Only keeping pdf/docx/txt files with sufficiently long 'text' metadata
         df = df[(df['extension'].isin(['.pdf', '.docx', '.txt'])) & (df['metadata_text'].str.len() > 10) & (df['metadata_text'].notnull())]
         df = df.reset_index(drop=True)
         file_names = df.absolute_path if use_abs_path else df.file_name
-
-        if df.empty:
-            raise Exception(
-                'Filtered selection of files is empty. Please try a different directory, or new filters')
 
         # Encoding and indexing
         encoder = SentenceTransformer("paraphrase-MiniLM-L3-v2")
@@ -95,12 +99,8 @@ class Directory:
             # Brute force search via cosine similarity
             similarities = 1 - cdist(vectors, vectors, 'cosine')
             similarities = np.around(similarities, decimals=2)
-
-            sim_df = pd.DataFrame(
-                data=similarities,
-                columns=file_names.tolist(),
-                index=file_names.tolist()
-            )
+            sim_df = pd.DataFrame(data=similarities, columns=file_names.tolist(),
+                                  index=file_names.tolist())
 
             sim_df.sort_index(axis=1, inplace=True)
             sim_df.sort_index(axis=0, inplace=True)
@@ -114,17 +114,18 @@ class Directory:
             index = faiss.IndexIDMap(index)
             faiss.normalize_L2(vectors)
             index.add_with_ids(vectors, df.index.values.astype(np.int64))
-            similarities, cpu_similarities_ids = index.search(vectors, k=top_n+1)
-            similarities = np.around(np.clip(similarities, 0, 3), decimals=2)
+            similarities, similarities_ids = index.search(vectors, k=top_n+1)
 
-            sim = pd.DataFrame(similarities)
+            # Cleaning the data (removing matches with low measures of similarity)
+            sim = pd.DataFrame(similarities).round(2)
             sim = sim.where(sim >= threshold).fillna('')
-            sim_ids = pd.DataFrame(cpu_similarities_ids)
+            sim_ids = pd.DataFrame(similarities_ids)
             sim_ids = sim_ids.where(sim != '', '')
 
+            # Creating the output dataframe
             df_out = pd.DataFrame(file_names)
             for i in range(min(top_n, len(df.file_name))):
-                df_out[f'{i+1}_id'] = sim_ids[i+1].map(file_names)
+                df_out[f'{i+1}_file'] = sim_ids[i+1].map(file_names)
                 df_out[str(i+1)] = sim[i+1]
 
             df_out = df_out.fillna('')
@@ -139,8 +140,7 @@ class Directory:
         :param filters: A dictionary of filters to apply to the files.
         """
 
-        data = [file.processor.__dict__ for file in self._file_generator(
-            filters, False)]
+        data = [file.processor.__dict__ for file in self._file_generator(filters, False)]
         df = pd.DataFrame(data)
 
         if df.empty:
@@ -217,7 +217,7 @@ class Directory:
         for boolean in ['is_file', 'is_symlink']:
             df[boolean] = df[boolean].astype(int)
 
-        # Converting unix time to datetime
+        # Converting unix time to datetime (GMT time)
         for time in ['modification_time', 'access_time', 'creation_time']:
             df[time] = pd.to_datetime(df[time].round(0), unit='s')
 

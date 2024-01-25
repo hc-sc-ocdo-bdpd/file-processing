@@ -12,8 +12,11 @@ pytesseract==0.3.10         # OCR Connector
 pywin32==306                # Extracting file 'Owner' information (Windows-exclusive)
 openpyxl>=3.1.2             # Used To read excel files with pandas
 pandas>=2.0.3
+numpy>=1.26.3
 python-Levenshtein==0.21.1  # Used for the utils (metrics)
 scikit-learn==1.3.0         # Used for the utils (metrics)
 tqdm==4.66.1
 openai-whisper
 mutagen==1.47.0
+faiss-cpu==1.7.4
+sentence-transformers==2.2.2
