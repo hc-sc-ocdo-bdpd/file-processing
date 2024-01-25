@@ -1,4 +1,4 @@
-from file_processor_strategy import FileProcessorStrategy
+from file_processing.file_processor_strategy import FileProcessorStrategy
 import shutil
 
 class GenericFileProcessor(FileProcessorStrategy):

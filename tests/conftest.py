@@ -1,8 +1,6 @@
-import sys, os
-sys.path.append(os.path.join(sys.path[0],'file_processing'))
 import pytest
 from file_processing.file import File
-from errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 
 # copy_file fixture to be used in test_..._processor.py files
 @pytest.fixture()

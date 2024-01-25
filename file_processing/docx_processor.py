@@ -1,9 +1,9 @@
-from file_processor_strategy import FileProcessorStrategy
+from file_processing.file_processor_strategy import FileProcessorStrategy
 from docx import Document
 from zipfile import BadZipFile
 from docx.oxml import OxmlElement
 import msoffcrypto
-from errors import FileProcessingFailedError, FileCorruptionError
+from file_processing.errors import FileProcessingFailedError, FileCorruptionError
 from io import BytesIO
 
 class DocxFileProcessor(FileProcessorStrategy):

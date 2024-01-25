@@ -1,9 +1,7 @@
 import pytest
-import sys, os
 from utils.cosine_similarity import CosineSimilarity
-sys.path.append(os.path.join(sys.path[0], 'file_processing'))
-from file import File
-from errors import TranscriptionProcessingError, NotTranscriptionApplicableError
+from file_processing.file import File
+from file_processing.errors import TranscriptionProcessingError, NotTranscriptionApplicableError
 
 variable_names = "path, actual_transcription_path, language"
 values = [

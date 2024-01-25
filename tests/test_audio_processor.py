@@ -1,6 +1,4 @@
 import pytest
-import sys, os
-sys.path.append(os.path.join(sys.path[0], 'file_processing'))
 from file_processing.file import File
 from mutagen import File as MutagenFile
 from mutagen.easyid3 import EasyID3
@@ -8,7 +6,7 @@ from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
 from mutagen.oggvorbis import OggVorbis
 from mutagen.mp4 import MP4
-from errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 from unittest.mock import patch
 
 

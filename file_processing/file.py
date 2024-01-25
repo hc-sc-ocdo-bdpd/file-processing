@@ -1,27 +1,27 @@
 from pathlib import Path
-from txt_processor import TextFileProcessor
-from pdf_processor import PdfFileProcessor
-from docx_processor import DocxFileProcessor
-from ocr_decorator import OCRDecorator
-from msg_processor import MsgFileProcessor
-from png_processor import PngFileProcessor
-from xlsx_processor import xlsxFileProcessor
-from pptx_processor import PptxFileProcessor
-from rtf_processor import RtfFileProcessor
-from html_processor import HtmlFileProcessor
-from xml_processor import XmlFileProcessor
-from jpeg_processor import JpegFileProcessor
-from csv_processor import CsvFileProcessor
-from json_processor import JsonFileProcessor
-from zip_processor import ZipFileProcessor
-from audio_processor import AudioFileProcessor
-from transcription_decorator import TranscriptionDecorator
-from generic_processor import GenericFileProcessor
-from py_processor import PyFileProcessor
-from gif_processor import GifFileProcessor
-from tiff_processor import TiffFileProcessor
-from heic_processor import HeicFileProcessor
-from errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
+from file_processing.txt_processor import TextFileProcessor
+from file_processing.pdf_processor import PdfFileProcessor
+from file_processing.docx_processor import DocxFileProcessor
+from file_processing.ocr_decorator import OCRDecorator
+from file_processing.msg_processor import MsgFileProcessor
+from file_processing.png_processor import PngFileProcessor
+from file_processing.xlsx_processor import xlsxFileProcessor
+from file_processing.pptx_processor import PptxFileProcessor
+from file_processing.rtf_processor import RtfFileProcessor
+from file_processing.html_processor import HtmlFileProcessor
+from file_processing.xml_processor import XmlFileProcessor
+from file_processing.jpeg_processor import JpegFileProcessor
+from file_processing.csv_processor import CsvFileProcessor
+from file_processing.json_processor import JsonFileProcessor
+from file_processing.zip_processor import ZipFileProcessor
+from file_processing.audio_processor import AudioFileProcessor
+from file_processing.transcription_decorator import TranscriptionDecorator
+from file_processing.generic_processor import GenericFileProcessor
+from file_processing.py_processor import PyFileProcessor
+from file_processing.gif_processor import GifFileProcessor
+from file_processing.tiff_processor import TiffFileProcessor
+from file_processing.heic_processor import HeicFileProcessor
+from file_processing.errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".gif", ".tiff", ".tif"}

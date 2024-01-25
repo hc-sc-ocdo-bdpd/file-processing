@@ -1,6 +1,6 @@
 import os
 import csv
-from file import File
+from file_processing.file import File
 from typing import Optional
 import json
 from tqdm import tqdm
