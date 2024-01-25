@@ -1,5 +1,5 @@
-from unittest.mock import patch
 from file_processing.directory import Directory
+from datetime import datetime
 import os
 import pandas as pd
 import pytest
@@ -162,13 +162,20 @@ directories = [
 @pytest.mark.parametrize(variable_names, directories)
 def test_not_opening_files_in_directory(directory_path, tmp_path):
     output_path = tmp_path / "test_output.csv"
-    with patch('file_processing.file.File', autospec=True) as mock_file:
-        dir1 = Directory(directory_path)
-        dir1.generate_report(str(output_path), open_files=False)
-        for call in mock_file.mock_calls:
-            args, kwargs = call[1], call[2]
-            assert kwargs.get(
-                'open_file') == False, "File was opened when it should not have been"
+    dir1 = Directory(directory_path)
+    dir1.generate_report(str(output_path), open_files=False)
+
+    data = pd.read_csv(str(output_path))
+    now = datetime.now().timestamp()
+    data = data[~data['Extension'].isin(['.py', '.pyc', '.csv', '.txt'])]
+    access_times = data['Access Time']
+
+    for index, time in enumerate(access_times):
+        unix = datetime.strptime(time, "%Y-%m-%d %H:%M:%S").timestamp()
+
+        # Comparing each access time (with 1.5 minutes of padding) to current time
+        assert now > (unix + 1.5 * 60), f"File was opened when it should not have been ({data['File Name'][index]})"
+
 
 
 @pytest.mark.parametrize(variable_names, directories)
