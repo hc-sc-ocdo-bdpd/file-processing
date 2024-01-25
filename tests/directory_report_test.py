@@ -1,5 +1,6 @@
 from file_processing.directory import Directory
 from datetime import datetime
+from pathlib import Path
 import os
 import pandas as pd
 import pytest
@@ -167,14 +168,15 @@ def test_not_opening_files_in_directory(directory_path, tmp_path):
 
     data = pd.read_csv(str(output_path))
     now = datetime.now().timestamp()
-    data = data[~data['Extension'].isin(['.py', '.pyc', '.csv', '.txt'])]
-    access_times = data['Access Time']
+    data = data[~data['Extension'].isin(['.py', '.csv', '.pyc'])]
+    data = data.reset_index(drop=True)
+    file_names = data['Absolute Path']
 
-    for index, time in enumerate(access_times):
-        unix = datetime.strptime(time, "%Y-%m-%d %H:%M:%S").timestamp()
+    for file_name in file_names:
+        unix = Path(str(file_name)).stat().st_atime
 
         # Comparing each access time (with 1.5 minutes of padding) to current time
-        assert now > (unix + 1.5 * 60), f"File was opened when it should not have been ({data['File Name'][index]})"
+        assert now > (unix + 1.5 * 60), f"File was opened when it should not have been ({file_name})"
 
 
 
