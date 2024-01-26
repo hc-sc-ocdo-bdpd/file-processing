@@ -79,7 +79,9 @@ class Directory:
         df = pd.DataFrame(data)
 
         if df.empty:
-            raise Exception('Filtered selection of files is empty. Please try a different directory, or new filters')
+            raise Exception(f'Filtered selection of files is empty. \
+                            Please try a different directory, or new filters. \
+                            Filters: {filters}, Path: {Path(self.path).resolve()}')
         elif not df.empty:
             df = df.get(['size', 'extension', 'file_name', 'metadata_text', 'absolute_path'])
 

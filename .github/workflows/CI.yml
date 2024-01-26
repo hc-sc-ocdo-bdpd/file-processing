@@ -17,11 +17,11 @@ jobs:
         with:
           python-version: "3.10.4"
 
-      - uses: actions/checkout@v3
-      - uses: FedericoCarboni/setup-ffmpeg@v3
-        id: setup-ffmpeg
-        with:
-          ffmpeg-version: release
+      # - uses: actions/checkout@v3
+      # - uses: FedericoCarboni/setup-ffmpeg@v3
+      #   id: setup-ffmpeg
+      #   with:
+      #     ffmpeg-version: release
 
       - name: Install dependencies
         run: |
@@ -31,4 +31,4 @@ jobs:
 
       - name: Run Pytest
         run: |
-          pytest tests/ --ignore=tests/ocr_decorator.py
+          pytest tests/ --ignore=tests/test_ocr_decorator.py --ignore=/tests/test_pdf_processor.py

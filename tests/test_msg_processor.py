@@ -1,5 +1,6 @@
 import pytest
 import os
+from datetime import datetime
 from file_processing.file import File
 from unittest.mock import patch
 from file_processing.errors import FileProcessingFailedError
@@ -15,9 +16,14 @@ values = [
 @pytest.mark.parametrize(variable_names, values)
 def test_msg_metadata(path, text_length, subject, date, sender):
     file_obj = File(path)
+
+    # Compare dates from different timezones
+    processed_date = datetime.strptime(file_obj.metadata['date'], "%a, %d %b %Y %H:%M:%S %z")
+    true_date = datetime.strptime(date, "%a, %d %b %Y %H:%M:%S %z")
+
     assert len(file_obj.metadata['text']) == text_length
     assert file_obj.metadata['subject'] == subject
-    assert file_obj.metadata['date'] == date
+    assert processed_date == true_date
     assert file_obj.metadata['sender'] == sender
     
 
