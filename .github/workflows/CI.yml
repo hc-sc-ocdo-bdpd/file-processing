@@ -24,7 +24,7 @@ jobs:
           ffmpeg-version: release
 
       - name: Install Tesseract
-        run: sudo apt-get install sudo apt-get install python3-pil tesseract-ocr libtesseract-dev tesseract-ocr-eng
+        run: sudo apt-get install python3-pil tesseract-ocr libtesseract-dev tesseract-ocr-eng
 
       - name: Install dependencies
         run: |
