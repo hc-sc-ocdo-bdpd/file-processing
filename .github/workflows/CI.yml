@@ -37,7 +37,7 @@ jobs:
 
       - name: Configure Tesseract path
         run: |
-          python -C "pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'"
+          python -c "pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'"
 
       - name: Run Pytest
         run: |
