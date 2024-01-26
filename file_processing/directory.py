@@ -44,9 +44,11 @@ class Directory:
 
     def _apply_filters(self, file_path: str, filters: dict) -> bool:
         file = Path(file_path).resolve()
-        if filters.get('exclude_str') and set(str(file).split('\\')) & set(filters['exclude_str']):
+        if filters.get('exclude_str') and \
+            set(os.path.normpath(str(file)).split(os.path.sep)) & set(filters['exclude_str']):
             return False
-        if filters.get('include_str') and not (set(str(file).split('\\')) & set(filters['include_str'])):
+        if filters.get('include_str') and \
+            not (set(os.path.normpath(str(file)).split(os.path.sep)) & set(filters['include_str'])):
             return False
         if filters.get('extensions') and file.suffix not in filters['extensions']:
             return False
