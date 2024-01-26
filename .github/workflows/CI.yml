@@ -35,6 +35,10 @@ jobs:
           pip install -r requirements.txt
         continue-on-error: true
 
+      - name: Configure Tesseract path
+        run: |
+          python -C "pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'"
+
       - name: Run Pytest
         run: |
           pytest tests/test_pdf_processor.py
