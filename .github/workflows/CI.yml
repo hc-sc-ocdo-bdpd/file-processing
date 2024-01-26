@@ -1,9 +1,8 @@
 name: Run Pytest
 
 on:
-  push:
-#  pull_request:
-#    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -34,5 +33,4 @@ jobs:
 
       - name: Run Pytest
         run: |
-          pytest tests/test_pdf_processor.py
-          pytest tests/test_ocr_decorator.py
+          pytest tests/
