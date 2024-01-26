@@ -146,8 +146,9 @@ class Directory:
         df = pd.DataFrame(data)
 
         if df.empty:
-            raise Exception(
-                'Filtered selection of files is empty. Please try different filters')
+            raise Exception(f'Filtered selection of files is empty. \
+                            Please try a different directory, or new filters. \
+                            Filters: {filters}, Path: {Path(self.path).resolve()}')
 
         df = df.get(['size', 'extension'])
         df['count'] = 1
@@ -206,8 +207,9 @@ class Directory:
         df = pd.DataFrame(data)
 
         if df.empty:
-            raise Exception(
-                'Filtered selection of files is empty. Please try different filters')
+            raise Exception(f'Filtered selection of files is empty. \
+                            Please try a different directory, or new filters. \
+                            Filters: {filters}, Path: {Path(self.path).resolve()}')
 
         df.columns = df.columns.str.replace('metadata_', '')
         df.columns = df.columns.str.replace('keywords_', 'Keyword.')

@@ -17,11 +17,17 @@ jobs:
         with:
           python-version: "3.10.4"
 
-      # - uses: actions/checkout@v3
-      # - uses: FedericoCarboni/setup-ffmpeg@v3
-      #   id: setup-ffmpeg
-      #   with:
-      #     ffmpeg-version: release
+      - uses: actions/checkout@v3
+      - uses: FedericoCarboni/setup-ffmpeg@v3
+        id: setup-ffmpeg
+        with:
+          ffmpeg-version: release
+
+      - name: Install Tesseract
+        run: sudo apt-get install tesseract-ocr
+
+      - name: Add Tesseract to PATH
+        run: echo "/usr/bin/tesseract" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: |
@@ -31,4 +37,6 @@ jobs:
 
       - name: Run Pytest
         run: |
-          pytest tests/ --ignore=tests/test_ocr_decorator.py --ignore=/tests/test_pdf_processor.py
+          pytest tests/directory_report_test.py 
+          pytest tests/pdf_processor.py
+          pytest tests/ocr_decorator.py
