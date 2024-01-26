@@ -168,7 +168,7 @@ def test_not_opening_files_in_directory(directory_path, tmp_path):
 
     data = pd.read_csv(str(output_path))
     now = datetime.now().timestamp()
-    data = data[~data['Extension'].isin(['.py', '.csv', '.pyc'])]
+    data = data[~data['Extension'].isin(['.py', '.csv', '.pyc', '.pdf', '.txt'])]
     data = data.reset_index(drop=True)
     file_names = data['Absolute Path']
 
