@@ -37,6 +37,5 @@ jobs:
 
       - name: Run Pytest
         run: |
-          pytest tests/directory_report_test.py 
-          pytest tests/pdf_processor.py
-          pytest tests/ocr_decorator.py
+          pytest tests/test_pdf_processor.py
+          pytest tests/test_ocr_decorator.py
