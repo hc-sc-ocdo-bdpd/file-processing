@@ -26,7 +26,7 @@ class FileProcessorStrategy(ABC):
             owner_sid = sd.GetSecurityDescriptorOwner()
             name, domain, _ = win32security.LookupAccountSid(None, owner_sid)
             return f'{domain}/{name}'
-        
+
         return ''
 
 
@@ -35,9 +35,7 @@ class FileProcessorStrategy(ABC):
         # Abstract method to be implemented by subclasses for file processing
         if not self.open_file:
             return
-        pass
 
     @abstractmethod
     def save(self) -> None:
         """Saves the processed file after metadata changes"""
-        pass

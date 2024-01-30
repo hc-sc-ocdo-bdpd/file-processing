@@ -1,7 +1,7 @@
 import pytest
 from utils.cosine_similarity import CosineSimilarity
 from file_processing.file import File
-from file_processing.errors import TranscriptionProcessingError, NotTranscriptionApplicableError
+from file_processing.errors import NotTranscriptionApplicableError
 
 variable_names = "path, actual_transcription_path, language"
 values = [

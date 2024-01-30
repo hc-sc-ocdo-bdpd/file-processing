@@ -22,9 +22,10 @@ corrupted_files_processing = [
 
 ]
 
+
 @pytest.mark.parametrize("path", corrupted_files_processing)
 def test_corrupted_file_processing_error(path):
-    with pytest.raises(FileProcessingFailedError) as exc_info:
+    with pytest.raises(FileProcessingFailedError):
         File(path)
 
 
@@ -35,7 +36,8 @@ corrupted_files_corruption = [
     'tests/resources/test_files/Test_excel_file_corrupted.xlsx',
 ]
 
+
 @pytest.mark.parametrize("path", corrupted_files_corruption)
 def test_corrupted_file_corruption_error(path):
-    with pytest.raises(FileCorruptionError) as exc_info:
+    with pytest.raises(FileCorruptionError):
         File(path)

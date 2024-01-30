@@ -1,4 +1,3 @@
-from file_processing.file_processor_strategy import FileProcessorStrategy
 from mutagen import File
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
@@ -8,6 +7,7 @@ from mutagen.aiff import AIFF
 from mutagen.wave import WAVE
 from mutagen.mp4 import MP4
 from file_processing.errors import FileProcessingFailedError
+from file_processing.file_processor_strategy import FileProcessorStrategy
 
 class AudioFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:

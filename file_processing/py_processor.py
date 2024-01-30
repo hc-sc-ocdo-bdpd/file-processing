@@ -1,14 +1,14 @@
-from file_processing.file_processor_strategy import FileProcessorStrategy
-from file_processing.errors import FileProcessingFailedError
 import ast
 import shutil
-import warnings
+from file_processing.file_processor_strategy import FileProcessorStrategy
+from file_processing.errors import FileProcessingFailedError
+
 
 class PyFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
-        self.metadata = {'message': 'File was not opened'} if not open_file else self._default_metadata()
-
+        self.metadata = {
+            'message': 'File was not opened'} if not open_file else self._default_metadata()
 
     def _default_metadata(self) -> dict:
         return {
@@ -22,7 +22,7 @@ class PyFileProcessor(FileProcessorStrategy):
     def process(self) -> None:
         if not self.open_file:
             return
-            
+
         try:
             with open(self.file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
@@ -30,7 +30,8 @@ class PyFileProcessor(FileProcessorStrategy):
                 ast_tree = ast.parse(content)
                 self._extract_metadata(ast_tree)
         except Exception as e:
-            raise FileProcessingFailedError(f"Error encountered while processing {self.file_path}: {e}")
+            raise FileProcessingFailedError(
+                f"Error encountered while processing {self.file_path}: {e}")
 
     def _extract_metadata(self, ast_tree) -> None:
         for node in ast.walk(ast_tree):
@@ -51,4 +52,5 @@ class PyFileProcessor(FileProcessorStrategy):
         try:
             shutil.copy2(self.file_path, output_path)
         except Exception as e:
-            raise FileProcessingFailedError(f"Error encountered while saving to {output_path}: {e}")
+            raise FileProcessingFailedError(
+                f"Error encountered while saving to {output_path}: {e}")

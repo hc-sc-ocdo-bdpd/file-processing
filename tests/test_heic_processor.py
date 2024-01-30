@@ -1,7 +1,7 @@
-import pytest
 import os
-from file_processing.file import File
 from unittest.mock import patch
+import pytest
+from file_processing.file import File
 from file_processing.errors import FileProcessingFailedError
 
 variable_names = "path, original_format, mode, width, height"

@@ -1,13 +1,13 @@
+import os
+from unittest.mock import patch
 import pytest
 from file_processing.file import File
-from unittest.mock import patch
 from file_processing.errors import FileProcessingFailedError
-import os
 
 variable_names = "path, text_length, num_lines, num_words"
 values = [
-   ('tests/resources/test_files/government_of_canada_wikipedia.txt', 38983, 306, 5691),
-   ('tests/resources/test_files/usa_government_wikipedia.txt', 47819, 383, 7160)
+    ('tests/resources/test_files/government_of_canada_wikipedia.txt', 38983, 306, 5691),
+    ('tests/resources/test_files/usa_government_wikipedia.txt', 47819, 383, 7160)
 ]
 
 
@@ -25,7 +25,7 @@ def test_not_opening_file(path, text_length, num_lines, num_words):
         File(path, open_file=False)
         mock_open.assert_not_called()
 
-    
+
 @pytest.mark.parametrize(variable_names, values)
 def test_save_txt_metadata(copy_file, text_length, num_lines, num_words):
     test_txt_metadata(copy_file, text_length, num_lines, num_words)

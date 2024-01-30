@@ -1,17 +1,15 @@
-from file_processing.file_processor_strategy import FileProcessorStrategy
-from docx import Document
-from zipfile import BadZipFile
-from docx.oxml import OxmlElement
-import msoffcrypto
-from file_processing.errors import FileProcessingFailedError, FileCorruptionError
 from io import BytesIO
+import msoffcrypto
+from docx import Document
+from file_processing.errors import FileProcessingFailedError, FileCorruptionError
+from file_processing.file_processor_strategy import FileProcessorStrategy
+
 
 class DocxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
-        self.metadata = {'message': 'File was not opened'} if not open_file else self._default_metadata()
-
-
+        self.metadata = {
+            'message': 'File was not opened'} if not open_file else self._default_metadata()
 
     def _default_metadata(self) -> dict:
         return {
@@ -20,7 +18,6 @@ class DocxFileProcessor(FileProcessorStrategy):
             'last_modified_by': None,
             'has_password': False
         }
-
 
     def process(self) -> None:
         if not self.open_file:
@@ -35,19 +32,18 @@ class DocxFileProcessor(FileProcessorStrategy):
                 self.metadata["has_password"] = True
                 return
         except Exception as e:
-            raise FileCorruptionError(f"File is corrupted: {self.file_path}")
-
+            raise FileCorruptionError(f"File is corrupted: {self.file_path}") from e
 
         try:
             file_content.seek(0)  # Reset the position to the start
             doc = Document(file_content)
             self.metadata.update({'text': self.extract_text_from_docx(doc)})
             self.metadata.update({'author': doc.core_properties.author})
-            self.metadata.update({'last_modified_by': doc.core_properties.last_modified_by})
+            self.metadata.update(
+                {'last_modified_by': doc.core_properties.last_modified_by})
         except Exception as e:
-            raise FileProcessingFailedError(f"Error encountered while processing {self.file_path}: {e}")
-
-
+            raise FileProcessingFailedError(
+                f"Error encountered while processing {self.file_path}: {e}")
 
     def save(self, output_path: str = None) -> None:
         try:
@@ -56,21 +52,21 @@ class DocxFileProcessor(FileProcessorStrategy):
             # Update the core properties (metadata)
             cp = doc.core_properties
             cp.author = self.metadata.get('author', cp.author)
-            cp.last_modified_by = self.metadata.get('last_modified_by', cp.last_modified_by)
-            
+            cp.last_modified_by = self.metadata.get(
+                'last_modified_by', cp.last_modified_by)
+
             save_path = output_path or self.file_path
             doc.save(save_path)
         except Exception as e:
-            raise FileProcessingFailedError(f"Error encountered while saving to {save_path}: {e}")
+            raise FileProcessingFailedError(
+                f"Error encountered while saving to {save_path}: {e}")
 
-
-    @staticmethod
-    def extract_text_from_docx(doc: Document) -> str:
+    def extract_text_from_docx(self, doc: Document) -> str:
         try:
             full_text = []
             for para in doc.paragraphs:
                 full_text.append(para.text)
             return '\n'.join(full_text)
         except Exception as e:
-            print(f"Error encountered while opening or processing {self.file_path}: {e}")
-            return None
+            raise FileProcessingFailedError(
+                f"Error encountered while opening or processing {self.file_path}: {e}")

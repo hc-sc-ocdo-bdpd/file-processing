@@ -1,14 +1,16 @@
-from file_processing.file_processor_strategy import FileProcessorStrategy
 from PIL import Image
-from file_processing.errors import FileProcessingFailedError
 from pillow_heif import register_heif_opener
+from file_processing.file_processor_strategy import FileProcessorStrategy
+from file_processing.errors import FileProcessingFailedError
 
 register_heif_opener()  # Supports .heic, .heics, .heif, .heifs, .hif
+
 
 class HeicFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
-        self.metadata = {'message': 'File was not opened'} if not open_file else {}
+        self.metadata = {
+            'message': 'File was not opened'} if not open_file else {}
 
     def process(self) -> None:
         if not self.open_file:
@@ -25,14 +27,15 @@ class HeicFileProcessor(FileProcessorStrategy):
                 'height': image.height,
             })
         except Exception as e:
-            raise FileProcessingFailedError(f"Error encountered while processing {self.file_path}: {e}")
-    
-    
+            raise FileProcessingFailedError(
+                f"Error encountered while processing {self.file_path}: {e}")
+
     def save(self, output_path: str = None) -> None:
         try:
             image = Image.open(self.file_path)
-            
+
             save_path = output_path or self.file_path
             image.save(save_path)
         except Exception as e:
-            raise FileProcessingFailedError(f"Error encountered while saving to {save_path}: {e}")
+            raise FileProcessingFailedError(
+                f"Error encountered while saving to {save_path}: {e}")

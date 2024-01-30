@@ -1,13 +1,14 @@
-import pytest
 import os
-from file_processing.file import File
 from unittest.mock import patch
+import pytest
+from file_processing.file import File
 from file_processing.errors import FileProcessingFailedError
 
 variable_names = "path, text_length"
 values = [
-   ('tests/resources/test_files/Test_for_RTF.rtf', 5306)
+    ('tests/resources/test_files/Test_for_RTF.rtf', 5306)
 ]
+
 
 @pytest.mark.parametrize(variable_names, values)
 def test_rtf_metadata(path, text_length):

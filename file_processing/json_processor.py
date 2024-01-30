@@ -1,13 +1,15 @@
-from file_processing.file_processor_strategy import FileProcessorStrategy
 import json
-import chardet
 from json.decoder import JSONDecodeError
+import chardet
+from file_processing.file_processor_strategy import FileProcessorStrategy
 from file_processing.errors import FileProcessingFailedError, FileCorruptionError
+
 
 class JsonFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
-        self.metadata = {'message': 'File was not opened'} if not open_file else {}
+        self.metadata = {
+            'message': 'File was not opened'} if not open_file else {}
 
     def process(self) -> None:
         if not self.open_file:
@@ -16,7 +18,7 @@ class JsonFileProcessor(FileProcessorStrategy):
         try:
             with open(self.file_path, 'rb') as f:
                 binary_content = f.read()
-            
+
             encoding = chardet.detect(binary_content)['encoding']
             content = binary_content.decode(encoding)
 
@@ -34,9 +36,10 @@ class JsonFileProcessor(FileProcessorStrategy):
                 'empty_values': empty_values,
             })
         except JSONDecodeError as e:
-            raise FileCorruptionError(f"File is corrupted: {self.file_path}")
+            raise FileCorruptionError(f"File is corrupted: {self.file_path}") from e
         except Exception as e:
-            raise FileProcessingFailedError(f"Error encountered while processing {self.file_path}: {e}")
+            raise FileProcessingFailedError(
+                f"Error encountered while processing {self.file_path}: {e}")
 
     def count_empty_values(self, data: dict) -> int:
         empty_values = 0
@@ -65,7 +68,8 @@ class JsonFileProcessor(FileProcessorStrategy):
     def save(self, output_path: str = None) -> None:
         save_path = output_path or self.file_path
         try:
-            with open(save_path, 'w', encoding = self.metadata['encoding']) as f:
+            with open(save_path, 'w', encoding=self.metadata['encoding']) as f:
                 json.dump(json.loads(self.metadata['text']), f, indent=4)
         except Exception as e:
-            raise FileProcessingFailedError(f"Error encountered while saving file {self.file_path} to {save_path}: {e}")
+            raise FileProcessingFailedError(
+                f"Error encountered while saving file {self.file_path} to {save_path}: {e}")

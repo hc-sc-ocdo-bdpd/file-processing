@@ -1,12 +1,14 @@
-from file_processing.file_processor_strategy import FileProcessorStrategy
 import extract_msg
 from file_processing.errors import FileProcessingFailedError
+from file_processing.file_processor_strategy import FileProcessorStrategy
+
 
 class MsgFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
-        self.metadata = {'message': 'File was not opened'} if not open_file else {}
-    
+        self.metadata = {
+            'message': 'File was not opened'} if not open_file else {}
+
     def process(self) -> None:
         if not self.open_file:
             return
@@ -19,10 +21,8 @@ class MsgFileProcessor(FileProcessorStrategy):
             self.metadata.update({'sender': msg.sender})
             msg.close()
         except Exception as e:
-            raise FileProcessingFailedError(f"Error encountered while processing: {e}")
-
-
-
+            raise FileProcessingFailedError(
+                f"Error encountered while processing: {e}")
 
     def save(self, output_path: str = None) -> None:
         try:
@@ -31,5 +31,5 @@ class MsgFileProcessor(FileProcessorStrategy):
             msg_file.export(path=output_path)
             msg_file.close()
         except Exception as e:
-            raise FileProcessingFailedError(f"Error encountered while saving: {e}")
-    
+            raise FileProcessingFailedError(
+                f"Error encountered while saving: {e}")

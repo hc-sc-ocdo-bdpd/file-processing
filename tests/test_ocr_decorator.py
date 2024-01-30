@@ -45,4 +45,3 @@ def test_ocr_processing_success(ocr_applicable_file):
 def test_ocr_processing_non_applicable_file(non_ocr_applicable_file):
     with pytest.raises(NotOCRApplciableError):
         File(str(non_ocr_applicable_file), use_ocr=True)
-

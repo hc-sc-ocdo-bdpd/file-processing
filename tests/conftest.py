@@ -1,3 +1,4 @@
+from pathlib import Path
 import pytest
 from file_processing.file import File
 from file_processing.errors import FileProcessingFailedError
@@ -5,7 +6,6 @@ from file_processing.errors import FileProcessingFailedError
 # copy_file fixture to be used in test_..._processor.py files
 @pytest.fixture()
 def copy_file(path, tmp_path_factory):
-    from pathlib import Path
     copy_path = str(tmp_path_factory.mktemp("copy") / Path(path).name)
     file_obj = File(path)
     file_obj.save(copy_path)

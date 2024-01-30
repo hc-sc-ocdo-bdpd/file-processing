@@ -1,6 +1,6 @@
-from file_processing.directory import Directory
 import pandas as pd
 import pytest
+from file_processing.directory import Directory
 
 variable_names = "filters"
 values = [

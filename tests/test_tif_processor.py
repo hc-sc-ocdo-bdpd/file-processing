@@ -1,13 +1,13 @@
-import pytest
 import os
-from file_processing.file import File
 from unittest.mock import patch
+import pytest
+from file_processing.file import File
 from file_processing.errors import FileProcessingFailedError
 
 variable_names = "path, original_format, mode, width, height"
 values = [
-   ('tests/resources/test_files/CanadaLogo.tif', 'TIFF', 'RGB', 215, 74),
-   ('tests/resources/test_files/MSWordIcon.tiff', 'TIFF', 'RGBA', 79, 106)
+    ('tests/resources/test_files/CanadaLogo.tif', 'TIFF', 'RGB', 215, 74),
+    ('tests/resources/test_files/MSWordIcon.tiff', 'TIFF', 'RGBA', 79, 106)
 ]
 
 

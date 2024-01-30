@@ -1,5 +1,5 @@
-import pytest
 from pathlib import Path
+import pytest
 from file_processing.file import File
 from file_processing.generic_processor import GenericFileProcessor
 

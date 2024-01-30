@@ -2,6 +2,7 @@ import whisper
 from file_processing.file_processor_strategy import FileProcessorStrategy
 from file_processing.errors import TranscriptionProcessingError
 
+
 class TranscriptionDecorator:
     def __init__(self, processor: FileProcessorStrategy) -> None:
         """Initializes the TranscriptionDecorator with a given file processor."""
@@ -25,7 +26,8 @@ class TranscriptionDecorator:
             text = model.transcribe(str(self._processor.file_path))
             return text['text'], text['language']
         except Exception as e:
-            raise TranscriptionProcessingError(f"Error during transcription processing: {e}")
+            raise TranscriptionProcessingError(
+                f"Error during transcription processing: {e}")
 
     @property
     def file_name(self) -> str:
