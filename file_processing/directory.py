@@ -9,8 +9,8 @@ import numpy as np
 from tqdm import tqdm
 from sentence_transformers import SentenceTransformer
 from scipy.spatial.distance import cdist
-from file_processing.file import File
-from file_processing.errors import EmptySelection
+from file_processing import File
+from file_processing.tools.errors import EmptySelection
 
 
 class Directory:

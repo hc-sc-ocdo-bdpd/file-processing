@@ -1,5 +1,5 @@
 import shutil
-from file_processing.file_processor_strategy import FileProcessorStrategy
+from file_processing.tools import FileProcessorStrategy
 
 class GenericFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:

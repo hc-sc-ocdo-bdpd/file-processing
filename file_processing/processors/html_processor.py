@@ -1,9 +1,12 @@
 import chardet
-from file_processing.errors import FileProcessingFailedError
-from file_processing.file_processor_strategy import FileProcessorStrategy
+from file_processing.tools import FileProcessorStrategy
+from file_processing.tools.errors import FileProcessingFailedError
+
+# Specialized python library for pulling html/xml data...
+# https://beautiful-soup-4.readthedocs.io/en/latest/
 
 
-class TextFileProcessor(FileProcessorStrategy):
+class HtmlFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
         self.metadata = {
@@ -29,12 +32,9 @@ class TextFileProcessor(FileProcessorStrategy):
                 'num_lines': len(lines),
                 'num_words': len(words),
             })
-        except UnicodeDecodeError as ude:
-            raise FileProcessingFailedError(
-                f"Unicode decoding error encountered while processing {self.file_path}: {ude}")
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while processing {self.file_path}: {e}")
+                f"Error encountered while processing: {e}")
 
     def save(self, output_path: str = None) -> None:
         try:
@@ -43,4 +43,4 @@ class TextFileProcessor(FileProcessorStrategy):
                 f.write(self.metadata['text'])
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while saving {self.file_path}: {e}")
+                f"Error encountered while saving: {e}")

@@ -1,8 +1,8 @@
 import os
 from unittest.mock import patch
 import pytest
-from file_processing.file import File
-from file_processing.errors import FileProcessingFailedError
+from file_processing import File
+from file_processing.tools.errors import FileProcessingFailedError
 
 variable_names = "path, sheet_names, active_sheet, data, last_modified_by, creator"
 values = [

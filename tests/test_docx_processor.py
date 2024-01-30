@@ -2,8 +2,8 @@ import os
 from unittest.mock import patch
 from docx import Document
 import pytest
-from file_processing.file import File
-from file_processing.errors import FileProcessingFailedError
+from file_processing import File
+from file_processing.tools.errors import FileProcessingFailedError
 
 
 variable_names = "path, text_length, last_modified_by, author"

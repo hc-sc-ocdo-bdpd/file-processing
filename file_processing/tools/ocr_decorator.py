@@ -5,8 +5,8 @@ import getpass
 import pypdf
 import pytesseract
 from PIL import Image
-from file_processing.file_processor_strategy import FileProcessorStrategy
-from file_processing.errors import OCRProcessingError
+from file_processing.tools import FileProcessorStrategy
+from file_processing.tools.errors import OCRProcessingError
 
 # Init for tesseract
 if sys.platform == 'win32':

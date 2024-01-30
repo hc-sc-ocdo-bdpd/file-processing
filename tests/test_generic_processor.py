@@ -1,7 +1,7 @@
 from pathlib import Path
 import pytest
-from file_processing.file import File
-from file_processing.generic_processor import GenericFileProcessor
+from file_processing import File
+from file_processing.processors.generic_processor import GenericFileProcessor
 
 
 unsupported_files = [

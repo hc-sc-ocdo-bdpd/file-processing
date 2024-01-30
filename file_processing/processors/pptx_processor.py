@@ -1,11 +1,11 @@
 from io import BytesIO
+from pptx import Presentation
 import msoffcrypto
-from docx import Document
-from file_processing.errors import FileProcessingFailedError, FileCorruptionError
-from file_processing.file_processor_strategy import FileProcessorStrategy
+from file_processing.tools.errors import FileProcessingFailedError, FileCorruptionError
+from file_processing.tools import FileProcessorStrategy
 
 
-class DocxFileProcessor(FileProcessorStrategy):
+class PptxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
         self.metadata = {
@@ -16,6 +16,7 @@ class DocxFileProcessor(FileProcessorStrategy):
             'text': None,
             'author': None,
             'last_modified_by': None,
+            'num_slides': None,
             'has_password': False
         }
 
@@ -32,41 +33,51 @@ class DocxFileProcessor(FileProcessorStrategy):
                 self.metadata["has_password"] = True
                 return
         except Exception as e:
-            raise FileCorruptionError(f"File is corrupted: {self.file_path}") from e
+            raise FileCorruptionError(
+                f"File is corrupted: {self.file_path}") from e
 
         try:
-            file_content.seek(0)  # Reset the position to the start
-            doc = Document(file_content)
-            self.metadata.update({'text': self.extract_text_from_docx(doc)})
-            self.metadata.update({'author': doc.core_properties.author})
+            ppt = Presentation(file_content)
+            self.metadata.update({'text': self.extract_text_from_pptx(ppt)})
+            self.metadata.update({'author': ppt.core_properties.author})
             self.metadata.update(
-                {'last_modified_by': doc.core_properties.last_modified_by})
+                {'last_modified_by': ppt.core_properties.last_modified_by})
+            self.metadata.update({"num_slides": len(ppt.slides)})
         except Exception as e:
             raise FileProcessingFailedError(
                 f"Error encountered while processing {self.file_path}: {e}")
 
     def save(self, output_path: str = None) -> None:
+        save_path = output_path or self.file_path
         try:
-            doc = Document(self.file_path)
+            ppt = Presentation(self.file_path)
 
             # Update the core properties (metadata)
-            cp = doc.core_properties
+            cp = ppt.core_properties
             cp.author = self.metadata.get('author', cp.author)
             cp.last_modified_by = self.metadata.get(
                 'last_modified_by', cp.last_modified_by)
 
-            save_path = output_path or self.file_path
-            doc.save(save_path)
+            ppt.save(save_path)
         except Exception as e:
             raise FileProcessingFailedError(
                 f"Error encountered while saving to {save_path}: {e}")
 
-    def extract_text_from_docx(self, doc: Document) -> str:
+    @staticmethod
+    def extract_text_from_pptx(ppt: Presentation) -> str:
         try:
             full_text = []
-            for para in doc.paragraphs:
-                full_text.append(para.text)
+            for slide in ppt.slides:
+                for shape in slide.shapes:
+                    if hasattr(shape, "text"):
+                        full_text.append(shape.text)
+                    if shape.has_table:
+                        for r in shape.table.rows:
+                            s = ""
+                            for c in r.cells:
+                                s += c.text_frame.text + " | "
+                            full_text.append(s)
             return '\n'.join(full_text)
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while opening or processing {self.file_path}: {e}")
+                f"Error encountered while extracting text from pptx: {e}")

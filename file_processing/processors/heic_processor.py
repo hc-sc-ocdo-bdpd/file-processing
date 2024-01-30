@@ -1,9 +1,12 @@
 from PIL import Image
-from file_processing.errors import FileProcessingFailedError
-from file_processing.file_processor_strategy import FileProcessorStrategy
+from pillow_heif import register_heif_opener
+from file_processing.tools import FileProcessorStrategy
+from file_processing.tools.errors import FileProcessingFailedError
+
+register_heif_opener()  # Supports .heic, .heics, .heif, .heifs, .hif
 
 
-class TiffFileProcessor(FileProcessorStrategy):
+class HeicFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
         self.metadata = {
@@ -21,7 +24,7 @@ class TiffFileProcessor(FileProcessorStrategy):
                 # mode defines type and width of a pixel (https://pillow.readthedocs.io/en/stable/handbook/concepts.html#concept-modes)
                 'mode': image.mode,
                 'width': image.width,
-                'height': image.height
+                'height': image.height,
             })
         except Exception as e:
             raise FileProcessingFailedError(

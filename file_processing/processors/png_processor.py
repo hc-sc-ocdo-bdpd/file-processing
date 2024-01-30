@@ -1,9 +1,9 @@
 from PIL import Image
-from file_processing.file_processor_strategy import FileProcessorStrategy
-from file_processing.errors import FileProcessingFailedError
+from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.tools import FileProcessorStrategy
 
 
-class JpegFileProcessor(FileProcessorStrategy):
+class PngFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
         self.metadata = {
@@ -25,7 +25,7 @@ class JpegFileProcessor(FileProcessorStrategy):
             })
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while processing: {e}")
+                f"Error encountered while processing {self.file_path}: {e}")
 
     def save(self, output_path: str = None) -> None:
         try:
@@ -35,4 +35,4 @@ class JpegFileProcessor(FileProcessorStrategy):
             image.save(save_path)
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while processing: {e}")
+                f"Error encountered while saving to {save_path}: {e}")

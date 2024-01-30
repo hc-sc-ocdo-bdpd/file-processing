@@ -1,7 +1,7 @@
 from pathlib import Path
 import pytest
-from file_processing.file import File
-from file_processing.errors import FileProcessingFailedError
+from file_processing import File
+from file_processing.tools.errors import FileProcessingFailedError
 
 # copy_file fixture to be used in test_..._processor.py files
 @pytest.fixture()

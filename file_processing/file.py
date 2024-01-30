@@ -1,8 +1,8 @@
 from pathlib import Path
 import pytesseract
-from file_processing import (TextFileProcessor, PdfFileProcessor, DocxFileProcessor, OCRDecorator, MsgFileProcessor, PngFileProcessor, XlsxFileProcessor, PptxFileProcessor, RtfFileProcessor, HtmlFileProcessor, XmlFileProcessor,
-                             JpegFileProcessor, CsvFileProcessor, JsonFileProcessor, ZipFileProcessor, AudioFileProcessor, TranscriptionDecorator, GenericFileProcessor, PyFileProcessor, GifFileProcessor, TiffFileProcessor, HeicFileProcessor, FileProcessorStrategy)
-from file_processing.errors import TesseractNotFound, NotOCRApplciableError, NotTranscriptionApplicableError
+from file_processing import processors
+from file_processing.tools import FileProcessorStrategy, OCRDecorator, TranscriptionDecorator
+from file_processing.tools.errors import TesseractNotFound, NotOCRApplciableError, NotTranscriptionApplicableError
 
 
 class File:
@@ -12,33 +12,33 @@ class File:
         ".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
     PROCESSORS = {
-        ".csv": CsvFileProcessor,
-        ".txt": TextFileProcessor,
-        ".pdf": PdfFileProcessor,
-        ".docx": DocxFileProcessor,
-        ".msg": MsgFileProcessor,
-        ".pptx": PptxFileProcessor,
-        ".rtf": RtfFileProcessor,
-        ".html": HtmlFileProcessor,
-        ".xml": XmlFileProcessor,
-        ".png": PngFileProcessor,
-        ".xlsx": XlsxFileProcessor,
-        ".jpeg": JpegFileProcessor,
-        ".jpg": JpegFileProcessor,
-        ".json": JsonFileProcessor,
-        ".zip": ZipFileProcessor,
-        ".mp3": AudioFileProcessor,
-        ".wav": AudioFileProcessor,
-        ".mp4": AudioFileProcessor,
-        ".flac": AudioFileProcessor,
-        ".aiff": AudioFileProcessor,
-        ".ogg": AudioFileProcessor,
-        ".py": PyFileProcessor,
-        ".gif": GifFileProcessor,
-        ".tif": TiffFileProcessor,
-        ".tiff": TiffFileProcessor,
-        ".heic": HeicFileProcessor,
-        ".heif": HeicFileProcessor
+        ".csv": processors.CsvFileProcessor,
+        ".txt": processors.TextFileProcessor,
+        ".pdf": processors.PdfFileProcessor,
+        ".docx": processors.DocxFileProcessor,
+        ".msg": processors.MsgFileProcessor,
+        ".pptx": processors.PptxFileProcessor,
+        ".rtf": processors.RtfFileProcessor,
+        ".html": processors.HtmlFileProcessor,
+        ".xml": processors.XmlFileProcessor,
+        ".png": processors.PngFileProcessor,
+        ".xlsx": processors.XlsxFileProcessor,
+        ".jpeg": processors.JpegFileProcessor,
+        ".jpg": processors.JpegFileProcessor,
+        ".json": processors.JsonFileProcessor,
+        ".zip": processors.ZipFileProcessor,
+        ".mp3": processors.AudioFileProcessor,
+        ".wav": processors.AudioFileProcessor,
+        ".mp4": processors.AudioFileProcessor,
+        ".flac": processors.AudioFileProcessor,
+        ".aiff": processors.AudioFileProcessor,
+        ".ogg": processors.AudioFileProcessor,
+        ".py": processors.PyFileProcessor,
+        ".gif": processors.GifFileProcessor,
+        ".tif": processors.TiffFileProcessor,
+        ".tiff": processors.TiffFileProcessor,
+        ".heic": processors.HeicFileProcessor,
+        ".heif": processors.HeicFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False, use_transcriber: bool = False, open_file: bool = True) -> None:
@@ -49,7 +49,7 @@ class File:
 
     def _get_processor(self, use_ocr: bool, use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
         extension = self.path.suffix
-        processor_class = File.PROCESSORS.get(extension, GenericFileProcessor)
+        processor_class = File.PROCESSORS.get(extension, processors.GenericFileProcessor)
         processor = processor_class(str(self.path), open_file)
 
         if use_ocr:

@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 import pandas as pd
 import pytest
-from file_processing.directory import Directory
+from file_processing import Directory
 
 variable_names = "include_text, filters, keywords, migrate_filters, open_files, split_metadata"
 values = [

@@ -1,9 +1,9 @@
 import chardet
-from file_processing.errors import FileProcessingFailedError
-from file_processing.file_processor_strategy import FileProcessorStrategy
+from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.tools import FileProcessorStrategy
 
 
-class XmlFileProcessor(FileProcessorStrategy):
+class TextFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
         self.metadata = {
@@ -29,6 +29,9 @@ class XmlFileProcessor(FileProcessorStrategy):
                 'num_lines': len(lines),
                 'num_words': len(words),
             })
+        except UnicodeDecodeError as ude:
+            raise FileProcessingFailedError(
+                f"Unicode decoding error encountered while processing {self.file_path}: {ude}")
         except Exception as e:
             raise FileProcessingFailedError(
                 f"Error encountered while processing {self.file_path}: {e}")

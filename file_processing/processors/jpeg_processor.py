@@ -1,9 +1,9 @@
 from PIL import Image
-from file_processing.file_processor_strategy import FileProcessorStrategy
-from file_processing.errors import FileProcessingFailedError
+from file_processing.tools import FileProcessorStrategy
+from file_processing.tools.errors import FileProcessingFailedError
 
 
-class GifFileProcessor(FileProcessorStrategy):
+class JpegFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
         self.metadata = {
@@ -22,18 +22,17 @@ class GifFileProcessor(FileProcessorStrategy):
                 'mode': image.mode,
                 'width': image.width,
                 'height': image.height,
-                'animated': image.is_animated,
-                'frames': image.n_frames
             })
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while processing {self.file_path}: {e}")
+                f"Error encountered while processing: {e}")
 
     def save(self, output_path: str = None) -> None:
         try:
             image = Image.open(self.file_path)
+
             save_path = output_path or self.file_path
-            image.save(save_path, save_all=True)
+            image.save(save_path)
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while saving to {save_path}: {e}")
+                f"Error encountered while processing: {e}")
