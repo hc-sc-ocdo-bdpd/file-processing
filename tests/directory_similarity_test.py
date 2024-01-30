@@ -65,11 +65,14 @@ def test_columns(mk_get_rm_dir, threshold, top_n, use_abs_path):
 
 @pytest.mark.parametrize(variable_names, values)
 def test_values(mk_get_rm_dir, threshold, top_n):
+    # Cosine similarity (compares all files)
     if threshold == 0:
         assert mk_get_rm_dir.map(lambda x: pd.to_numeric(x, errors='coerce')).notnull().all().all(), \
             'Non-numeric data found in output'
         assert mk_get_rm_dir.map(lambda x: pd.Series(x).between(-1, 1, inclusive='both').all()).all().all(), \
             'Numeric values outside of acceptable cosine similarity range of [-1, 1]'
+
+    # FAISS indexes (returns top n matches)
     elif threshold != 0:
         similarities = mk_get_rm_dir[[str(n+1) for n in range(min(top_n, len(file_names)))]]
         assert similarities.map(lambda x: pd.Series(x).dropna().between(threshold, 1, inclusive='both').all()).all().all(), \

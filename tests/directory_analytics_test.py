@@ -24,8 +24,7 @@ def mk_get_rm_dir(filters, tmp_path_factory):
 
 @pytest.mark.parametrize(variable_names, values)
 def test_columns(mk_get_rm_dir):
-    assert set(["extension", "size (MB)", "count"]
-               ) == set(mk_get_rm_dir.columns)
+    assert set(["extension", "size (MB)", "count"]) == set(mk_get_rm_dir.columns)
 
 
 def test_empty_report(tmp_path):
