@@ -6,10 +6,8 @@ from file_processing.tools.errors import TesseractNotFound, NotOCRApplciableErro
 
 
 class File:
-    OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg",
-                                 ".jpg", ".png", ".gif", ".tiff", ".tif"}
-    TRANSCRIPTION_APPLICABLE_EXTENSIONS = {
-        ".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
+    OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".gif", ".tiff", ".tif"}
+    TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
     PROCESSORS = {
         ".csv": processors.CsvFileProcessor,
