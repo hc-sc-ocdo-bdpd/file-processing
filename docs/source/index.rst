@@ -33,6 +33,7 @@
    4_additional_information/*
 
 
+===============
 File Processing
 ===============
 
@@ -56,6 +57,33 @@ including OCR for image files and transcription for audio/video files. There are
 Example Usage and Output
 ------------------------
 
+Test files can be found in `docs/sample_reports` and examples are shown below
+
+.. tab:: Metadata Report
+
+    Lists metadata of all files
+
+    .. image:  
+
+[project.optional-dependencies]
+windows = ["pywin32"]
+
+.. tab:: Analytics Report
+
+    Second.
+
+.. tab:: Similarity Report (1)
+
+    Second.
+
+.. tab:: Similarity Report (2)
+
+    Second.
+
+.. tab:: File Metadata
+
+    Second.
+
 
 -------------------------------------------
 Supported File Types and Extracted Metadata
@@ -64,7 +92,7 @@ Supported File Types and Extracted Metadata
 +--------------------------------+-----------------------+---------+
 | File Type                      | Metadata Fields       | Example |
 +================================+=======================+=========+
-| [Generic]                      | - file_path           |         |
+| [All file types]               | - file_path           |         |
 |                                | - file_name           |         |
 |                                | - extension           |         |
 |                                | - owner               |         |
@@ -84,6 +112,18 @@ Supported File Types and Extracted Metadata
 |                                | - date                |         |
 |                                | - title               |         |
 +--------------------------------+-----------------------+---------+
+| jpeg, png, heic/heif, tiff/tif | - original_format     |         |
+|                                | - mode                |         |
+|                                | - width               |         |
+|                                | - height              |         |
++--------------------------------+-----------------------+---------+
+| gif                            | - original_format     |         |
+|                                | - mode                |         |
+|                                | - width               |         |
+|                                | - height              |         |
+|                                | - animated            |         |
+|                                | - frames              |         |
++--------------------------------+-----------------------+---------+
 | csv                            | - text                |         |
 |                                | - encoding            |         |
 |                                | - num_rows            |         |
@@ -91,96 +131,69 @@ Supported File Types and Extracted Metadata
 |                                | - num_cells           |         |
 |                                | - empty_cells         |         |
 +--------------------------------+-----------------------+---------+
+| xlsx                           | - active_sheet        |         |
+|                                | - sheet_names         |         |
+|                                | - data                |         |
+|                                | - last_modified_by    |         |
+|                                | - creator             |         |
+|                                | - has_password        |         |
++--------------------------------+-----------------------+---------+
+| docx                           | - text                |         |
+|                                | - author              |         |
+|                                | - last_modified_by    |         |
+|                                | - has_password        |         |
++--------------------------------+-----------------------+---------+
+| pptx                           | - text                |         |
+|                                | - author              |         |
+|                                | - last_modified_by    |         |
+|                                | - num_slides          |         |
+|                                | - has_password        |         |
++--------------------------------+-----------------------+---------+
+| html, txt, xml                 | - text                |         |
+|                                | - encoding            |         |
+|                                | - lines               |         |
+|                                | - words               |         |
+|                                | - num_lines           |         |
+|                                | - num_words           |         |
++--------------------------------+-----------------------+---------+
+| json                           | - text                |         |
+|                                | - encoding            |         |
+|                                | - num_keys            |         |
+|                                | - key_names           |         |
+|                                | - empty_values        |         |
++--------------------------------+-----------------------+---------+
+| msg                            | - text                |         |
+|                                | - subject             |         |
+|                                | - date                |         |
+|                                | - sender              |         |
++--------------------------------+-----------------------+---------+
+| pdf                            | - text                |         |
+|                                | - has_password        |         |
+|                                | - author              |         |
+|                                | - producer            |         |
++--------------------------------+-----------------------+---------+
+| py                             | - num_lines           |         |
+|                                | - num_functions       |         |
+|                                | - num_classes         |         |
+|                                | - imports             |         |
+|                                | - docstrings          |         |
++--------------------------------+-----------------------+---------+
+| rtf                            | - text                |         |
++--------------------------------+-----------------------+---------+
+| py                             | - num_lines           |         |
+|                                | - num_functions       |         |
+|                                | - num_classes         |         |
+|                                | - imports             |         |
+|                                | - docstrings          |         |
++--------------------------------+-----------------------+---------+
+| text                           | - num_lines           |         |
+|                                | - num_functions       |         |
+|                                | - num_classes         |         |
+|                                | - imports             |         |
+|                                | - docstrings          |         |
++--------------------------------+-----------------------+---------+
+| zip                            | - num_files           |         |
+|                                | - file_types          |         |
+|                                | - file_names          |         |
++--------------------------------+-----------------------+---------+
 
-DOCX
-text 
-author 
-last_modified_by 
-has_password 
-
-GIF: 
-original_format 
-mode 
-width 
-height 
-animated 
-frames 
-
-jpeg, png, heic, heif, tiff, tif
-original_format 
-mode 
-width 
-height 
-
-HTML: 
-text 
-encoding 
-lines 
-words 
-num_lines 
-num_words 
-
-JSON: 
-text 
-encoding 
-num_keys 
-key_names 
-empty_values 
-
-MSG: 
-text 
-subject 
-date 
-sender 
-
-PDF: 
-text 
-has_password 
-author 
-producer 
-
-PPTX: 
-text 
-author 
-last_modified_by 
-num_slides 
-has_password 
-
-PY: 
-num_lines 
-num_functions 
-num_classes 
-imports 
-docstrings 
-
-RTF: 
-text 
-
-TXT: 
-text 
-encoding 
-lines 
-words 
-num_lines 
-num_words 
-
-XLSX: 
-active_sheet 
-sheet_names 
-data 
-last_modified_by 
-creator 
-has_password 
-
-XML: 
-text 
-encoding 
-lines 
-words 
-num_lines 
-num_words 
-
-ZIP: 
-num_files 
-file_types 
-file_names 

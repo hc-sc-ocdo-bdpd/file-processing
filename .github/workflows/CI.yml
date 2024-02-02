@@ -1,9 +1,8 @@
 name: Run Pytest
 
 on:
-  push
-  # pull_request:
-  #   branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -31,11 +30,11 @@ jobs:
         continue-on-error: true
 
       - name: Run Pytest
-        run: pytest tests/test_png_processor.py --junit-xml=.test_report.xml
+        run: pytest tests/ --junit-xml=.test_report.xml
 
       - name: Generate PyTest report
         uses: test-summary/action@v2
         with:
           paths: .test_report.xml
-          show: all
+          show: fail
         if: always()

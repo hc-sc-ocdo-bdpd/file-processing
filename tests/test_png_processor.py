@@ -10,7 +10,7 @@ from file_processing.tools.errors import FileProcessingFailedError
 
 variable_names = "path, original_format, mode, width, height"
 values = [
-    ('tests/resources/test_files/Health_Canada_logo.png', 'GIF', 'P', 303, 0),
+    ('tests/resources/test_files/Health_Canada_logo.png', 'GIF', 'P', 303, 40),
     ('tests/resources/test_files/MapCanada.png', 'PNG', 'RGBA', 3000, 2408)
 ]
 
