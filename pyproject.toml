@@ -1,5 +1,5 @@
 [project]
-name = "file_processing_tools"
+name = "file_processing"
 description = "A metadata extraction tool for various file extensions"
 readme = "README.md"
 requires-python = ">=3.10"
