@@ -13,12 +13,12 @@ from file_processing import File
 
 variable_names = "path, bitrate, length, artist, date, title, organization"
 values = [
-    ('tests/resources/test_files/How Canadas Universal HealthCare System Works.mp3', 230679, 576.048, '', '', '', ''),
-    ('tests/resources/test_files/Super Easy French.wav', 1536000, 218.9706875, '', '', '', ''),
-    ('tests/resources/test_files/Taylor Swift.mp4', 0, 228.4843537414966, '', '', '', ''),
-    ('tests/resources/test_files/Jingle Bell Rock.flac', 710366, 145.61233560090702, '', '', '', ''),
-    ('tests/resources/test_files/Katy Perry.aiff', 1411200, 289.9243537414966, '', '', '', ''),
-    ('tests/resources/test_files/Frosty the Snowman.ogg', 112000, 137.71755102040817, '', '', '', '')
+    ("tests/resources/test_files/sample_speech.aiff", 256000, 3.18, '', '', '', ''),
+    ("tests/resources/test_files/sample_speech.flac", 109089, 14.92, '', '', '', ''),
+    ("tests/resources/test_files/sample_speech.mp3", 24000, 15.012, '', '', '', ''),
+    ("tests/resources/test_files/sample_speech.mp4", 58503, 14.804, '', '', '', ''),
+    ("tests/resources/test_files/sample_speech.ogg", 48000, 14.97, '', '', '', ''),
+    ("tests/resources/test_files/sample_speech.wav", 256000, 14.92, '', '', '', '')
 ]
 
 
@@ -100,7 +100,7 @@ def test_not_opening_file(path, bitrate, length, artist, date, title, organizati
         mock_open.assert_not_called()
 
 invalid_save_locations = [
-    ('tests/resources/test_files/How Canadas Universal HealthCare System Works.mp3',
+    ('tests/resources/test_files/sample_speech.mp3',
      '/non_existent_folder/How Canadas Universal HealthCare System Works.mp3')
 ]
 

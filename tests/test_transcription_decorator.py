@@ -1,6 +1,5 @@
 import pytest
-from sentence_transformers import SentenceTransformer
-from scipy.spatial.distance import cdist
+from Levenshtein import ratio
 from file_processing import File
 from file_processing.tools.errors import NotTranscriptionApplicableError
 
@@ -20,13 +19,24 @@ values = [
      "into a lease with us they go through an extensive counseling process and legal review with summaries of it with signed statements that they understand what they're getting themselves into and what they have to do and what they own and what they don't own and they own the", "en")
 ]
 
+NON_TRANSCRIPTION_APPLICABLE_SAMPLES = [
+    "tests/resources/test_files/Empty.zip", "tests/resources/test_files/Sample.xml"]
+
+
+@pytest.fixture(params=NON_TRANSCRIPTION_APPLICABLE_SAMPLES)
+def non_transcription_applicable_file(request):
+    return request.param
+
+
 @pytest.mark.parametrize(variable_names, values)
 def test_transcription_processing_success(path, transcription, language):
     audio_file = File(path, use_transcriber=True)
-    
+
     assert 'text' in audio_file.metadata
-    assert CosineSimilarity(audio_file, transcription).calculate().round(3) >= 0.8
     assert audio_file.metadata['language'] == language
+
+    similarity = ratio(audio_file.metadata['text'], transcription)
+    assert similarity >= 0.8
 
 
 def test_transcription_processing_non_applicable_file(non_transcription_applicable_file):
