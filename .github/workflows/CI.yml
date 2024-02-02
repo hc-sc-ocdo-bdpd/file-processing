@@ -37,5 +37,5 @@ jobs:
         uses: test-summary/action@v2
         with:
           paths: .test_report.xml
-          output: test-summary.md
+          show: all
         if: always()
