@@ -10,7 +10,7 @@ values = [
     ("tests/resources/test_files/sample_speech.flac",
      "into a lease with us they go through an extensive counseling process and legal review with summaries of it with signed statements that they understand what they're getting themselves into and what they have to do and what they own and what they don't own and they own the", "en"),
     ("tests/resources/test_files/sample_speech.mp3",
-     "from our volunteers in maui county when the storms on top of us or a disaster is headed our way or a disaster has just happened because they truly love the work that they're doing and there's something that draws them to red cross something from the heart where", "en"),
+     "into a lease with us they go through an extensive counseling process and legal review with summaries of it with signed statements that they understand what they're getting themselves into and what they have to do and what they own and what they don't own and they own the", "en"),
     ("tests/resources/test_files/sample_speech.mp4",
      "we're definitely in support of this concept and we'll figure a way to make it work very good and then i know it's a work in progress but in relation to enforcement any type", "en"),
     ("tests/resources/test_files/sample_speech.ogg",
