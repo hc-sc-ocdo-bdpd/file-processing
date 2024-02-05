@@ -7,6 +7,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.githubpages",
+    "sphinx_inline_tabs",
     "myst_parser"
 ]
 

@@ -63,27 +63,49 @@ Test files can be found in `docs/sample_reports` and examples are shown below
 
     Lists metadata of all files
 
-    .. image:  
-
-[project.optional-dependencies]
-windows = ["pywin32"]
+    .. image:: ./resources/metadata_report.png
+       :align: center
+     
 
 .. tab:: Analytics Report
 
     Second.
 
+    .. image:: ./resources/analytics_report.png
+       :align: center
+     
+
 .. tab:: Similarity Report (1)
 
     Second.
 
+    .. image:: ./resources/cosine_similarity.png
+       :align: center
+     
+
 .. tab:: Similarity Report (2)
 
-    Second.
+    .. image:: ./resources/faiss_similarity.png
+       :align: center
+     
 
 .. tab:: File Metadata
 
-    Second.
+    .. code:: python
 
+        from file_processing import File
+
+        file = File('path/to/file')
+        print(file.metadata)
+
+    .. code:: none
+
+        {
+            'original_format': 'PNG', 
+            'mode': 'RGBA', 
+            'width': 1188, 
+            'height': 429
+        }
 
 -------------------------------------------
 Supported File Types and Extracted Metadata
