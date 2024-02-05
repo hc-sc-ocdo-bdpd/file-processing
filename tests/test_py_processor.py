@@ -3,7 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0], 'file_processing'))
 from file import File
 from unittest.mock import patch
-from errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 
 
 variable_names = "path, num_lines, num_functions, num_classes, num_imports, num_docstrings"

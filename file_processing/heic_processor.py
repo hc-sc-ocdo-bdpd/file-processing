@@ -1,6 +1,6 @@
 from file_processor_strategy import FileProcessorStrategy
 from PIL import Image
-from errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 from pillow_heif import register_heif_opener
 
 register_heif_opener()  # Supports .heic, .heics, .heif, .heifs, .hif
