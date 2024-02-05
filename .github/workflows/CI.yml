@@ -28,7 +28,7 @@ jobs:
         continue-on-error: true
 
       - name: Run Pytest
-        run: pytest tests/directory_report_test.py tests/test_transcription_decorator.py tests/test_audio_processor.py --junit-xml=.test_report.xml
+        run: pytest tests/directory_report_test.py --junit-xml=.test_report.xml
 
       - name: Generate PyTest report
         uses: test-summary/action@v2

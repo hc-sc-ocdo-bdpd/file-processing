@@ -6,6 +6,44 @@ import pandas as pd
 import pytest
 from file_processing import Directory
 
+dir_variable_names = "dir_path"
+dir_values = [
+    ('tests/resources/directory_test_files'),
+    ('tests/resources'),
+    ('file_processing')
+]
+
+@pytest.fixture
+def mk_get_rm_dir_2(dir_path, tmp_path_factory):
+    output_path = str(tmp_path_factory.mktemp("outputs") / "test_output.csv")
+    dir1 = Directory(dir_path)
+    dir1.generate_report(output_path, False, None, None, None, False, False)
+    data = pd.read_csv(output_path)
+    yield data
+
+
+@pytest.mark.order(1)
+@pytest.mark.parametrize(dir_variable_names, dir_values)
+def test_not_opening_files_in_directory(mk_get_rm_dir_2):
+    now = datetime.now().timestamp()
+    data = mk_get_rm_dir_2[~mk_get_rm_dir_2['Extension'].isin(['.py', '.pyc'])]
+    data = data.reset_index(drop=True)
+    file_names = data['Absolute Path']
+
+    for file_name in file_names:
+        unix = Path(str(file_name)).stat().st_atime
+        assert now > (unix + 1.5 * 60), f"File was opened when it should not have been ({file_name})"
+
+
+@pytest.mark.parametrize(dir_variable_names, dir_values)
+def test_metadata_when_not_opening_files(mk_get_rm_dir_2):
+    for metadata_str in mk_get_rm_dir_2['Metadata']:
+        metadata = json.loads(metadata_str)
+        assert len(metadata) == 1, "There should be only one key in the metadata"
+        assert 'message' in metadata, "'message' key should be present in the metadata"
+        assert "File was not opened" in metadata['message'], "'File was not opened' should be part of the message"
+
+
 variable_names = "include_text, filters, keywords, migrate_filters, open_files, split_metadata"
 values = [
     (False, None, None, None, True, False),
@@ -148,40 +186,3 @@ def test_empty_report(tmp_path):
     dir1 = Directory('tests/resources/empty_dir')
     with pytest.raises(Exception):
         dir1.generate_report(tmp_path / "test_output.csv")
-
-
-dir_variable_names = "dir_path"
-dir_values = [
-    ('tests/resources/directory_test_files'),
-    ('tests/resources'),
-    ('file_processing')
-]
-
-@pytest.fixture
-def mk_get_rm_dir_2(dir_path, tmp_path_factory):
-    output_path = str(tmp_path_factory.mktemp("outputs") / "test_output.csv")
-    dir1 = Directory(dir_path)
-    dir1.generate_report(output_path, False, None, None, None, False, False)
-    data = pd.read_csv(output_path)
-    yield data
-
-
-@pytest.mark.parametrize(dir_variable_names, dir_values)
-def test_not_opening_files_in_directory(mk_get_rm_dir_2):
-    now = datetime.now().timestamp()
-    data = mk_get_rm_dir_2[~mk_get_rm_dir_2['Extension'].isin(['.py', '.pyc'])]
-    data = data.reset_index(drop=True)
-    file_names = data['Absolute Path']
-
-    for file_name in file_names:
-        unix = Path(str(file_name)).stat().st_atime
-        assert now > (unix + 1.5 * 60), f"File was opened when it should not have been ({file_name})"
-
-
-@pytest.mark.parametrize(dir_variable_names, dir_values)
-def test_metadata_when_not_opening_files(mk_get_rm_dir_2):
-    for metadata_str in mk_get_rm_dir_2['Metadata']:
-        metadata = json.loads(metadata_str)
-        assert len(metadata) == 1, "There should be only one key in the metadata"
-        assert 'message' in metadata, "'message' key should be present in the metadata"
-        assert "File was not opened" in metadata['message'], "'File was not opened' should be part of the message"
