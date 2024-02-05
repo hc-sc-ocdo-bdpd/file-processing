@@ -101,7 +101,7 @@ def test_not_opening_file(path, bitrate, length, artist, date, title, organizati
 
 invalid_save_locations = [
     ('tests/resources/test_files/sample_speech.mp3',
-     '/non_existent_folder/How Canadas Universal HealthCare System Works.mp3')
+     '/non_existent_folder/sample_speech.mp3')
 ]
 
 
@@ -113,7 +113,7 @@ def test_audio_invalid_save_location(path, save_path):
 
 
 corrupted_files = [
-    'tests/resources/test_files/Super Easy French Corrupted.mp3'
+    'tests/resources/test_files/sample_speech_corrupted.mp3'
 ]
 
 
