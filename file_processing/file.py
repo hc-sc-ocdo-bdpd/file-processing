@@ -21,7 +21,7 @@ from py_processor import PyFileProcessor
 from gif_processor import GifFileProcessor
 from tiff_processor import TiffFileProcessor
 from heic_processor import HeicFileProcessor
-from errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
+from file_processing.errors import UnsupportedFileTypeError, NotOCRApplciableError, NotTranscriptionApplicableError
 
 class File:
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".gif", ".tiff", ".tif"}

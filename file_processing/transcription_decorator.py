@@ -1,6 +1,6 @@
 import whisper
 from file_processor_strategy import FileProcessorStrategy
-from errors import TranscriptionProcessingError
+from file_processing.errors import TranscriptionProcessingError
 
 class TranscriptionDecorator:
     def __init__(self, processor: FileProcessorStrategy) -> None:
