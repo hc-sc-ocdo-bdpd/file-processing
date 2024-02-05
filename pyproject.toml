@@ -28,7 +28,12 @@ dependencies = [
 [project.optional-dependencies]
 windows = ['pywin32']
 build = ['wheel==0.40.0']
-documentation = ['sphinx==7.2.6', 'furo==2024.1.29', 'myst-parser==2.0.0']
+documentation = [
+    'sphinx==7.2.6',
+    'furo==2024.1.29',
+    'myst-parser==2.0.0',
+    'sphinx-inline-tabs==2023.4.21',
+]
 testing = [
     'pytest==7.4.0',
     'pytest-order==1.2.0',
