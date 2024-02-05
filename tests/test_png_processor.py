@@ -3,7 +3,7 @@ import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
 from unittest.mock import patch
-from file_processing.errors import FileProcessingFailedError
+from errors import FileProcessingFailedError
 
 # Note: test_save_png_metadata tests both files for "original_format == 'PNG'
 # when creating a copy, the original_format metadata for Health_Canada_logo.png

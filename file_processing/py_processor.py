@@ -1,5 +1,5 @@
 from file_processor_strategy import FileProcessorStrategy
-from file_processing.errors import FileProcessingFailedError
+from errors import FileProcessingFailedError
 import ast
 import shutil
 import warnings

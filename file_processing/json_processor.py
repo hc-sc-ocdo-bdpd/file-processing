@@ -2,7 +2,7 @@ from file_processor_strategy import FileProcessorStrategy
 import json
 import chardet
 from json.decoder import JSONDecodeError
-from file_processing.errors import FileProcessingFailedError, FileCorruptionError
+from errors import FileProcessingFailedError, FileCorruptionError
 
 class JsonFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:

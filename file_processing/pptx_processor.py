@@ -1,7 +1,7 @@
 from file_processor_strategy import FileProcessorStrategy
 from pptx import Presentation
 from zipfile import BadZipFile
-from file_processing.errors import FileProcessingFailedError, FileCorruptionError
+from errors import FileProcessingFailedError, FileCorruptionError
 import msoffcrypto
 from io import BytesIO
 

@@ -2,7 +2,7 @@ import pytest
 import sys, os
 sys.path.append(os.path.join(sys.path[0],'file_processing'))
 from file_processing.file import File
-from file_processing.errors import FileProcessingFailedError, FileCorruptionError
+from errors import FileProcessingFailedError, FileCorruptionError
 
 corrupted_files_processing = [
     'tests/resources/test_files/2021_Census_English_corrupted.csv',

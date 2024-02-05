@@ -1,6 +1,6 @@
 from file_processor_strategy import FileProcessorStrategy
 import chardet
-from file_processing.errors import FileProcessingFailedError
+from errors import FileProcessingFailedError
 
 class XmlFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:

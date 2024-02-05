@@ -3,7 +3,7 @@ from docx import Document
 from zipfile import BadZipFile
 from docx.oxml import OxmlElement
 import msoffcrypto
-from file_processing.errors import FileProcessingFailedError, FileCorruptionError
+from errors import FileProcessingFailedError, FileCorruptionError
 from io import BytesIO
 
 class DocxFileProcessor(FileProcessorStrategy):

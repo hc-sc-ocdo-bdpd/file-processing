@@ -1,11 +1,11 @@
-import pypdf
+import PyPDF2
 import pytesseract
 from PIL import Image
 from pathlib import Path
 import io
 import getpass
 from file_processor_strategy import FileProcessorStrategy
-from file_processing.errors import OCRProcessingError
+from errors import OCRProcessingError
 
 # Init for tesseract
 pytesseract.pytesseract.tesseract_cmd = Path('C:/Users') / getpass.getuser() / 'AppData/Local/Programs/Tesseract-OCR/tesseract.exe'
@@ -49,7 +49,7 @@ class OCRDecorator:
 
         try:
             with open(self._processor.file_path, 'rb') as pdfFileObj:
-                reader = pypdf.PdfReader(pdfFileObj)
+                reader = PyPDF2.PdfReader(pdfFileObj)
                 numPages = len(reader.pages)
 
                 startPage = 0
