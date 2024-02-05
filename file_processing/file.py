@@ -52,14 +52,12 @@ class File:
 
         if use_ocr:
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
-                raise NotOCRApplciableError(
-                    f"OCR is not applicable for file type {extension}.")
+                raise NotOCRApplciableError(f"OCR is not applicable for file type {extension}.")
 
             try:
                 pytesseract.get_tesseract_version()
             except Exception:
-                raise TesseractNotFound(
-                    "Tesseract is not installed or not added to PATH")
+                raise TesseractNotFound("Tesseract is not installed or not added to PATH")
 
             return OCRDecorator(processor)
 

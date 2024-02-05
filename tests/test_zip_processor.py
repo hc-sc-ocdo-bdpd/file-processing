@@ -1,5 +1,8 @@
 import os
+import shutil
 from unittest.mock import patch
+import tempfile
+import zipfile
 import pytest
 from file_processing import File
 from file_processing.tools.errors import FileProcessingFailedError
@@ -17,7 +20,6 @@ def file_obj(request):
 
 
 def test_zip_extraction(file_obj):
-    import shutil
     file_obj.processor.extract()
 
     extraction_dir = os.path.splitext(file_obj.path)[0]
@@ -31,8 +33,6 @@ def test_zip_extraction(file_obj):
 
 
 def test_zip_save(file_obj):
-    import tempfile
-    import zipfile
     with tempfile.TemporaryDirectory() as temp_dir:
         original_zip_path = file_obj.path
         saved_zip_path = os.path.join(temp_dir, 'SavedSampleReport.zip')

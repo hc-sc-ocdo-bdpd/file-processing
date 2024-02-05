@@ -97,8 +97,7 @@ def test_columns(mk_get_rm_dir, include_text, filters, keywords, open_files, spl
 @pytest.mark.parametrize(variable_names, values)
 def test_text(mk_get_rm_dir, include_text, split_metadata):
     if include_text and not split_metadata:
-        assert mk_get_rm_dir["Metadata"].str.contains(
-            "\"text\":").any() == include_text
+        assert mk_get_rm_dir["Metadata"].str.contains("\"text\":").any() == include_text
 
 
 @pytest.mark.parametrize(variable_names, values)
@@ -124,30 +123,25 @@ def test_filters(mk_get_rm_dir, filters):
                 "|".join(filters.get("include_str"))).any()
 
     else:
-        assert mk_get_rm_dir.shape[0] == sum(
-            len(files) for _, _, files in os.walk(r"tests/resources/directory_test_files"))
+        num_files = sum(len(files) for _, _, files in os.walk(r"tests/resources/directory_test_files"))
+        assert mk_get_rm_dir.shape[0] == num_files
 
 
 @pytest.mark.parametrize(variable_names, values)
 def test_migrate_filters(mk_get_rm_dir, migrate_filters):
     if migrate_filters:
         if "extensions" in migrate_filters.keys():
-            assert mk_get_rm_dir[mk_get_rm_dir["Extension"].isin(
-                migrate_filters.get("extensions"))]["Migrate"].eq(1).all()
-            assert mk_get_rm_dir[~mk_get_rm_dir["Extension"].isin(
-                migrate_filters.get("extensions"))]["Migrate"].eq(0).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Extension"].isin(migrate_filters.get("extensions"))]["Migrate"].eq(1).all()
+            assert mk_get_rm_dir[~mk_get_rm_dir["Extension"].isin(migrate_filters.get("extensions"))]["Migrate"].eq(0).all()
         if "min_size" in migrate_filters.keys():
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] >=
-                                 migrate_filters["min_size"] / 1e6]["Migrate"].eq(1).all()
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] <
-                                 migrate_filters["min_size"] / 1e6]["Migrate"].eq(0).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] >= migrate_filters["min_size"] / 1e6]["Migrate"].eq(1).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] < migrate_filters["min_size"] / 1e6]["Migrate"].eq(0).all()
         if "max_size" in migrate_filters.keys():
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] <=
-                                 migrate_filters["max_size"] / 1e6]["Migrate"].eq(1).all()
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] >
-                                 migrate_filters["max_size"] / 1e6]["Migrate"].eq(0).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] <= migrate_filters["max_size"] / 1e6]["Migrate"].eq(1).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] > migrate_filters["max_size"] / 1e6]["Migrate"].eq(0).all()
     else:
-        assert "Migrate" not in mk_get_rm_dir.columns, "The 'Keywords' column should not be present in the DataFrame."
+        assert "Migrate" not in mk_get_rm_dir.columns, \
+            "The 'Keywords' column should not be present in the DataFrame."
 
 
 @pytest.mark.parametrize(variable_names, values)
@@ -167,10 +161,11 @@ def test_keywords(mk_get_rm_dir, include_text, split_metadata, keywords):
             .apply(lambda x: sum(x.count(key.lower()) for key in ['Health', 'Canada']))
         )
 
-        assert (metadata_keyword_counts == keyword_counts).all(
-        ), "Keyword counts do not match."
+        assert (metadata_keyword_counts == keyword_counts).all(), \
+            "Keyword counts do not match."
     else:
-        assert "Keywords" not in mk_get_rm_dir.columns, "The 'Keywords' column should not be present in the DataFrame."
+        assert "Keywords" not in mk_get_rm_dir.columns, \
+            "The 'Keywords' column should not be present in the DataFrame."
 
 
 def test_corrupted_dir(tmp_path):

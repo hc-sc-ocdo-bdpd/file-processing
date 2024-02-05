@@ -26,8 +26,7 @@ values = [
 def mk_get_rm_dir(filters, threshold, top_n, use_abs_path, tmp_path_factory):
     output_path = str(tmp_path_factory.mktemp("outputs") / "test_output.csv")
     dir1 = Directory('tests/resources/similarity_test_files')
-    dir1.identify_duplicates(output_path, filters,
-                             threshold, top_n, use_abs_path)
+    dir1.identify_duplicates(output_path, filters, threshold, top_n, use_abs_path)
     data = pd.read_csv(output_path, index_col=0)
     yield data
 
@@ -43,15 +42,11 @@ def test_columns(mk_get_rm_dir, threshold, top_n, use_abs_path):
     # Cosine similarity (compares all files)
     if threshold == 0:
         if not use_abs_path:
-            assert set(mk_get_rm_dir.columns).issubset(
-                set(file_names)), 'File names are incorrect'
+            assert set(mk_get_rm_dir.columns).issubset(set(file_names)), 'File names are incorrect'
         elif use_abs_path:
-            assert all([os.path.isabs(item)
-                       for item in mk_get_rm_dir.columns]), 'Paths are not absolute paths'
-            extracted_names = [
-                Path(item).name for item in mk_get_rm_dir.columns]
-            assert set(extracted_names).issubset(
-                set(file_names)), 'File names are incorrect'
+            assert all([os.path.isabs(item) for item in mk_get_rm_dir.columns]), 'Paths are not absolute paths'
+            extracted_names = [Path(item).name for item in mk_get_rm_dir.columns]
+            assert set(extracted_names).issubset(set(file_names)), 'File names are incorrect'
 
     # FAISS indexes (returns top n matches)
     elif threshold != 0:
@@ -59,8 +54,7 @@ def test_columns(mk_get_rm_dir, threshold, top_n, use_abs_path):
         for n in range(min(top_n, len(file_names))):
             headers.append(f'{n+1}_file')
             headers.append(str(n+1))
-        assert set(mk_get_rm_dir.columns) == set(
-            headers), 'File names are incorrect'
+        assert set(mk_get_rm_dir.columns) == set(headers), 'File names are incorrect'
 
 
 @pytest.mark.parametrize(variable_names, values)

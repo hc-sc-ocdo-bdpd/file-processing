@@ -8,8 +8,7 @@ from file_processing.tools import FileProcessorStrategy
 class XlsxFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         super().__init__(file_path, open_file)
-        self.metadata = {
-            'message': 'File was not opened'} if not open_file else self._default_metadata()
+        self.metadata = {'message': 'File was not opened'} if not open_file else self._default_metadata()
 
     def _default_metadata(self) -> dict:
         return {

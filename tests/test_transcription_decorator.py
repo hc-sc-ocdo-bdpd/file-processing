@@ -20,7 +20,9 @@ values = [
 ]
 
 NON_TRANSCRIPTION_APPLICABLE_SAMPLES = [
-    "tests/resources/test_files/Empty.zip", "tests/resources/test_files/Sample.xml"]
+    "tests/resources/test_files/Empty.zip",
+    "tests/resources/test_files/Sample.xml"
+]
 
 
 @pytest.fixture(params=NON_TRANSCRIPTION_APPLICABLE_SAMPLES)

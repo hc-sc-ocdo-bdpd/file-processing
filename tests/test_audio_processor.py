@@ -100,8 +100,7 @@ def test_not_opening_file(path, bitrate, length, artist, date, title, organizati
         mock_open.assert_not_called()
 
 invalid_save_locations = [
-    ('tests/resources/test_files/sample_speech.mp3',
-     '/non_existent_folder/sample_speech.mp3')
+    ('tests/resources/test_files/sample_speech.mp3', '/non_existent_folder/sample_speech.mp3')
 ]
 
 

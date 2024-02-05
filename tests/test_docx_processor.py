@@ -70,4 +70,4 @@ locked_files = [
 
 @pytest.mark.parametrize("path", locked_files)
 def test_docx_locked(path):
-    assert File(path).metadata["has_password"] == True
+    assert File(path).metadata["has_password"] is True

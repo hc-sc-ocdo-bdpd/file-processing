@@ -10,8 +10,8 @@ from file_processing.tools.errors import OCRProcessingError
 
 # Init for tesseract
 if sys.platform == 'win32':
-    pytesseract.pytesseract.tesseract_cmd = Path(
-        'C:/Users') / getpass.getuser() / 'AppData/Local/Programs/Tesseract-OCR/tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = Path('C:/Users') / \
+        getpass.getuser() / 'AppData/Local/Programs/Tesseract-OCR/tesseract.exe'
 elif sys.platform == 'linux':
     pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 

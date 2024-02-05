@@ -19,7 +19,6 @@ corrupted_files_processing = [
     'tests/resources/test_files/MapleLeaf_corrupted.heif',
     'tests/resources/test_files/MapleLeaf_corrupted.heic',
     'tests/resources/test_files/CanadaLogo_corrupted.tif'
-
 ]
 
 
