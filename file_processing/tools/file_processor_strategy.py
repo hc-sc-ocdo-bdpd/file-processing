@@ -22,7 +22,7 @@ class FileProcessorStrategy(ABC):
         self.absolute_path = self.file_path.resolve()
 
     def _find_owner(self, file_path: str) -> str:
-        if sys.platform == 'win32' and importlib.util.find_spec('pywin32'):
+        if sys.platform == 'win32' and importlib.util.find_spec('win32security'):
             import win32security
             sd = win32security.GetFileSecurity(file_path, win32security.OWNER_SECURITY_INFORMATION)
             owner_sid = sd.GetSecurityDescriptorOwner()

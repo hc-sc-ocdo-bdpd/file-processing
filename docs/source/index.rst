@@ -32,12 +32,11 @@
 
    4_additional_information/*
 
+|
 
 ===============
 File Processing
 ===============
-
-
 
 The file processing library is a metadata extraction tool that supports 26 common file types, 
 including OCR for image files and transcription for audio/video files. There are 4 main use cases:
@@ -52,6 +51,7 @@ including OCR for image files and transcription for audio/video files. There are
 
    - compare file similarity of text-based documents to identify possible duplicates
 
+|
 
 ------------------------
 Example Usage and Output
@@ -61,7 +61,7 @@ Test files can be found in `docs/sample_reports` and examples are shown below
 
 .. tab:: Metadata Report
 
-    Lists metadata of all files
+    Lists metadata of all files. There are multiple report configurations and only a subset of the columns are shown:
 
     .. image:: ./resources/metadata_report.png
        :align: center
@@ -69,21 +69,24 @@ Test files can be found in `docs/sample_reports` and examples are shown below
 
 .. tab:: Analytics Report
 
-    Second.
+    Aggregates file size and count for each file type.
 
     .. image:: ./resources/analytics_report.png
        :align: center
+       :height: 300px
      
 
 .. tab:: Similarity Report (1)
 
-    Second.
+    Compares the text in each document-based file to every other file according to cosine similarity. 
 
     .. image:: ./resources/cosine_similarity.png
        :align: center
      
 
 .. tab:: Similarity Report (2)
+
+    Determines the top n matches to each file using FAISS indicies.
 
     .. image:: ./resources/faiss_similarity.png
        :align: center
@@ -107,115 +110,106 @@ Test files can be found in `docs/sample_reports` and examples are shown below
             'height': 429
         }
 
+|
+
 -------------------------------------------
 Supported File Types and Extracted Metadata
 -------------------------------------------
 
-+--------------------------------+-----------------------+---------+
-| File Type                      | Metadata Fields       | Example |
-+================================+=======================+=========+
-| [All file types]               | - file_path           |         |
-|                                | - file_name           |         |
-|                                | - extension           |         |
-|                                | - owner               |         |
-|                                | - size                |         |
-|                                | - modification_time   |         |
-|                                | - access_time         |         |
-|                                | - creation_time       |         |
-|                                | - permissions         |         |
-|                                | - parent_directory    |         |
-|                                | - is_file             |         |
-|                                | - is_symlink          |         |
-|                                | - absolute_path       |         |
-+--------------------------------+-----------------------+---------+
-| mp3, wav, mp4, flac, aiff, ogg | - bitrate             |         |
-|                                | - length              |         |
-|                                | - artist              |         |
-|                                | - date                |         |
-|                                | - title               |         |
-+--------------------------------+-----------------------+---------+
-| jpeg, png, heic/heif, tiff/tif | - original_format     |         |
-|                                | - mode                |         |
-|                                | - width               |         |
-|                                | - height              |         |
-+--------------------------------+-----------------------+---------+
-| gif                            | - original_format     |         |
-|                                | - mode                |         |
-|                                | - width               |         |
-|                                | - height              |         |
-|                                | - animated            |         |
-|                                | - frames              |         |
-+--------------------------------+-----------------------+---------+
-| csv                            | - text                |         |
-|                                | - encoding            |         |
-|                                | - num_rows            |         |
-|                                | - num_cols            |         |
-|                                | - num_cells           |         |
-|                                | - empty_cells         |         |
-+--------------------------------+-----------------------+---------+
-| xlsx                           | - active_sheet        |         |
-|                                | - sheet_names         |         |
-|                                | - data                |         |
-|                                | - last_modified_by    |         |
-|                                | - creator             |         |
-|                                | - has_password        |         |
-+--------------------------------+-----------------------+---------+
-| docx                           | - text                |         |
-|                                | - author              |         |
-|                                | - last_modified_by    |         |
-|                                | - has_password        |         |
-+--------------------------------+-----------------------+---------+
-| pptx                           | - text                |         |
-|                                | - author              |         |
-|                                | - last_modified_by    |         |
-|                                | - num_slides          |         |
-|                                | - has_password        |         |
-+--------------------------------+-----------------------+---------+
-| html, txt, xml                 | - text                |         |
-|                                | - encoding            |         |
-|                                | - lines               |         |
-|                                | - words               |         |
-|                                | - num_lines           |         |
-|                                | - num_words           |         |
-+--------------------------------+-----------------------+---------+
-| json                           | - text                |         |
-|                                | - encoding            |         |
-|                                | - num_keys            |         |
-|                                | - key_names           |         |
-|                                | - empty_values        |         |
-+--------------------------------+-----------------------+---------+
-| msg                            | - text                |         |
-|                                | - subject             |         |
-|                                | - date                |         |
-|                                | - sender              |         |
-+--------------------------------+-----------------------+---------+
-| pdf                            | - text                |         |
-|                                | - has_password        |         |
-|                                | - author              |         |
-|                                | - producer            |         |
-+--------------------------------+-----------------------+---------+
-| py                             | - num_lines           |         |
-|                                | - num_functions       |         |
-|                                | - num_classes         |         |
-|                                | - imports             |         |
-|                                | - docstrings          |         |
-+--------------------------------+-----------------------+---------+
-| rtf                            | - text                |         |
-+--------------------------------+-----------------------+---------+
-| py                             | - num_lines           |         |
-|                                | - num_functions       |         |
-|                                | - num_classes         |         |
-|                                | - imports             |         |
-|                                | - docstrings          |         |
-+--------------------------------+-----------------------+---------+
-| text                           | - num_lines           |         |
-|                                | - num_functions       |         |
-|                                | - num_classes         |         |
-|                                | - imports             |         |
-|                                | - docstrings          |         |
-+--------------------------------+-----------------------+---------+
-| zip                            | - num_files           |         |
-|                                | - file_types          |         |
-|                                | - file_names          |         |
-+--------------------------------+-----------------------+---------+
+|
 
++--------------------------------+-----------------------+---------------------+
+| File Type                      | Metadata Fields       | Example             |
++================================+=======================+=====================+
+| [All file types]               | - file_path           | - build\index.html  |
+|                                | - file_name           | - index.html        |
+|                                | - extension           | - .html             |
+|                                | - owner               | - AD/BLUO           |
+|                                | - size (in bytes)     | - 53800             |
+|                                | - modification_time   | - 1707161382        |
+|                                | - access_time         | - 1707161382        |
+|                                | - creation_time       | - 1707161382        |
+|                                | - permissions         | - 666               |
+|                                | - parent_directory    | - build\            |
+|                                | - is_file             | - False             |
+|                                | - is_symlink          | - False             |
+|                                | - absolute_path       | - C:\...\index.html |
++--------------------------------+-----------------------+---------------------+
+| `mp3`, `wav`, `mp4`, `flac`,   | - bitrate             | - 50000             |
+| `aiff`, `ogg`                  | - length (in seconds) | - 4.32              |
+|                                | - artist              | - John Doe          |
+|                                | - date                | - 1707161382        |
+|                                | - title               | - The ABCs          |
++--------------------------------+-----------------------+---------------------+
+| `jpeg`, `png`, `heic`/`heif`,  | - original_format     | - GIF               |
+| `tiff`/`tif`                   | - mode                | - P                 |
+|                                | - width               | - 1024              |
+|                                | - height              | - 980               |
++--------------------------------+-----------------------+---------------------+
+| `gif`                          | - original_format     | - GIF               |
+|                                | - mode                | - P                 |
+|                                | - width               | - 1024              |
+|                                | - height              | - 980               |
+|                                | - animated            | - True              |
+|                                | - frames              | - 24                |
++--------------------------------+-----------------------+---------------------+
+| `csv`                          | - text                | - Text goes here    |
+|                                | - encoding            | - utf-8             |
+|                                | - num_rows            | - 12                |
+|                                | - num_cols            | - 5                 |
+|                                | - num_cells           | - 60                |
+|                                | - empty_cells         | - 5                 |
++--------------------------------+-----------------------+---------------------+
+| `xlsx`                         | - active_sheet        | - Sheet1            |
+|                                | - sheet_names         | - ["Sheet1"]        |
+|                                | - data                | - {"Sheet1": [()]   |
+|                                | - last_modified_by    | - John Doe          |
+|                                | - creator             | - John Doe          |
+|                                | - has_password        | - False             |
++--------------------------------+-----------------------+---------------------+
+| `docx`                         | - text                | - Text goes here    |
+|                                | - author              | - John Doe          |
+|                                | - last_modified_by    | - John Doe          |
+|                                | - has_password        | - False             |
++--------------------------------+-----------------------+---------------------+
+| `pptx`                         | - text                | - Text goes here    |
+|                                | - author              | - John Doe          |
+|                                | - last_modified_by    | - John Doe          |
+|                                | - num_slides          | - 17                |
+|                                | - has_password        | - False             |
++--------------------------------+-----------------------+---------------------+
+| `html`, `txt`, `xml`           | - text                | - Text goes here    |
+|                                | - encoding            | - utf-8             |
+|                                | - lines               | - ["a b c", "d e"]  |
+|                                | - words               | - ["Word", "Text"]  |
+|                                | - num_lines           | - 2                 |
+|                                | - num_words           | - 9                 |
++--------------------------------+-----------------------+---------------------+
+| `json`                         | - text                | - Text goes here    |
+|                                | - encoding            | - utf-8             |
+|                                | - num_keys            | - 3                 |
+|                                | - key_names           | - ["A", "B", "C"]   |
+|                                | - empty_values        | - 2                 |
++--------------------------------+-----------------------+---------------------+
+| `msg`                          | - text                | - Text goes here    |
+|                                | - subject             | - "Title"           |
+|                                | - date                | - 1707161382        |
+|                                | - sender              | - John Doe          |
++--------------------------------+-----------------------+---------------------+
+| `pdf`                          | - text                | - Text goes here    |
+|                                | - has_password        | - False             |
+|                                | - author              | - John Doe          |
+|                                | - producer            | - John Doe          |
++--------------------------------+-----------------------+---------------------+
+| `py`                           | - num_lines           | - 3                 |
+|                                | - num_functions       | - 3                 |
+|                                | - num_classes         | - 3                 |
+|                                | - imports             | - ["pandas"]        |
+|                                | - docstrings          | - ["Docstring A"]   |
++--------------------------------+-----------------------+---------------------+
+| `rtf`                          | - text                | - Text goes here    |
++--------------------------------+-----------------------+---------------------+
+| `zip`                          | - num_files           | - 1                 |
+|                                | - file_types          | - ["html"]          |
+|                                | - file_names          | - ["a.html"]        |
++--------------------------------+-----------------------+---------------------+

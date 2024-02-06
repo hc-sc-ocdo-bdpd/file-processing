@@ -8,7 +8,11 @@ h2 {
     font-weight: 600;
 }
 
-h2 {
+h3 {
     font-size: 1.5rem;
     font-weight: 600;
+}
+
+td, th {
+    padding:  15px !important;
 }

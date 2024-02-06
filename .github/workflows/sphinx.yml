@@ -1,11 +1,14 @@
 name: Build documentation
 
 on:
-  pull_request:
-    types: [closed]
-    branches: [main]
-    paths:
-      - "**"
+  push:
+    branches:
+      - Sphinx
+  # pull_request:
+  #   types: [closed]
+  #   branches: [main]
+  #   paths:
+  #     - "**"
 
 permissions:
   contents: write
