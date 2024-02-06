@@ -1,9 +1,8 @@
-import pytest
-import sys, os
-sys.path.append(os.path.join(sys.path[0],'file_processing'))
-from file_processing.file import File
+import os
 from unittest.mock import patch
-from file_processing.errors import FileProcessingFailedError
+import pytest
+from file_processing import File
+from file_processing.tools.errors import FileProcessingFailedError
 
 
 variable_names = "path, original_format, mode, width, height"
@@ -33,7 +32,7 @@ def test_jpeg_invalid_save_location(path):
     invalid_save_path = '/non_existent_folder/' + os.path.basename(path)
     with pytest.raises(FileProcessingFailedError):
         jpeg_file.processor.save(invalid_save_path)
-    
+
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))
 def test_not_opening_file(path):

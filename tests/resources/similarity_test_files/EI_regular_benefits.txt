@@ -1,0 +1,65 @@
+EI regular benefits
+
+How much you could receive
+From: Employment and Social Development Canada
+
+On this page
+You could get up to 55% of your earnings
+You can get benefits for up to a maximum of 45 weeks
+How we calculate your weekly benefit amount
+If your net family income is $25,921 or less
+Taxes are deducted from EI payments
+You could get up to 55% of your earnings
+We can’t tell you exactly how much you’ll receive before we process your application. For most people, the basic rate for calculating Employment Insurance (EI) benefits is 55% of their average insurable weekly earnings, up to a maximum amount. As of January 1, 2023, the maximum yearly insurable earnings amount is $61,500. This means that you can receive a maximum amount of $650 per week.
+
+Insurable earnings include most of the different types of compensation from employment, such as wages, tips, bonuses and commissions. The Canada Revenue Agency determines what types of earnings are insurable.
+
+You can get benefits for up to a maximum of 45 weeks
+You can receive EI from 14 weeks up to a maximum of 45 weeks, depending on the unemployment rate in your region at the time of filing your claim and the amount of insurable hours you've accumulated in the last 52 weeks or since your last claim, whichever is shorter.
+
+Seasonal workers
+Number of weeks of EI regular benefits payable by regional rate of unemployment
+The number of weeks for which you may receive benefits doesn’t change if you move to another region after your benefit period begins.
+
+How we calculate your weekly benefit amount
+The amount of weekly benefits is calculated as follows:
+
+we calculate your total insurable earnings for the required number of best weeks (the weeks that you earned the most money, including insurable tips and commissions) based on the information you provide and/or your record(s) of employment
+we determine the divisor (number of best weeks) that corresponds to your regional rate of unemployment
+we divide your total insurable earnings for your best weeks by your required number of best weeks
+we then multiply the result by 55% to obtain the amount of your weekly benefits
+In regions of Canada with the highest rates of unemployment, we’ll calculate using the best 14 weeks. In regions of Canada with the lowest rates of unemployment, we’ll use the best 22 weeks. In other regions, the number of weeks used to calculate benefits will be somewhere between 14 and 22, depending on the unemployment rate in those regions.
+
+Calculation
+Total insurable earnings for the required number of best weeks
+divided byRequired number of best weeks
+times by55 %
+equalsWeekly EI benefit (maximum $650)
+Required number of best weeks by regional rate of unemployment
+Regional rate of unemployment	Required weeks
+6% or less	22
+6.1% to 7%	21
+7.1% to 8%	20
+8.1% to 9%	19
+9.1% to 10%	18
+10.1% to 11%	17
+11.1% to 12%	16
+12.1% to 13%	15
+13.1% or more	14
+To find out the rate of unemployment in your region, visit EI Program Characteristics.
+
+Once the weekly benefit rate is established, it will remain unchanged over the life of your claim.
+
+If your net family income is $25,921 or less
+If your net family income doesn’t exceed $25,921 per year, you have children and you or your spouse receives the Canada Child Benefit, you’re considered a member of a low-income family. Therefore, you may be eligible to receive the EI family supplement.
+
+The family supplement rate is based on:
+
+your net family income up to a maximum of $25,921 per year
+the number of children in the family and their ages
+The family supplement may increase your benefit rate up to 80% of your average insurable earnings. If you and your spouse claim EI benefits at the same time, only 1 of you can receive the family supplement. It is generally better for the spouse with the lower benefit rate to receive the supplement.
+
+As your income level rises, the Family Supplement gradually decreases, so that when the maximum income of $25,921 is reached no supplement is payable.
+
+Taxes are deducted from EI payments
+EI benefits are taxable, no matter what type of benefits you receive. Federal and provincial or territorial taxes, where applicable, will be deducted from your payment.

@@ -1,9 +1,8 @@
-import pytest
-import sys, os
-sys.path.append(os.path.join(sys.path[0],'file_processing'))
-from file_processing.file import File
+import os
 from unittest.mock import patch
-from file_processing.errors import FileProcessingFailedError
+import pytest
+from file_processing import File
+from file_processing.tools.errors import FileProcessingFailedError
 
 variable_names = "path, original_format, mode, width, height"
 values = [

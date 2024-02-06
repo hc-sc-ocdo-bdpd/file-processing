@@ -17,7 +17,7 @@ This project also uses ffmpeg for audio/video file transcripting. You can instal
 
 This library contains several components in different directories:
 
-- file_processing: Utilities for opening a variety of different file types.
+- file_processing: utilities for opening a variety of different file types.
 - utils: support functions for the file_processing components.
 - tests: pytest test cases
 - tests/resources: files used as inputs for tests.
@@ -27,18 +27,3 @@ These include file processing tools (in the file_processing directory). This cod
 - `file_processing.File`: Entry point for processing a file. It selects the appropriate processor for a given file based on the file type.
 - `utils.FileProcessorStrategy`: An abstract base class (ABC) for processing files. Subclasses must implement the `process` method.
 - `file_processing.TextFileProcessor` and `PdfFileProcessor`: They inherit from `FileProcessorStrategy` and implement `process` method for .txt and .pdf files respectively.
-- `file_processing.FileMetricStrategy`: An ABC for calculating metrics between files. Subclasses must implement the `calculate` method.
-- `utils.CosineSimilarity` and `utils.LevenshteinDistance`: They inherit from `FileMetricStrategy` and implement the `calculate` method to compute cosine similarity and Levenshtein distance between files.
-
-
-## Things To Do
-
-- [ ] Migrate this list to project milestones and issues
-- [ ] Extend `FileProcessorStrategy` to include more detailed metadata
-- [ ] Replace `print` statements with `logging` module
-- [ ] Implement OCR functionality for processing image-based PDF files
-- [ ] Integrate table extraction functionality
-- [ ] Add docstrings and type hinting to all classes and methods
-- [ ] Write tests to ensure the functionality of the library
-- [ ] Add support for more file types (.docx, .xlsx, .pptx, etc.)
-- [ ] Add more metrics for comparison between files (ex. jaccard)

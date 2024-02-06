@@ -7,8 +7,8 @@ from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
 from mutagen.oggvorbis import OggVorbis
 from mutagen.mp4 import MP4
-from file_processing.errors import FileProcessingFailedError
-from file_processing.file import File
+from file_processing.tools.errors import FileProcessingFailedError
+from file_processing import File
 
 
 variable_names = "path, bitrate, length, artist, date, title, organization"
@@ -100,8 +100,7 @@ def test_not_opening_file(path, bitrate, length, artist, date, title, organizati
         mock_open.assert_not_called()
 
 invalid_save_locations = [
-    ('tests/resources/test_files/sample_speech.mp3',
-     '/non_existent_folder/sample_speech.mp3')
+    ('tests/resources/test_files/sample_speech.mp3', '/non_existent_folder/sample_speech.mp3')
 ]
 
 

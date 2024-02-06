@@ -1,8 +1,9 @@
 import pytest
 from Levenshtein import ratio
-from file_processing.file import File
-from file_processing.errors import NotTranscriptionApplicableError
+from file_processing import File
+from file_processing.tools.errors import NotTranscriptionApplicableError
 
+variable_names = "path, transcription, language"
 variable_names = "path, transcription, language"
 values = [
     ("tests/resources/test_files/sample_speech.aiff",
@@ -20,7 +21,9 @@ values = [
 ]
 
 NON_TRANSCRIPTION_APPLICABLE_SAMPLES = [
-    "tests/resources/test_files/Empty.zip", "tests/resources/test_files/Sample.xml"]
+    "tests/resources/test_files/Empty.zip",
+    "tests/resources/test_files/Sample.xml"
+]
 
 
 @pytest.fixture(params=NON_TRANSCRIPTION_APPLICABLE_SAMPLES)
@@ -34,6 +37,9 @@ def test_transcription_processing_success(path, transcription, language):
 
     assert 'text' in audio_file.metadata
     assert audio_file.metadata['language'] == language
+
+    similarity = ratio(audio_file.metadata['text'], transcription)
+    assert similarity >= 0.8
 
     similarity = ratio(audio_file.metadata['text'], transcription)
     assert similarity >= 0.8

@@ -1,9 +1,48 @@
-from unittest.mock import patch
-from file_processing.directory import Directory
 import os
+import json
+from datetime import datetime
+from pathlib import Path
 import pandas as pd
 import pytest
-import json
+from file_processing import Directory
+
+dir_variable_names = "dir_path"
+dir_values = [
+    ('tests/resources/directory_test_files'),
+    ('tests/resources'),
+    ('file_processing')
+]
+
+@pytest.fixture
+def mk_get_rm_dir_2(dir_path, tmp_path_factory):
+    output_path = str(tmp_path_factory.mktemp("outputs") / "test_output.csv")
+    dir1 = Directory(dir_path)
+    dir1.generate_report(output_path, False, None, None, None, False, False)
+    data = pd.read_csv(output_path)
+    yield data
+
+
+@pytest.mark.order(1)
+@pytest.mark.parametrize(dir_variable_names, dir_values)
+def test_not_opening_files_in_directory(mk_get_rm_dir_2):
+    now = datetime.now().timestamp()
+    data = mk_get_rm_dir_2[~mk_get_rm_dir_2['Extension'].isin(['.py', '.pyc'])]
+    data = data.reset_index(drop=True)
+    file_names = data['Absolute Path']
+
+    for file_name in file_names:
+        unix = Path(str(file_name)).stat().st_atime
+        assert now > (unix + 1.5 * 60), f"File was opened when it should not have been ({file_name})"
+
+
+@pytest.mark.parametrize(dir_variable_names, dir_values)
+def test_metadata_when_not_opening_files(mk_get_rm_dir_2):
+    for metadata_str in mk_get_rm_dir_2['Metadata']:
+        metadata = json.loads(metadata_str)
+        assert len(metadata) == 1, "There should be only one key in the metadata"
+        assert 'message' in metadata, "'message' key should be present in the metadata"
+        assert "File was not opened" in metadata['message'], "'File was not opened' should be part of the message"
+
 
 variable_names = "include_text, filters, keywords, migrate_filters, open_files, split_metadata"
 values = [
@@ -11,10 +50,8 @@ values = [
     (True, None, None, {"extensions": [".csv"]}, True, True),
     (False, None, None, {"max_size": 50000}, False, False),
     (True, {}, None, {"min_size": 50000}, True, True),
-    (True, {"extensions": [".csv"], "include_str": ["directory_test_files"],
-            "min_size": 50000}, None, None, True, False),
-    (False, {"extensions": [".docx", ".pptx"], "exclude_str": ["0.1.2.3.4.5"],
-             "max_size": 50000}, None, None, True, True),
+    (True, {"extensions": [".csv"], "include_str": ["directory_test_files"], "min_size": 50000}, None, None, True, False),
+    (False, {"extensions": [".docx", ".pptx"], "exclude_str": ["0.1.2.3.4.5"], "max_size": 50000}, None, None, True, True),
     (True, {"exclude_extensions": [".csv", ".pptx"]}, [], None, True, False),
     (False, None, ["Canada"], None, True, True),
     (True, None, ["Canada", "Health"], None, True, False),]
@@ -60,8 +97,7 @@ def test_columns(mk_get_rm_dir, include_text, filters, keywords, open_files, spl
 @pytest.mark.parametrize(variable_names, values)
 def test_text(mk_get_rm_dir, include_text, split_metadata):
     if include_text and not split_metadata:
-        assert mk_get_rm_dir["Metadata"].str.contains(
-            "\"text\":").any() == include_text
+        assert mk_get_rm_dir["Metadata"].str.contains("\"text\":").any() == include_text
 
 
 @pytest.mark.parametrize(variable_names, values)
@@ -87,30 +123,25 @@ def test_filters(mk_get_rm_dir, filters):
                 "|".join(filters.get("include_str"))).any()
 
     else:
-        assert mk_get_rm_dir.shape[0] == sum(
-            len(files) for _, _, files in os.walk(r"tests/resources/directory_test_files"))
+        num_files = sum(len(files) for _, _, files in os.walk(r"tests/resources/directory_test_files"))
+        assert mk_get_rm_dir.shape[0] == num_files
 
 
 @pytest.mark.parametrize(variable_names, values)
 def test_migrate_filters(mk_get_rm_dir, migrate_filters):
     if migrate_filters:
         if "extensions" in migrate_filters.keys():
-            assert mk_get_rm_dir[mk_get_rm_dir["Extension"].isin(
-                migrate_filters.get("extensions"))]["Migrate"].eq(1).all()
-            assert mk_get_rm_dir[~mk_get_rm_dir["Extension"].isin(
-                migrate_filters.get("extensions"))]["Migrate"].eq(0).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Extension"].isin(migrate_filters.get("extensions"))]["Migrate"].eq(1).all()
+            assert mk_get_rm_dir[~mk_get_rm_dir["Extension"].isin(migrate_filters.get("extensions"))]["Migrate"].eq(0).all()
         if "min_size" in migrate_filters.keys():
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] >=
-                                 migrate_filters["min_size"] / 1e6]["Migrate"].eq(1).all()
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] <
-                                 migrate_filters["min_size"] / 1e6]["Migrate"].eq(0).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] >= migrate_filters["min_size"] / 1e6]["Migrate"].eq(1).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] < migrate_filters["min_size"] / 1e6]["Migrate"].eq(0).all()
         if "max_size" in migrate_filters.keys():
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] <=
-                                 migrate_filters["max_size"] / 1e6]["Migrate"].eq(1).all()
-            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] >
-                                 migrate_filters["max_size"] / 1e6]["Migrate"].eq(0).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] <= migrate_filters["max_size"] / 1e6]["Migrate"].eq(1).all()
+            assert mk_get_rm_dir[mk_get_rm_dir["Size (MB)"] > migrate_filters["max_size"] / 1e6]["Migrate"].eq(0).all()
     else:
-        assert "Migrate" not in mk_get_rm_dir.columns, "The 'Keywords' column should not be present in the DataFrame."
+        assert "Migrate" not in mk_get_rm_dir.columns, \
+            "The 'Keywords' column should not be present in the DataFrame."
 
 
 @pytest.mark.parametrize(variable_names, values)
@@ -130,10 +161,11 @@ def test_keywords(mk_get_rm_dir, include_text, split_metadata, keywords):
             .apply(lambda x: sum(x.count(key.lower()) for key in ['Health', 'Canada']))
         )
 
-        assert (metadata_keyword_counts == keyword_counts).all(
-        ), "Keyword counts do not match."
+        assert (metadata_keyword_counts == keyword_counts).all(), \
+            "Keyword counts do not match."
     else:
-        assert "Keywords" not in mk_get_rm_dir.columns, "The 'Keywords' column should not be present in the DataFrame."
+        assert "Keywords" not in mk_get_rm_dir.columns, \
+            "The 'Keywords' column should not be present in the DataFrame."
 
 
 def test_corrupted_dir(tmp_path):
@@ -149,37 +181,3 @@ def test_empty_report(tmp_path):
     dir1 = Directory('tests/resources/empty_dir')
     with pytest.raises(Exception):
         dir1.generate_report(tmp_path / "test_output.csv")
-
-
-variable_names = "directory_path"
-directories = [
-    'tests/resources/directory_test_files',
-    'tests/resources',
-    'file_processing'
-]
-
-
-@pytest.mark.parametrize(variable_names, directories)
-def test_not_opening_files_in_directory(directory_path, tmp_path):
-    output_path = tmp_path / "test_output.csv"
-    with patch('file_processing.file.File', autospec=True) as mock_file:
-        dir1 = Directory(directory_path)
-        dir1.generate_report(str(output_path), open_files=False)
-        for call in mock_file.mock_calls:
-            args, kwargs = call[1], call[2]
-            assert kwargs.get(
-                'open_file') == False, "File was opened when it should not have been"
-
-
-@pytest.mark.parametrize(variable_names, directories)
-def test_metadata_when_not_opening_files(directory_path, tmp_path):
-    output_path = tmp_path / "test_output.csv"
-    dir1 = Directory(directory_path)
-    dir1.generate_report(str(output_path), open_files=False)
-
-    data = pd.read_csv(str(output_path))
-    for metadata_str in data['Metadata']:
-        metadata = json.loads(metadata_str)
-        assert len(metadata) == 1, "There should be only one key in the metadata"
-        assert 'message' in metadata, "'message' key should be present in the metadata"
-        assert "File was not opened" in metadata['message'], "'File was not opened' should be part of the message"

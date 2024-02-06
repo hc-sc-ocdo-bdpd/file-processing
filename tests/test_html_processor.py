@@ -1,14 +1,13 @@
-import pytest
-import sys, os
-sys.path.append(os.path.join(sys.path[0],'file_processing'))
-from file_processing.file import File
+import os
 from unittest.mock import patch
-from file_processing.errors import FileProcessingFailedError
+import pytest
+from file_processing import File
+from file_processing.tools.errors import FileProcessingFailedError
 
 
 variable_names = "path, text_length, num_lines, num_words"
 values = [
-   ('tests/resources/test_files/Health - Canada.ca.html', 165405, 3439, 11162)
+    ('tests/resources/test_files/Health - Canada.ca.html', 165405, 3439, 11162)
 ]
 
 
@@ -22,7 +21,7 @@ def test_html_metadata(path, text_length, num_lines, num_words):
 
 @pytest.mark.parametrize(variable_names, values)
 def test_save_html_metadata(copy_file, text_length, num_lines, num_words):
-        test_html_metadata(copy_file, text_length, num_lines, num_words)
+    test_html_metadata(copy_file, text_length, num_lines, num_words)
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))

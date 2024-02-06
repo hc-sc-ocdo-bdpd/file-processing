@@ -1,10 +1,7 @@
-import pytest
-import sys
-import os
 from pathlib import Path
-sys.path.append(os.path.join(sys.path[0], 'file_processing'))
-from file import File
-from generic_processor import GenericFileProcessor
+import pytest
+from file_processing import File
+from file_processing.processors.generic_processor import GenericFileProcessor
 
 
 unsupported_files = [

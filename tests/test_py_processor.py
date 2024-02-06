@@ -1,15 +1,13 @@
-import pytest
-import sys, os
-sys.path.append(os.path.join(sys.path[0], 'file_processing'))
-from file import File
 from unittest.mock import patch
-from file_processing.errors import FileProcessingFailedError
+import pytest
+from file_processing import File
+from file_processing.tools.errors import FileProcessingFailedError
 
 
 variable_names = "path, num_lines, num_functions, num_classes, num_imports, num_docstrings"
 values = [
-   ('tests/resources/test_files/backend.py', 6503, 224, 5, 69, 194),
-   ('tests/resources/test_files/align.py', 213, 8, 0, 16, 3)
+    ('tests/resources/test_files/backend.py', 6503, 224, 5, 69, 194),
+    ('tests/resources/test_files/align.py', 213, 8, 0, 16, 3)
 ]
 
 
@@ -30,10 +28,10 @@ def test_not_opening_file(path, num_lines, num_functions, num_classes, num_impor
         mock_open.assert_not_called()
 
 
-
 @pytest.mark.parametrize(variable_names, values)
 def test_save_python_metadata(copy_file, num_lines, num_functions, num_classes, num_imports, num_docstrings):
-    test_python_metadata(copy_file, num_lines, num_functions, num_classes, num_imports, num_docstrings)
+    test_python_metadata(copy_file, num_lines, num_functions,
+                         num_classes, num_imports, num_docstrings)
 
 
 invalid_save_locations_python = [

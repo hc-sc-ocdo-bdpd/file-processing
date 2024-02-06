@@ -1,10 +1,16 @@
 import os
-from file import File
-from typing import Optional
-import pandas as pd
-from pathlib import Path
-from tqdm import tqdm
 import json
+from typing import Optional
+from pathlib import Path
+
+import faiss
+import pandas as pd
+import numpy as np
+from tqdm import tqdm
+from sentence_transformers import SentenceTransformer
+from scipy.spatial.distance import cdist
+from file_processing import File
+from file_processing.tools.errors import EmptySelection
 
 
 class Directory:
@@ -23,12 +29,13 @@ class Directory:
                     file_path = os.path.join(root, filename)
 
                     pbar.update(1)
-                    
+
                     if filters and not self._apply_filters(file_path, filters):
                         continue
 
                     try:
-                        file = File(file_path, use_ocr=self.use_ocr, open_file=open_files)
+                        file = File(file_path, use_ocr=self.use_ocr,
+                                    open_file=open_files)
                         yield file
                     except Exception as e:
                         file = File(file_path, open_file=False)
@@ -38,9 +45,11 @@ class Directory:
 
     def _apply_filters(self, file_path: str, filters: dict) -> bool:
         file = Path(file_path).resolve()
-        if filters.get('exclude_str') and set(str(file).split('\\')) & set(filters['exclude_str']):
+        if filters.get('exclude_str') and \
+                set(os.path.normpath(str(file)).split(os.path.sep)) & set(filters['exclude_str']):
             return False
-        if filters.get('include_str') and not (set(str(file).split('\\')) & set(filters['include_str'])):
+        if filters.get('include_str') and \
+                not set(os.path.normpath(str(file)).split(os.path.sep)) & set(filters['include_str']):
             return False
         if filters.get('extensions') and file.suffix not in filters['extensions']:
             return False
@@ -56,16 +65,98 @@ class Directory:
     def get_files(self, filters: dict = None):
         return self._file_generator(filters)
 
+    def identify_duplicates(self, report_file: str = None, filters: Optional[dict] = None,
+                            threshold: int = 0, top_n: int = 3, use_abs_path: bool = False) -> None:
+        """
+        Generates a CSV ranking the most similar files in the provided directory.
+
+        :param report_file: The path to the output CSV file. If none, then the data is returned.
+        :param filters: A dictionary of filters to apply to the files. Extensions are restricted to pdf/docx/txt by default.
+        :param threshold: The cutoff similarity score (0-1) to write to the report.
+        :param top_n: The top n closest files to check for. Only compatible with threshold > 0.
+        """
+
+        # Pre-processing data
+        data = [file.processor.__dict__ for file in self._file_generator(
+            filters, True)]
+        data = pd.json_normalize(data, max_level=1, sep='_')
+        df = pd.DataFrame(data)
+
+        if df.empty:
+            raise EmptySelection(f'Filtered selection of files is empty. \
+                            Please try a different directory, or new filters. \
+                            Filters: {filters}, Path: {Path(self.path).resolve()}')
+        elif not df.empty:
+            df = df.get(['size', 'extension', 'file_name',
+                        'metadata_text', 'absolute_path'])
+
+        df['metadata_text'] = df['metadata_text'].str.strip()
+        df['metadata_text'] = df['metadata_text'].str.replace('\n', '')
+
+        # Only keeping pdf/docx/txt files with sufficiently long 'text' metadata
+        df = df[(df['extension'].isin(['.pdf', '.docx', '.txt'])) &
+                (df['metadata_text'].str.len() > 10) &
+                (df['metadata_text'].notnull())]
+        df = df.reset_index(drop=True)
+        file_names = df.absolute_path if use_abs_path else df.file_name
+
+        # Encoding
+        encoder = SentenceTransformer("paraphrase-MiniLM-L3-v2")
+        vectors = encoder.encode(df['metadata_text'])
+
+        if threshold == 0:
+            # Brute force search via cosine similarity
+            similarities = 1 - cdist(vectors, vectors, 'cosine')
+            similarities = np.around(similarities, decimals=2)
+            sim_df = pd.DataFrame(data=similarities, columns=file_names.tolist(),
+                                  index=file_names.tolist())
+
+            sim_df.sort_index(axis=1, inplace=True)
+            sim_df.sort_index(axis=0, inplace=True)
+
+            sim_df.to_csv(report_file)
+
+        elif threshold != 0:
+            # Search via FAISS indexes
+            vector_dimension = vectors.shape[1]
+            index = faiss.IndexFlatIP(vector_dimension)
+            index = faiss.IndexIDMap(index)
+            faiss.normalize_L2(vectors)
+            index.add_with_ids(vectors, df.index.values.astype(np.int64))
+            similarities, similarities_ids = index.search(vectors, k=top_n+1)
+
+            # Cleaning the data (removing matches with low measures of similarity)
+            sim = pd.DataFrame(similarities).astype('float64').round(2)
+            sim = sim.where(sim >= threshold).fillna('')
+            sim_ids = pd.DataFrame(similarities_ids)
+            sim_ids = sim_ids.where(sim != '', '')
+
+            # Creating the output dataframe
+            df_out = pd.DataFrame(file_names)
+            for i in range(min(top_n, len(df.file_name))):
+                df_out[f'{i+1}_file'] = sim_ids[i+1].map(file_names)
+                df_out[str(i+1)] = sim[i+1]
+
+            df_out = df_out.fillna('')
+            df_out.to_csv(report_file)
+
     def generate_analytics(self, report_file: str = None, filters: Optional[dict] = None) -> dict:
         """
         Returns analytics (size and count) on the file types inside the directory.
 
-        :param report_file: The path to the output CSV file. If none is specified, the data is returned directly.
+        :param report_file: The path to the output CSV file. If none, then the data is returned.
         :param filters: A dictionary of filters to apply to the files.
         """
 
-        data = [file.processor.__dict__ for file in self._file_generator(filters, False)]
+        data = [file.processor.__dict__ for file in self._file_generator(
+            filters, False)]
         df = pd.DataFrame(data)
+
+        if df.empty:
+            raise EmptySelection(f'Filtered selection of files is empty. \
+                            Please try a different directory, or new filters. \
+                            Filters: {filters}, Path: {Path(self.path).resolve()}')
+
         df = df.get(['size', 'extension'])
         df['count'] = 1
         df = df.groupby('extension').sum()
@@ -78,7 +169,7 @@ class Directory:
         return df.to_dict()
 
     def generate_report(self, report_file: str, include_text: bool = False, filters: Optional[dict] = None,
-                        keywords: Optional[list] = None, migrate_filters: Optional[dict] = None, 
+                        keywords: Optional[list] = None, migrate_filters: Optional[dict] = None,
                         open_files: bool = True, split_metadata: bool = False, char_limit: int = 3000) -> None:
         """
         Generates a report of the directory and writes it to a CSV file.
@@ -94,18 +185,22 @@ class Directory:
         """
 
         # Extracting the attributes from the File object
-        data = [file.processor.__dict__ for file in self._file_generator(filters, open_files)]
+        data = [file.processor.__dict__ for file in self._file_generator(
+            filters, open_files)]
 
-        # Imposing a character limit on each metadata property or removing the verbose fields entirely
+        # Imposing a character limit on each metadata property, or removing the verbose fields
         for file in data:
             file.pop('open_file', None)
             file['size'] = file['size'] / 1e6
             if migrate_filters:
-                file['migrate'] = int(self._apply_filters(file['file_path'], migrate_filters))
+                file['migrate'] = int(self._apply_filters(
+                    file['file_path'], migrate_filters))
             if include_text and open_files:
-                file['metadata'] = {k: str(v)[:char_limit] for k, v in file['metadata'].items()}
+                file['metadata'] = {k: str(v)[:char_limit]
+                                    for k, v in file['metadata'].items()}
                 if keywords and file['metadata'].get('text'):
-                    file['keywords'] = self._count_keywords(file['metadata']['text'], keywords)
+                    file['keywords'] = self._count_keywords(
+                        file['metadata']['text'], keywords)
                 elif keywords:
                     file['keywords'] = self._count_keywords('', keywords)
             elif not include_text:
@@ -115,25 +210,31 @@ class Directory:
         # Unpacking the metadata field so each metadata property becomes its own column
         if split_metadata:
             data = pd.json_normalize(data, max_level=1, sep='_')
-        
+
         df = pd.DataFrame(data)
 
         if df.empty:
-            raise Exception('Filtered selection of files is empty. Please try different filters')
+            raise EmptySelection(f'Filtered selection of files is empty. \
+                            Please try a different directory, or new filters. \
+                            Filters: {filters}, Path: {Path(self.path).resolve()}')
 
         df.columns = df.columns.str.replace('metadata_', '')
         df.columns = df.columns.str.replace('keywords_', 'Keyword.')
 
         if not split_metadata:
-            df['metadata'] = df['metadata'].apply(lambda x: json.dumps(x))
+            df['metadata'] = df['metadata'].apply(json.dumps)
 
         # Converting booleans to integers (True->1; False->0)
         for boolean in ['is_file', 'is_symlink']:
             df[boolean] = df[boolean].astype(int)
 
-        # Converting unix time to datetime
+        # Converting unix time to datetime (GMT time)
         for time in ['modification_time', 'access_time', 'creation_time']:
             df[time] = pd.to_datetime(df[time].round(0), unit='s')
+
+        # Converting file permissions from number to string (ex '666' to 'Unrestricted')
+        df['permissions'] = df['permissions'].apply(
+            lambda x: f'Unrestricted ({x})' if x in ['666', '777'] else f'Restricted ({x})')
 
         # df.replace(np.NaN, 'N/A', inplace=True)
         df.columns = df.columns.str.replace('_', ' ')
@@ -159,4 +260,3 @@ class Directory:
             keyword_dict[keyword] = count
 
         return keyword_dict
-    
