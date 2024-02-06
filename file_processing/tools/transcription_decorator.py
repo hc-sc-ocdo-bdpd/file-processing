@@ -23,7 +23,7 @@ class TranscriptionDecorator:
         """
         try:
             model = whisper.load_model('base')
-            text = model.transcribe(str(self._processor.file_path))
+            text = model.transcribe(str(self._processor.file_path), fp16=False)
             return text['text'], text['language']
         except Exception as e:
             raise TranscriptionProcessingError(

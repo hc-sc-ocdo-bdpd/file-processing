@@ -126,7 +126,7 @@ class Directory:
             similarities, similarities_ids = index.search(vectors, k=top_n+1)
 
             # Cleaning the data (removing matches with low measures of similarity)
-            sim = pd.DataFrame(similarities).round(2)
+            sim = pd.DataFrame(similarities).astype('float64').round(2)
             sim = sim.where(sim >= threshold).fillna('')
             sim_ids = pd.DataFrame(similarities_ids)
             sim_ids = sim_ids.where(sim != '', '')
