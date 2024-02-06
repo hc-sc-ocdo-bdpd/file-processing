@@ -37,8 +37,26 @@ Optional dependencies are defined in the `pyproject.toml` config file. These inc
 
 Once on `pypi`, the command to install optional dependencies is:
 
-```js
+```py
 pip install file_procesing_tools[<optional_set_1>, ...]
 ```
 
-This installs both the library and each of the specified sets of dependencies.
+This installs both the library and each of the specified sets of dependencies. Namely, the 4 optional dependency sets are:
+
+```toml
+windows = ['pywin32']
+build = ['wheel==0.40.0']
+documentation = [
+    'sphinx==7.2.6',
+    'furo==2024.1.29',
+    'myst-parser==2.0.0',
+    'sphinx-inline-tabs==2023.4.21',
+]
+testing = [
+    'pytest==7.4.0',
+    'pytest-order==1.2.0',
+    'openpyxl>=3.1.2',
+    'python-Levenshtein==0.21.1',
+    'scikit-learn==1.3.0',
+]
+```

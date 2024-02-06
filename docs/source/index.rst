@@ -121,7 +121,7 @@ Supported File Types and Extracted Metadata
 +--------------------------------+-----------------------+---------------------+
 | File Type                      | Metadata Fields       | Example             |
 +================================+=======================+=====================+
-| [All file types]               | - file_path           | - build\index.html  |
+| [All file types]               | - file_path           | - build/index.html  |
 |                                | - file_name           | - index.html        |
 |                                | - extension           | - .html             |
 |                                | - owner               | - AD/BLUO           |
@@ -130,10 +130,10 @@ Supported File Types and Extracted Metadata
 |                                | - access_time         | - 1707161382        |
 |                                | - creation_time       | - 1707161382        |
 |                                | - permissions         | - 666               |
-|                                | - parent_directory    | - build\            |
+|                                | - parent_directory    | - build/            |
 |                                | - is_file             | - False             |
 |                                | - is_symlink          | - False             |
-|                                | - absolute_path       | - C:\...\index.html |
+|                                | - absolute_path       | - C:/.../index.html |
 +--------------------------------+-----------------------+---------------------+
 | `mp3`, `wav`, `mp4`, `flac`,   | - bitrate             | - 50000             |
 | `aiff`, `ogg`                  | - length (in seconds) | - 4.32              |
