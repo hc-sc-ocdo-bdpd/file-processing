@@ -28,8 +28,8 @@ def test_similarity_scores(a, b, cosine, levenshtein):
 
 
 variable_names = "a, b"
-invalid_files = ["tests/resources/test_files/align.py",
-                 "tests/resources/test_files/coffee.json"]
+invalid_files = [("tests/resources/test_files/align.py",
+                 "tests/resources/test_files/coffee.json")]
 
 
 @pytest.mark.parametrize(variable_names, invalid_files)
