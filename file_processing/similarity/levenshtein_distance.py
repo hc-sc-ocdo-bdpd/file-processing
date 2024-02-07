@@ -1,5 +1,5 @@
 from Levenshtein import distance
-from utils.file_metric_strategy import FileMetricStrategy
+from file_processing.similarity.file_metric_strategy import FileMetricStrategy
 
 class LevenshteinDistance(FileMetricStrategy):
     def calculate(self):
