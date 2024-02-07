@@ -1,7 +1,7 @@
 import whisper
+import torch
 from file_processing.tools import FileProcessorStrategy
 from file_processing.tools.errors import TranscriptionProcessingError
-
 
 class TranscriptionDecorator:
     def __init__(self, processor: FileProcessorStrategy) -> None:
@@ -22,8 +22,9 @@ class TranscriptionDecorator:
             list: The extracted text, language
         """
         try:
-            model = whisper.load_model('base')
-            text = model.transcribe(str(self._processor.file_path), fp16=False)
+            gpu = torch.cuda.is_available()
+            model = whisper.load_model('base', device=(gpu or None))
+            text = model.transcribe(str(self._processor.file_path), fp16=gpu)
             return text['text'], text['language']
         except Exception as e:
             raise TranscriptionProcessingError(
