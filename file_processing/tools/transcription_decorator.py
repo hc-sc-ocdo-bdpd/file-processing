@@ -22,9 +22,10 @@ class TranscriptionDecorator:
             list: The extracted text, language
         """
         try:
-            gpu = torch.cuda.is_available()
-            model = whisper.load_model('base', device=(gpu or None))
-            text = model.transcribe(str(self._processor.file_path), fp16=gpu)
+            has_gpu = torch.cuda.is_available()
+            device = 'cuda' if has_gpu else None
+            model = whisper.load_model('base', device=device)
+            text = model.transcribe(str(self._processor.file_path), fp16=has_gpu)
             return text['text'], text['language']
         except Exception as e:
             raise TranscriptionProcessingError(
