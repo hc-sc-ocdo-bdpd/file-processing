@@ -74,8 +74,9 @@ docs/_build/
 # PyBuilder
 target/
 
-# Jupyter Notebook
+# Jupyter Notebook and Generated Files
 .ipynb_checkpoints
+corrupted_file_report.csv
 
 # IPython
 profile_default/
