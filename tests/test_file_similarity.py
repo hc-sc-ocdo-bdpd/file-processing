@@ -1,7 +1,7 @@
 import pytest
 from file_processing import File
-from similarity import CosineSimilarity
-from similarity import LevenshteinDistance
+from file_processing import CosineSimilarity
+from file_processing import LevenshteinDistance
 
 variable_names = "a, b, cosine, levenshtein"
 values = [("tests/resources/similarity_test_files/aviation_safety.txt",

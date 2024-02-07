@@ -1,6 +1,6 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from similarity.file_metric_strategy import FileMetricStrategy
+from file_processing.similarity.file_metric_strategy import FileMetricStrategy
 
 class CosineSimilarity(FileMetricStrategy):
     def calculate(self):
