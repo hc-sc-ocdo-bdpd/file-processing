@@ -24,7 +24,7 @@ class OCRProcessingError(OCRError):
     """Raised when there's an issue during OCR processing."""
 
 
-class NotOCRApplciableError(OCRError):
+class NotOCRApplicableError(OCRError):
     """Raised when attempting OCR on a file type that doesn't support it."""
 
 

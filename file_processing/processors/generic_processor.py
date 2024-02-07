@@ -1,4 +1,5 @@
 import shutil
+import logging
 from file_processing.tools import FileProcessorStrategy
 
 class GenericFileProcessor(FileProcessorStrategy):
@@ -13,4 +14,4 @@ class GenericFileProcessor(FileProcessorStrategy):
         if output_path:
             shutil.copy2(self.file_path, output_path)
         else:
-            print("No output path provided, file not saved.")
+            logging.info("No output path provided, file not saved.")

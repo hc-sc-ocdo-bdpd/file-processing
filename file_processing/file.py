@@ -2,7 +2,7 @@ from pathlib import Path
 import pytesseract
 from file_processing import processors
 from file_processing.tools import FileProcessorStrategy, OCRDecorator, TranscriptionDecorator
-from file_processing.tools.errors import TesseractNotFound, NotOCRApplciableError, NotTranscriptionApplicableError
+from file_processing.tools.errors import TesseractNotFound, NotOCRApplicableError, NotTranscriptionApplicableError
 
 
 class File:
@@ -52,7 +52,7 @@ class File:
 
         if use_ocr:
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
-                raise NotOCRApplciableError(f"OCR is not applicable for file type {extension}.")
+                raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
 
             try:
                 pytesseract.get_tesseract_version()

@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 from typing import Optional
 from pathlib import Path
 
@@ -34,13 +35,15 @@ class Directory:
                         continue
 
                     try:
-                        file = File(file_path, use_ocr=self.use_ocr,
-                                    open_file=open_files)
+                        file = File(file_path, use_ocr=self.use_ocr, open_file=open_files)
+                        logging.info('Processing file: %s', file_path)
                         yield file
                     except Exception as e:
+                        logging.error('Error processing %s: %s', file_path, type(e).__name__)
                         file = File(file_path, open_file=False)
                         file.metadata.pop('message')
                         file.metadata.update({'error': type(e).__name__})
+
                         yield file
 
     def _apply_filters(self, file_path: str, filters: dict) -> bool:
@@ -77,8 +80,7 @@ class Directory:
         """
 
         # Pre-processing data
-        data = [file.processor.__dict__ for file in self._file_generator(
-            filters, True)]
+        data = [file.processor.__dict__ for file in self._file_generator(filters, True)]
         data = pd.json_normalize(data, max_level=1, sep='_')
         df = pd.DataFrame(data)
 
@@ -148,8 +150,7 @@ class Directory:
         :param filters: A dictionary of filters to apply to the files.
         """
 
-        data = [file.processor.__dict__ for file in self._file_generator(
-            filters, False)]
+        data = [file.processor.__dict__ for file in self._file_generator(filters, False)]
         df = pd.DataFrame(data)
 
         if df.empty:
@@ -185,22 +186,18 @@ class Directory:
         """
 
         # Extracting the attributes from the File object
-        data = [file.processor.__dict__ for file in self._file_generator(
-            filters, open_files)]
+        data = [file.processor.__dict__ for file in self._file_generator(filters, open_files)]
 
         # Imposing a character limit on each metadata property, or removing the verbose fields
         for file in data:
             file.pop('open_file', None)
             file['size'] = file['size'] / 1e6
             if migrate_filters:
-                file['migrate'] = int(self._apply_filters(
-                    file['file_path'], migrate_filters))
+                file['migrate'] = int(self._apply_filters(file['file_path'], migrate_filters))
             if include_text and open_files:
-                file['metadata'] = {k: str(v)[:char_limit]
-                                    for k, v in file['metadata'].items()}
+                file['metadata'] = {k: str(v)[:char_limit] for k, v in file['metadata'].items()}
                 if keywords and file['metadata'].get('text'):
-                    file['keywords'] = self._count_keywords(
-                        file['metadata']['text'], keywords)
+                    file['keywords'] = self._count_keywords(file['metadata']['text'], keywords)
                 elif keywords:
                     file['keywords'] = self._count_keywords('', keywords)
             elif not include_text:
