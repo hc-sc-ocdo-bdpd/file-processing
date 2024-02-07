@@ -46,3 +46,7 @@ class TesseractNotFound(Exception):
 
 class EmptySelection(FileProcessorError):
     """Raised when the input directory is empty. This may be caused by the filter conditions."""
+
+
+class NotDocumentBasedFile(KeyError):
+    """Raised during file similarity testing when the input file does not have a 'text' field."""

@@ -1,7 +1,6 @@
 import pytest
-from file_processing import File
-from file_processing import CosineSimilarity
-from file_processing import LevenshteinDistance
+from file_processing import File, CosineSimilarity, LevenshteinDistance
+from file_processing.tools.errors import NotDocumentBasedFile
 
 variable_names = "a, b, cosine, levenshtein"
 values = [("tests/resources/similarity_test_files/aviation_safety.txt",
@@ -26,3 +25,17 @@ def test_similarity_scores(a, b, cosine, levenshtein):
 
     assert cosine == round(cos, 2), "Cosine similarity is wrong"
     assert levenshtein == round(lev, 2), "Levenshtein distance is wrong"
+
+
+variable_names = "a, b"
+invalid_files = ["tests/resources/test_files/align.py",
+                 "tests/resources/test_files/coffee.json"]
+
+
+@pytest.mark.parametrize(variable_names, invalid_files)
+def test_invalid_file(a, b):
+    file_a = File(a)
+    file_b = File(b)
+
+    with pytest.raises(NotDocumentBasedFile):
+        CosineSimilarity(file_a, file_b).calculate()
