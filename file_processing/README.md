@@ -10,7 +10,7 @@
 
 
 
-## Steps to Extend Support for Additional File Types
+## Steps to Extend Support for Additional File Types 
 
 **Note**: The following is an example for adding support for `.html` files. When adding a new file type, ensure you follow the structure and conventions of existing file types (like `docx`, `pdf`, `txt`).
 
