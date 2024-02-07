@@ -4,6 +4,7 @@ from file_processing import File
 from file_processing.tools.errors import NotTranscriptionApplicableError
 
 variable_names = "path, transcription, language"
+variable_names = "path, transcription, language"
 values = [
     ("tests/resources/test_files/sample_speech.aiff",
      "and thank you for your continued support thank you", "en"),
@@ -36,6 +37,9 @@ def test_transcription_processing_success(path, transcription, language):
 
     assert 'text' in audio_file.metadata
     assert audio_file.metadata['language'] == language
+
+    similarity = ratio(audio_file.metadata['text'], transcription)
+    assert similarity >= 0.8
 
     similarity = ratio(audio_file.metadata['text'], transcription)
     assert similarity >= 0.8
