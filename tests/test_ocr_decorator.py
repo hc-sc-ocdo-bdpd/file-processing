@@ -1,7 +1,7 @@
 import re
 import pytest
 from file_processing import File
-from file_processing.tools.errors import NotOCRApplciableError
+from file_processing.tools.errors import NotOCRApplicableError
 
 PDF_SAMPLES = ["tests/resources/test_files/test_ocr_text.pdf", "tests/resources/test_files/test_ocr_text_2.pdf"]
 JPEG_SAMPLES = ["tests/resources/test_files/test_ocr_text.jpg", "tests/resources/test_files/test_ocr_text_2.jpg"]
@@ -43,5 +43,5 @@ def test_ocr_processing_success(ocr_applicable_file):
     assert predicted_text == expected_ocr_result
 
 def test_ocr_processing_non_applicable_file(non_ocr_applicable_file):
-    with pytest.raises(NotOCRApplciableError):
+    with pytest.raises(NotOCRApplicableError):
         File(str(non_ocr_applicable_file), use_ocr=True)
