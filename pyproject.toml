@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "file_processing"
 description = "A metadata extraction tool for various file extensions"
@@ -5,41 +9,8 @@ readme = "README.md"
 requires-python = ">=3.10"
 keywords = ["Metadata"]
 classifiers = ["Programming Language :: Python :: 3"]
-dynamic = ["version"]
-dependencies = [
-    'pypdf==4.0.0',
-    'python-docx==0.8.11',
-    'extract-msg==0.45.0',
-    'python-pptx==0.6.21',
-    'striprtf==0.0.26',
-    'chardet==5.2.0',
-    'Pillow>=10.0.0',
-    'pillow-heif==0.14.0',
-    'pytesseract==0.3.10',
-    'pandas>=2.0.3',
-    'numpy>=1.26.3',
-    'tqdm==4.66.1',
-    'openpyxl>=3.1.2',
-    'openai-whisper',
-    'mutagen==1.47.0',
-    'faiss-cpu==1.7.4',
-    'sentence-transformers==2.2.2',
-    'Levenshtein==0.21.1',
-    'torch==2.1.2'
-]
+dynamic = ["version", "dependencies", "optional-dependencies"]
 
-[project.optional-dependencies]
-windows = ['pywin32']
-build = ['wheel==0.40.0']
-documentation = [
-    'sphinx==7.2.6',
-    'furo==2024.1.29',
-    'myst-parser==2.0.0',
-    'sphinx-inline-tabs==2023.4.21',
-]
-testing = [
-    'pytest==7.4.0',
-    'pytest-order==1.2.0',
-    'python-Levenshtein==0.21.1',
-    'scikit-learn==1.3.0',
-]
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+optional-dependencies.developer = { file = ["developer_requirements.txt"] }
