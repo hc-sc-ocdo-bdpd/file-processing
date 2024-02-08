@@ -22,8 +22,11 @@ class TranscriptionDecorator:
             list: The extracted text, language
         """
         try:
-            model = whisper.load_model('base')
-            text = model.transcribe(str(self._processor.file_path), fp16=False)
+            text = whisper.transcribe(
+                model=whisper.load_model('base'),
+                audio=str(self._processor.file_path),
+                fp16=False
+            )
             return text['text'], text['language']
         except Exception as e:
             raise TranscriptionProcessingError(

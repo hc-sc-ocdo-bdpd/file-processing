@@ -2,6 +2,7 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import patch
 import pandas as pd
 import pytest
 from file_processing import Directory
@@ -123,7 +124,7 @@ def test_filters(mk_get_rm_dir, filters):
                 "|".join(filters.get("include_str"))).any()
 
     else:
-        num_files = sum(len(files) for _, _, files in os.walk(r"tests/resources/directory_test_files"))
+        num_files = sum(len(files) for _, _, files in os.walk("tests/resources/directory_test_files"))
         assert mk_get_rm_dir.shape[0] == num_files
 
 

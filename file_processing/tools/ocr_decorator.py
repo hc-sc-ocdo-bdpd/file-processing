@@ -42,8 +42,7 @@ class OCRDecorator:
 
     def _ocr_image(self) -> str:
         try:
-            image = Image.open(self._processor.file_path)
-            ocr_result = pytesseract.image_to_string(image)
+            ocr_result = pytesseract.image_to_string(str(self._processor.file_path))
             return ocr_result
         except Exception as e:
             raise OCRProcessingError(f"Error during OCR processing: {e}")
