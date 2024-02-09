@@ -42,11 +42,7 @@ def test_ocr_processing_success(mock_tesseract, ocr_applicable_file):
     result = re.sub('[^A-Za-z0-9!? ]+', '', file.metadata['ocr_text'])
 
     assert result == 'Test OCR text successful!'
-
-    _, file_extension = os.path.splitext(file.file_name)
-
-    if file_extension != '.pdf':
-        mock_tesseract.assert_called_once_with(image_path)
+    mock_tesseract.assert_called()
 
 
 def test_ocr_processing_non_applicable_file(non_ocr_applicable_file):

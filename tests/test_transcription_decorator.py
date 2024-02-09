@@ -1,6 +1,5 @@
 from unittest.mock import patch
 import pytest
-from Levenshtein import ratio
 from file_processing import File
 from file_processing.tools.errors import NotTranscriptionApplicableError
 
