@@ -2,6 +2,8 @@
 
 This library contains tools for processing various file types for several purposes. This includes extracting metadata, calculating metrics between files such as cosine similarity and Levenshtein distance. This software is under active development.
 
+> See the full documentation at https://hc-sc-ocdo-bdpd.github.io/file-processing-tools/
+
 ## Dependencies
 
 This project has dependencies defined in `requirements.txt`. These dependencies should be installed using `pip3 install -r depencencies.txt`. Older versions of pip may result in an error.
