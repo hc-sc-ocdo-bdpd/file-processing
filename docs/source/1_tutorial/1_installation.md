@@ -33,30 +33,27 @@ This project uses Tesseract for OCR and ffmpeg for transcription. Note that thes
 
 ## Optional Dependencies
 
-Optional dependencies are defined in the `pyproject.toml` config file. These include sets of dependencies for `windows`, `testing`, `build`, and `documentation`. These cannot be installed directly from GitHub and will require manual `pip install <library>` for now, until the project can be published on `pypi`.
+As system metadata extraction can entail OS-specific processes, Windows users can optionally install `pywin32` to extract file owner information (`pip install pywin32`).  
 
-Once on `pypi`, the command to install optional dependencies is:
+Optional developer dependencies are defined in the `pyproject.toml` config file. These cannot be installed directly from GitHub and will require manual `pip install <library>` for now, until the project can be published on `pypi`.
+
+Once on `pypi`, the command to install the optional dependencies is:
 
 ```py
-pip install file_procesing_tools[<optional_set_1>, ...]
+pip install file_procesing_tools[developer]
 ```
 
-This installs both the library and each of the specified sets of dependencies. Namely, the 4 optional dependency sets are:
+This installs both the library and each of the specified sets of dependencies. The `[developer]` dependencies are listed below and are oriented around build, documentation, and testing capabilities. 
 
-```toml
-windows = ['pywin32']
-build = ['wheel==0.40.0']
-documentation = [
-    'sphinx==7.2.6',
-    'furo==2024.1.29',
-    'myst-parser==2.0.0',
-    'sphinx-inline-tabs==2023.4.21',
-]
-testing = [
-    'pytest==7.4.0',
-    'pytest-order==1.2.0',
-    'openpyxl>=3.1.2',
-    'python-Levenshtein==0.21.1',
-    'scikit-learn==1.3.0',
-]
+```
+wheel==0.40.0
+pytest==7.4.0
+pytest-order==1.2.0
+sphinx==7.2.6
+furo==2024.1.29
+myst-parser==2.0.0
+sphinx-inline-tabs==2023.4.21
+pywin32
+ipywidgets==8.1.1
+build==1.0.3
 ```

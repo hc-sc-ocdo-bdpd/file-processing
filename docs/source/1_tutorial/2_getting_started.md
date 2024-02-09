@@ -16,6 +16,10 @@ from file_processing import File
 file = File('path/to/file')
 ```
 
+<br>
+
+### Metadata extraction
+
 Once initialized, attributes can be directly extracted by `file.attribute_name`. For example:
 
 ```py
@@ -51,6 +55,35 @@ It is also possible to read all metadata from the File object as a dictionary. N
             'num_words': 22
         }
     }
+```
+
+<br>
+
+### Measuring similarity between 2 files
+
+To check the similarity between 2 files, the file objects must first be defined. Afterward, `CosineSimilarity` or `LevenshteinDistance` objects can be used to compare the files:
+
+```{tab} Cosine Similarity
+```python
+from file_processing import File, CosineSimilarity
+
+a = File('path/to/fileA.docx')
+b = File('path/to/fileA.pdf')
+
+CosineSimilarity(a, b).calculate()
+
+>>> 0.6715940803327793
+```
+```{tab} Levenshtein Distance
+```python
+from file_processing import File, LevenshteinDistance
+
+a = File('path/to/fileA.docx')
+b = File('path/to/fileA.pdf')
+
+LevenshteinDistance(a, b).calculate()
+
+>>> 4135
 ```
 
 <br>
