@@ -41,17 +41,17 @@ File Processing
 The file processing library is a metadata extraction tool that supports 26 common file types, 
 including OCR for image files and transcription for audio/video files. There are 5 main use cases:
 
-1. Extracting metadata from individual files 
+#. | **Extracting metadata from individual files**
 
-2. Recursively extracting metadata from directories and generating CSV reports that
+#. | **Recursively extracting metadata from directories and generating CSV reports that:**
 
-   - list metadata for each file
+   * | list metadata for each file
 
-   - provide aggregate statistics on file size and file count versus file type
+   * | provide aggregate statistics on file size and file count versus file type
 
-   - compare file similarity of document-based files to identify possible duplicates in a directory
+   * | compare file similarity of document-based files to identify possible duplicates in a directory
 
-3. Comparing 2 document-based files via cosine similarity and Levenshtein distance
+#. | **Comparing 2 document-based files via cosine similarity and Levenshtein distance**
 
 |
 
