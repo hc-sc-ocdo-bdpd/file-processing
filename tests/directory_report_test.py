@@ -44,31 +44,30 @@ def test_metadata_when_not_opening_files(mk_get_rm_dir_2):
         assert "File was not opened" in metadata['message'], "'File was not opened' should be part of the message"
 
 
-variable_names = "include_text, filters, keywords, migrate_filters, open_files, split_metadata"
+variable_names = "include_text, filters, keywords, check_title_keywords, migrate_filters, open_files, split_metadata"
 values = [
-    (False, None, None, None, True, False),
-    (True, None, None, {"extensions": [".csv"]}, True, True),
-    (False, None, None, {"max_size": 50000}, False, False),
-    (True, {}, None, {"min_size": 50000}, True, True),
-    (True, {"extensions": [".csv"], "include_str": ["directory_test_files"], "min_size": 50000}, None, None, True, False),
-    (False, {"extensions": [".docx", ".pptx"], "exclude_str": ["0.1.2.3.4.5"], "max_size": 50000}, None, None, True, True),
-    (True, {"exclude_extensions": [".csv", ".pptx"]}, [], None, True, False),
-    (False, None, ["Canada"], None, True, True),
-    (True, None, ["Canada", "Health"], None, True, False),]
+    (False, None, None, False, None, True, False),
+    (True, None, None, False, {"extensions": [".csv"]}, True, True),
+    (False, None, None, False, {"max_size": 50000}, False, False),
+    (True, {}, None, False, {"min_size": 50000}, True, True),
+    (True, {"extensions": [".csv"], "include_str": ["directory_test_files"], "min_size": 50000}, None, False, None, True, False),
+    (False, {"extensions": [".docx", ".pptx"], "exclude_str": ["0.1.2.3.4.5"], "max_size": 50000}, None, False, None, True, True),
+    (True, {"exclude_extensions": [".csv", ".pptx"]}, [], False, None, True, False),
+    (False, None, ["Canada"], True, None, True, True),
+    (True, None, ["Canada", "Health"], True, None, True, False),]
 
 
 @pytest.fixture
-def mk_get_rm_dir(include_text, filters, keywords, migrate_filters, open_files, split_metadata, tmp_path_factory):
+def mk_get_rm_dir(include_text, filters, keywords, check_title_keywords, migrate_filters, open_files, split_metadata, tmp_path_factory):
     output_path = str(tmp_path_factory.mktemp("outputs") / "test_output.csv")
     dir1 = Directory("tests/resources/directory_test_files")
-    dir1.generate_report(output_path, include_text, filters,
-                         keywords, migrate_filters, open_files, split_metadata)
+    dir1.generate_report(output_path, include_text, filters, keywords, check_title_keywords, migrate_filters, open_files, split_metadata)
     data = pd.read_csv(output_path)
     yield data
 
 
 @pytest.mark.parametrize(variable_names, values)
-def test_columns(mk_get_rm_dir, include_text, filters, keywords, open_files, split_metadata, migrate_filters):
+def test_columns(mk_get_rm_dir, include_text, filters, keywords, check_title_keywords, open_files, split_metadata, migrate_filters):
 
     assert set(["File Path", "File Name", "Owner", "Extension", "Size (MB)", "Modification Time", "Access Time", "Creation Time",
                 "Parent Directory", "Permissions", "Is File", "Is Symlink", "Absolute Path"]).issubset(mk_get_rm_dir.columns)
@@ -87,8 +86,17 @@ def test_columns(mk_get_rm_dir, include_text, filters, keywords, open_files, spl
     if include_text and split_metadata and not filters:
         assert set(["Text", "Lines", "Words"]).issubset(mk_get_rm_dir.columns)
 
-    if include_text and keywords and not split_metadata:
-        assert "Keywords" in mk_get_rm_dir.columns
+    if include_text and keywords:
+        if not split_metadata:
+            assert "Keywords" in mk_get_rm_dir.columns
+        elif split_metadata:
+            assert sum(mk_get_rm_dir.columns.str.contains('Text.')) == len(keywords)
+
+    if keywords and check_title_keywords:
+        if not split_metadata:
+            assert "Title Keywords" in mk_get_rm_dir.columns
+        elif split_metadata:
+            assert sum(mk_get_rm_dir.columns.str.contains('Title.')) == len(keywords)
 
     if migrate_filters:
         assert "Migrate" in mk_get_rm_dir.columns
@@ -107,20 +115,15 @@ def test_filters(mk_get_rm_dir, filters):
             assert mk_get_rm_dir["Extension"].str.contains(r"\b(?:{})\b".format(
                 "|".join(filters.get("extensions")))).count() == mk_get_rm_dir.shape[0]
         if "exclude_extensions" in filters.keys() and filters['exclude_extensions']:
-            assert not mk_get_rm_dir["Extension"].isin(
-                filters.get("exclude_extensions")).any()
+            assert not mk_get_rm_dir["Extension"].isin(filters.get("exclude_extensions")).any()
         if "min_size" in filters.keys():
-            assert (mk_get_rm_dir["Size (MB)"] * 1e6 >=
-                    filters.get("min_size")).all()
+            assert (mk_get_rm_dir["Size (MB)"] * 1e6 >= filters.get("min_size")).all()
         if "max_size" in filters.keys():
-            assert (mk_get_rm_dir["Size (MB)"] * 1e6 <=
-                    filters.get("max_size")).all()
+            assert (mk_get_rm_dir["Size (MB)"] * 1e6 <= filters.get("max_size")).all()
         if "exclude_str" in filters.keys():
-            assert not mk_get_rm_dir["Absolute Path"].str.contains(
-                "|".join(filters.get("exclude_str"))).any()
+            assert not mk_get_rm_dir["Absolute Path"].str.contains("|".join(filters.get("exclude_str"))).any()
         if "include_str" in filters.keys():
-            assert mk_get_rm_dir["Absolute Path"].str.contains(
-                "|".join(filters.get("include_str"))).any()
+            assert mk_get_rm_dir["Absolute Path"].str.contains("|".join(filters.get("include_str"))).any()
 
     else:
         num_files = sum(len(files) for _, _, files in os.walk(r"tests/resources/directory_test_files"))
@@ -166,6 +169,29 @@ def test_keywords(mk_get_rm_dir, include_text, split_metadata, keywords):
     else:
         assert "Keywords" not in mk_get_rm_dir.columns, \
             "The 'Keywords' column should not be present in the DataFrame."
+
+
+@pytest.mark.parametrize(variable_names, values)
+def test_title_keywords(mk_get_rm_dir, keywords, check_title_keywords, split_metadata):
+    if keywords and check_title_keywords and not split_metadata:
+
+        keyword_counts = (
+            mk_get_rm_dir["Title Keywords"]
+            .fillna('{}')
+            .apply(lambda x: sum(json.loads(x.replace("'", '"')).values()))
+        )
+
+        metadata_keyword_counts = (
+            mk_get_rm_dir["File Name"]
+            .str.lower()
+            .apply(lambda x: sum(x.count(key.lower()) for key in ['Health', 'Canada']))
+        )
+
+        assert (metadata_keyword_counts == keyword_counts).all(), \
+            "Title keyword counts do not match."
+    else:
+        assert "Title Keywords" not in mk_get_rm_dir.columns, \
+            "The 'Title Keywords' column should not be present in the DataFrame."
 
 
 def test_corrupted_dir(tmp_path):
