@@ -53,4 +53,10 @@ If the workflow fails, it is helpful to view the `Summary` through the Actions t
 
 ## Automating Documentation
 
+This workflow enables the automatic updating of the [project documentation](https://hc-sc-ocdo-bdpd.github.io/file-processing-tools/) which is hosted on GitHub pages. As an overview:
 
+1. The documentation is built into a static website in the `docs/build/html` folder via `./make html`
+2. The `docs/build/html` folder is extracted and pushed to the `gh-pages` branch
+3. Another workflow is automatically triggered to publish the `index.html` file to GitHub pages
+
+In this way, a single push to the `documentation` branch is able to trigger a series of actions to ultimately update the project website.
