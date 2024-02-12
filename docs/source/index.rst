@@ -43,11 +43,11 @@ including OCR for image files and transcription for audio/video files. There are
 
 #. | **Extracting metadata from individual files**
 
-#. | **Recursively extracting metadata from directories and generating CSV reports that:**
+#. | **Extracting metadata from files in a directory and generating reports (.csv) that:**
 
    * | list metadata for each file
 
-   * | provide aggregate statistics on file size and file count versus file type
+   * | provide aggregate statistics on file size and count of each file type
 
    * | compare file similarity of document-based files to identify possible duplicates in a directory
 
