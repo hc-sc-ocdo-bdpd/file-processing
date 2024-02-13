@@ -1,8 +1,18 @@
+<br>
+
 # Citations
 
-* Where data came from 
+<br>
 
-* Audio text
+## Test Files
+
+The majority of the test resources are manually created using editors such as Paint or Photoshop. Certain resources are also publicly available through Health Canada and the Government of Canada. Online file converters were generally avoided for security reasons.
+
+<br>
+
+## Audio Transcriptions
+
+The `sample_speech` resources came from the below HuggingFace source.
 
 ```py
 @article{DBLP:journals/corr/abs-2111-09344,
