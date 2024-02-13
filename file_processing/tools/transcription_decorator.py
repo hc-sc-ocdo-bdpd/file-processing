@@ -24,8 +24,12 @@ class TranscriptionDecorator:
         try:
             has_gpu = torch.cuda.is_available()
             device = 'cuda' if has_gpu else None
-            model = whisper.load_model('base', device=device)
-            text = model.transcribe(str(self._processor.file_path), fp16=has_gpu)
+
+            text = whisper.transcribe(
+                model=whisper.load_model('base', device=device),
+                audio=str(self._processor.file_path),
+                fp16=has_gpu
+            )
             return text['text'], text['language']
         except Exception as e:
             raise TranscriptionProcessingError(
