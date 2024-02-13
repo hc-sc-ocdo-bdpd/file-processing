@@ -35,6 +35,16 @@ This project uses Tesseract for OCR and ffmpeg for transcription. Note that thes
 
 <br>
 
+### Runtime Optimization with GPU
+
+The audio to text transcription tool can be optimized if your computer supports CUDA, which is a special GPU tool. To toggle this, install the CUDA version of torch:
+
+```
+pip install --index-url https://download.pytorch.org/whl/cu118 torch==2.2.0
+```
+
+<br>
+
 ### Optional Windows Dependencies
 
 To enable file owner information extraction on Windows, you should have the `pywin32` library installed. However, this is not a mandatory dependency as the code will still run normally without `pywin32`.
