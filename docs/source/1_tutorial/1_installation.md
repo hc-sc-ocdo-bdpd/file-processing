@@ -33,30 +33,46 @@ This project uses Tesseract for OCR and ffmpeg for transcription. Note that thes
 
 ## Optional Dependencies
 
-Optional dependencies are defined in the `pyproject.toml` config file. These include sets of dependencies for `windows`, `testing`, `build`, and `documentation`. These cannot be installed directly from GitHub and will require manual `pip install <library>` for now, until the project can be published on `pypi`.
+<br>
 
-Once on `pypi`, the command to install optional dependencies is:
+### Runtime Optimization with GPU
 
-```py
-pip install file_procesing_tools[<optional_set_1>, ...]
+The audio to text transcription tool can be optimized if your computer supports CUDA, which is a special GPU tool. To toggle this, install the CUDA version of torch:
+
+```
+pip install --index-url https://download.pytorch.org/whl/cu118 torch==2.2.0
 ```
 
-This installs both the library and each of the specified sets of dependencies. Namely, the 4 optional dependency sets are:
+<br>
 
-```toml
-windows = ['pywin32']
-build = ['wheel==0.40.0']
-documentation = [
-    'sphinx==7.2.6',
-    'furo==2024.1.29',
-    'myst-parser==2.0.0',
-    'sphinx-inline-tabs==2023.4.21',
-]
-testing = [
-    'pytest==7.4.0',
-    'pytest-order==1.2.0',
-    'openpyxl>=3.1.2',
-    'python-Levenshtein==0.21.1',
-    'scikit-learn==1.3.0',
-]
+### Optional Windows Dependencies
+
+To enable file owner information extraction on Windows, you should have the `pywin32` library installed. However, this is not a mandatory dependency as the code will still run normally without `pywin32`.
+
+Use the following command install `pywin32`:
+
+```python
+pip install pywin32
+```
+
+<br>
+
+### Optional Developer Dependencies
+
+Optional developer dependencies are defined in the `developer_requirements.txt` file. Once the library is cloned, these can be installed via `pip install -r developer_requirements.txt` or included when creating the venv.
+
+The developer dependencies are listed below and are oriented around build, documentation, and testing capabilities. 
+
+
+```
+wheel==0.40.0
+pytest==7.4.0
+pytest-order==1.2.0
+sphinx==7.2.6
+furo==2024.1.29
+myst-parser==2.0.0
+sphinx-inline-tabs==2023.4.21
+pywin32
+ipywidgets==8.1.1
+build==1.0.3
 ```

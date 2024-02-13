@@ -170,15 +170,17 @@ class Directory:
         return df.to_dict()
 
     def generate_report(self, report_file: str, include_text: bool = False, filters: Optional[dict] = None,
-                        keywords: Optional[list] = None, migrate_filters: Optional[dict] = None,
-                        open_files: bool = True, split_metadata: bool = False, char_limit: int = 3000) -> None:
+                        keywords: Optional[list] = None, check_title_keywords: Optional[bool] = False,
+                        migrate_filters: Optional[dict] = None, open_files: bool = True,
+                        split_metadata: bool = False, char_limit: int = 3000) -> None:
         """
         Generates a report of the directory and writes it to a CSV file.
 
         :param report_file: The path to the output CSV file.
         :param include_text: Whether to include the 'text' attribute in the metadata column.
         :param filters: A dictionary of filters to apply to the files.
-        :param keywords: A list of keywords to count in the 'text' attribute of the metadata.   
+        :param keywords: A list of keywords to count in the 'text' (and file_name) attribute of the metadata.
+        :param check_title_keywords: Whether to check for keywords in the file_name field
         :param migrate_filters: A dictionary of filters to mark whether an item should be migrated (True) or not (False).
         :param open_files: Whether to open the files for extracting metadata. If False, files won't be opened.
         :param split_metadata: Whether to unpack the metadata dictionary into separate columns in the CSV file.
@@ -203,6 +205,8 @@ class Directory:
             elif not include_text:
                 for field in ['text', 'docstrings', 'imports', 'words', 'lines', 'data']:
                     file['metadata'].pop(field, None)
+            if check_title_keywords and keywords:
+                file['title_keywords'] = self._count_keywords(file['file_name'], keywords)
 
         # Unpacking the metadata field so each metadata property becomes its own column
         if split_metadata:
@@ -216,7 +220,8 @@ class Directory:
                             Filters: {filters}, Path: {Path(self.path).resolve()}')
 
         df.columns = df.columns.str.replace('metadata_', '')
-        df.columns = df.columns.str.replace('keywords_', 'Keyword.')
+        df.columns = df.columns.str.replace('title_keywords_', 'Title.')
+        df.columns = df.columns.str.replace('keywords_', 'Text.')
 
         if not split_metadata:
             df['metadata'] = df['metadata'].apply(json.dumps)

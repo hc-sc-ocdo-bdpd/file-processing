@@ -1,11 +1,9 @@
 name: Build documentation
 
 on:
-  pull_request:
-    types: [closed]
-    branches: [main]
-    paths:
-      - "**"
+  push:
+    branches:
+      - documentation
 
 permissions:
   contents: write
@@ -13,7 +11,6 @@ permissions:
 jobs:
   docs:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v4
 
