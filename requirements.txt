@@ -18,6 +18,4 @@ mutagen==1.47.0
 faiss-cpu==1.7.4
 sentence-transformers==2.2.2
 Levenshtein==0.21.1
-
-# --extra-index-url https://download.pytorch.org/whl/cu116
-torch==2.1.2
+torch==2.2.0 
