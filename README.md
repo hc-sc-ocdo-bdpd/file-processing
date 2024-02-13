@@ -1,17 +1,21 @@
 # File Processing Library
 
-➤ [**Starter code**](https://github.com/hc-sc-ocdo-bdpd/file_processing_tools_template
+➜ [**Starter code**](https://github.com/hc-sc-ocdo-bdpd/file_processing_tools_template
 )
 
-➤ [**Documentation**](https://hc-sc-ocdo-bdpd.github.io/file-processing-tools/)
+➜ [**Documentation**](https://hc-sc-ocdo-bdpd.github.io/file-processing-tools/)
 
 ## Overview
 
-This library contains tools for processing various file types for several purposes. This includes extracting metadata, calculating metrics between files such as cosine similarity and Levenshtein distance. This software is under active development.
+This library contains tools for processing various file types for several purposes. This includes extracting metadata from files and directories and calculating metrics between files such as cosine similarity and Levenshtein distance. This software is under active development.
 
-## Dependencies
+## Installation and Dependencies
 
-This project has dependencies defined in `requirements.txt`. These dependencies should be installed using `pip3 install -r depencencies.txt`. Older versions of pip may result in an error.
+If starting from scratch, use:
+
+```
+pip install git+https://github.com/hc-sc-ocdo-bdpd/file-processing-tools.git
+```
 
 Additionally, this project uses tesseract for OCR. This must be installed at: `C:/Users/USERNAME/AppData/Local/Programs/Tesseract-OCR/tesseract.exe`. See https://github.com/UB-Mannheim/tesseract/wiki.
 
