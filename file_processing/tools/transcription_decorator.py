@@ -3,7 +3,6 @@ import torch
 from file_processing.tools import FileProcessorStrategy
 from file_processing.tools.errors import TranscriptionProcessingError
 
-
 class TranscriptionDecorator:
     def __init__(self, processor: FileProcessorStrategy) -> None:
         """Initializes the TranscriptionDecorator with a given file processor."""
