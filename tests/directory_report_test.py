@@ -2,6 +2,7 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import patch
 import pandas as pd
 import pytest
 from file_processing import Directory
@@ -22,17 +23,30 @@ def mk_get_rm_dir_2(dir_path, tmp_path_factory):
     yield data
 
 
-@pytest.mark.order(1)
-@pytest.mark.parametrize(dir_variable_names, dir_values)
-def test_not_opening_files_in_directory(mk_get_rm_dir_2):
-    now = datetime.now().timestamp()
-    data = mk_get_rm_dir_2[~mk_get_rm_dir_2['Extension'].isin(['.py', '.pyc'])]
-    data = data.reset_index(drop=True)
-    file_names = data['Absolute Path']
+## Unmocked test to check actual access times
+# @pytest.mark.order(1)
+# @pytest.mark.parametrize(dir_variable_names, dir_values)
+# def test_not_opening_files_in_directory(mk_get_rm_dir_2):
+#     now = datetime.now().timestamp()
+#     data = mk_get_rm_dir_2[~mk_get_rm_dir_2['Extension'].isin(['.py', '.pyc'])]
+#     data = data.reset_index(drop=True)
+#     file_names = data['Absolute Path']
 
-    for file_name in file_names:
-        unix = Path(str(file_name)).stat().st_atime
-        assert now > (unix + 1.5 * 60), f"File was opened when it should not have been ({file_name})"
+#     for file_name in file_names:
+#         unix = Path(str(file_name)).stat().st_atime
+#         assert now > (unix + 1.5 * 60), f"File was opened when it should not have been ({file_name})"
+
+
+# Mocked test to check whether open_file is called on every individual file
+@pytest.mark.parametrize(dir_variable_names, dir_values)
+def test_not_opening_files_in_directory(dir_path, tmp_path):
+    output_path = tmp_path / "test_output.csv"
+    with patch('file_processing.File', autospec=True) as mock_file:
+        directory = Directory(dir_path)
+        directory.generate_report(str(output_path), open_files=False)
+        for call in mock_file.mock_calls:
+            _, kwargs = call[1], call[2]
+            assert kwargs.get('open_file') is False, "File was opened when it should not have been"
 
 
 @pytest.mark.parametrize(dir_variable_names, dir_values)
@@ -126,7 +140,7 @@ def test_filters(mk_get_rm_dir, filters):
             assert mk_get_rm_dir["Absolute Path"].str.contains("|".join(filters.get("include_str"))).any()
 
     else:
-        num_files = sum(len(files) for _, _, files in os.walk(r"tests/resources/directory_test_files"))
+        num_files = sum(len(files) for _, _, files in os.walk("tests/resources/directory_test_files"))
         assert mk_get_rm_dir.shape[0] == num_files
 
 
