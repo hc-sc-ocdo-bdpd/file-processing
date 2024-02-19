@@ -15,7 +15,7 @@ jobs:
         run: docker build -t idp .
 
       - name: Run Pytest
-        run: docker run -i idp pytest tests/ --junit-xml=.test_report.xml
+        run: docker run -i -v $PWD:/srv -w/srv idp pytest tests/ --junit-xml=.test_report.xml
 
       - name: Generate PyTest report
         uses: test-summary/action@v2
