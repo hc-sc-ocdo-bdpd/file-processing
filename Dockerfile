@@ -19,5 +19,5 @@ RUN pip install -r requirements.txt
 # Whether to install optional dependencies
 ARG DEV=false
 
-COPY if [ "$DEV" = "true" ]; then developer_requirements.txt .
-RUN if [ "$DEV" = "true" ]; then pip install -r developer_requirements.txt
+COPY if [ "${DEV}" = "true" ]; then developer_requirements.txt .; fi
+RUN if [ "${DEV}" = "true" ]; then pip install -r developer_requirements.txt; fi
