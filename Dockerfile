@@ -22,9 +22,3 @@ RUN pip install -r requirements.txt
 
 COPY developer_requirements.txt .
 RUN pip install -r developer_requirements.txt
-
-# Expose Jupyter port
-EXPOSE 8888
-
-# Start Jupyter Notebook
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--allow-root"]
