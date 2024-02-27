@@ -3,15 +3,10 @@ FROM python:3.10.12-slim
 # Set working directory
 WORKDIR /workspace
 
-# Install build tools and compilers
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     tesseract-ocr
 
-# # Set CMAKE_ARGS environment variable
-# ENV CMAKE_ARGS="-DLLAMA_CUBLAS=on"
-
-# Install Requirements
 RUN pip install -U \
     pip \
     setuptools \
@@ -20,5 +15,9 @@ RUN pip install -U \
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY developer_requirements.txt .
-RUN pip install -r developer_requirements.txt
+# docker build --build-arg DEV=true -t file_processing_tools:latest .
+# Whether to install optional dependencies
+ARG DEV=false
+
+COPY if [ "$DEV" = "true" ]; then developer_requirements.txt .
+RUN if [ "$DEV" = "true" ]; then pip install -r developer_requirements.txt
