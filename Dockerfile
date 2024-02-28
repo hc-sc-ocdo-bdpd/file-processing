@@ -12,6 +12,8 @@ RUN pip install -U \
     setuptools \
     wheel
 
+COPY file_processing .
+
 COPY requirements.txt .
 COPY developer_requirements.txt .
 RUN pip install -r requirements.txt
