@@ -21,7 +21,7 @@ COPY dist/file_processing-0.0.0-py3-none-any.whl .
 ARG DEV=false
 
 RUN if [ "${DEV}" = "true" ]; then \
-        pip install -r developer_requirements.txt; && \
+        pip install -r developer_requirements.txt && \
         pip install -r requirements.txt; \
     else \
         pip install file_processing-0.0.0-py3-none-any.whl; \
