@@ -12,18 +12,17 @@ RUN pip install -U \
     setuptools \
     wheel
 
-# COPY ./file_processing/ .
-# COPY requirements.txt .
-# RUN pip install -r requirements.txt
-
+COPY requirements.txt .
+COPY developer_requirements.txt .
 COPY dist/file_processing-0.0.0-py3-none-any.whl .
-RUN pip install file_processing-0.0.0-py3-none-any.whl
 
 # docker build --build-arg DEV=true -t file_processing_tools:latest .
 # Whether to install optional dependencies
 ARG DEV=false
 
-COPY developer_requirements.txt .
 RUN if [ "${DEV}" = "true" ]; then \
-      pip install -r developer_requirements.txt; \
+        pip install -r developer_requirements.txt; && \
+        pip install -r requirements.txt; \
+    else \
+        pip install file_processing-0.0.0-py3-none-any.whl; \
     fi
