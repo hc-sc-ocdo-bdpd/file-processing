@@ -13,6 +13,7 @@ RUN pip install -U \
     wheel
 
 COPY requirements.txt .
+COPY developer_requirements.txt .
 RUN pip install -r requirements.txt
 
 # docker build --build-arg DEV=true -t file_processing_tools:latest .
@@ -20,6 +21,5 @@ RUN pip install -r requirements.txt
 ARG DEV=false
 
 RUN if [ "${DEV}" = "true" ]; then \
-      cp developer_requirements.txt . && \
       pip install -r developer_requirements.txt; \
     fi
