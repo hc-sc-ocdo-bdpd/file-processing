@@ -171,7 +171,8 @@ class Directory:
 
     def generate_report(self, report_file: str, include_text: bool = False, filters: Optional[dict] = None,
                         keywords: Optional[list] = None, migrate_filters: Optional[dict] = None,
-                        open_files: bool = True, split_metadata: bool = False, char_limit: int = 3000) -> None:
+                        open_files: bool = True, split_metadata: bool = False, char_limit: int = 3000,
+                        batch_size: int = 10000) -> None:
         """
         Generates a report of the directory and writes it to a CSV file.
 
@@ -183,6 +184,7 @@ class Directory:
         :param open_files: Whether to open the files for extracting metadata. If False, files won't be opened.
         :param split_metadata: Whether to unpack the metadata dictionary into separate columns in the CSV file.
         :param char_limit: The cut-off length for each metadata field.
+        :param batch_size: The maximum number of files per report. If exceeded, then additional reports are created.
         """
 
         # Extracting the attributes from the File object
