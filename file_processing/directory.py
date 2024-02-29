@@ -187,8 +187,8 @@ class Directory:
 
     def generate_report(self, report_file: str, include_text: bool = False, filters: Optional[dict] = None,
                         keywords: Optional[list] = None, check_title_keywords: Optional[bool] = False,
-                        migrate_filters: Optional[dict] = None, open_files: bool = True, 
-                        split_metadata: bool = False, char_limit: int = 3000, batch_size: int = 500, 
+                        migrate_filters: Optional[dict] = None, open_files: bool = True,
+                        split_metadata: bool = False, char_limit: int = 3000, batch_size: int = 500,
                         start_at: int = 0, recovery_mode: bool = False) -> None:
         """
         Generates a report of the directory and writes it to a CSV file.
@@ -207,6 +207,8 @@ class Directory:
         :param recovery_mode: Continue building on the output report instead of rebuilding it.
         """
 
+        check_empty = True
+
         # Crash recovery: auto-computing start_at index to see when to start processing
         if recovery_mode and os.path.isfile(report_file):
             df = pd.read_csv(report_file)
@@ -215,6 +217,7 @@ class Directory:
         with tqdm(desc='Processing batches', unit=' batches completed') as pbar:
             for index, batch in enumerate(self._file_generator(filters, open_files, start_at, batch_size)):
                 # Extracting the attributes from the File object
+                check_empty = False
                 data = [file.processor.__dict__ for file in batch]
 
                 # Imposing a character limit on each metadata property, or removing the verbose fields
@@ -240,11 +243,6 @@ class Directory:
                     data = pd.json_normalize(data, max_level=1, sep='_')
 
                 df = pd.DataFrame(data)
-
-                if df.empty:
-                    raise EmptySelection(f'Filtered selection of files is empty. \
-                                    Please try a different directory, or new filters. \
-                                    Filters: {filters}, Path: {Path(self.path).resolve()}')
 
                 df.columns = df.columns.str.replace('metadata_', '')
                 df.columns = df.columns.str.replace('title_keywords_', 'Title.')
@@ -274,10 +272,16 @@ class Directory:
                     report = pd.read_csv(report_file)
                     report = pd.concat([report, df], ignore_index=True)
                     report.to_csv(report_file, index=False)
-                elif not recovery_mode:
+                elif not recovery_mode or os.path.isfile(report_file):
                     df.to_csv(report_file, index=False)
 
                 pbar.update(1)
+
+        if check_empty:
+            raise EmptySelection(f'Filtered selection of files is empty. \
+                            Please try a different directory, or new filters. \
+                            Filters: {filters}, Path: {Path(self.path).resolve()}')
+
 
     def _count_keywords(self, text: str, keywords: list) -> dict:
         """
