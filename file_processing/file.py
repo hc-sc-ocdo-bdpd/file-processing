@@ -41,8 +41,7 @@ class File:
 
     def __init__(self, path: str, use_ocr: bool = False, use_transcriber: bool = False, open_file: bool = True) -> None:
         self.path = Path(path)
-        self.processor = self._get_processor(
-            use_ocr, use_transcriber, open_file)
+        self.processor = self._get_processor(use_ocr, use_transcriber, open_file)
         self.process()
 
     def _get_processor(self, use_ocr: bool, use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:

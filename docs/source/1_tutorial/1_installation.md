@@ -33,17 +33,36 @@ This project uses Tesseract for OCR and ffmpeg for transcription. Note that thes
 
 ## Optional Dependencies
 
-As system metadata extraction can entail OS-specific processes, Windows users can optionally install `pywin32` to extract file owner information (`pip install pywin32`).  
+<br>
 
-Optional developer dependencies are defined in the `pyproject.toml` config file. These cannot be installed directly from GitHub and will require manual `pip install <library>` for now, until the project can be published on `pypi`.
+### Runtime Optimization with GPU
 
-Once on `pypi`, the command to install the optional dependencies is:
+The audio to text transcription tool can be optimized if your computer supports CUDA, which is a special GPU tool. To toggle this, install the CUDA version of torch:
 
-```py
-pip install file_procesing_tools[developer]
+```
+pip install --index-url https://download.pytorch.org/whl/cu118 torch==2.2.0
 ```
 
-This installs both the library and each of the specified sets of dependencies. The `[developer]` dependencies are listed below and are oriented around build, documentation, and testing capabilities. 
+<br>
+
+### Optional Windows Dependencies
+
+To enable file owner information extraction on Windows, you should have the `pywin32` library installed. However, this is not a mandatory dependency as the code will still run normally without `pywin32`.
+
+Use the following command install `pywin32`:
+
+```python
+pip install pywin32
+```
+
+<br>
+
+### Optional Developer Dependencies
+
+Optional developer dependencies are defined in the `developer_requirements.txt` file. Once the library is cloned, these can be installed via `pip install -r developer_requirements.txt` or included when creating the venv.
+
+The developer dependencies are listed below and are oriented around build, documentation, and testing capabilities. 
+
 
 ```
 wheel==0.40.0
