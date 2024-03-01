@@ -30,12 +30,12 @@ class Directory:
                     pbar.update(1)
                     file_path = os.path.join(dirpath, filename)
 
-                    if filters and not self._apply_filters(file_path, filters):
-                        continue
-
                     # Start processing when the starting index is reached
                     if pbar.n > start_at:
                         file_obj = None
+
+                        if filters and not self._apply_filters(file_path, filters):
+                            continue
 
                         # Process the file
                         try:
@@ -272,7 +272,8 @@ class Directory:
                     report = pd.read_csv(report_file)
                     report = pd.concat([report, df], ignore_index=True)
                     report.to_csv(report_file, index=False)
-                elif not recovery_mode or os.path.isfile(report_file):
+                elif (index == 0 and not recovery_mode) or \
+                     (recovery_mode and not os.path.isfile(report_file)):
                     df.to_csv(report_file, index=False)
 
                 pbar.update(1)
