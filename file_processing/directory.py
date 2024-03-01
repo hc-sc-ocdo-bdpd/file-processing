@@ -213,6 +213,7 @@ class Directory:
         if recovery_mode and os.path.isfile(report_file):
             df = pd.read_csv(report_file)
             start_at = len(df)
+            logging.info('Recovery mode: starting index: %s', start_at)
 
         with tqdm(desc='Processing batches', unit=' batches completed') as pbar:
             for index, batch in enumerate(self._file_generator(filters, open_files, start_at, batch_size)):
@@ -268,13 +269,13 @@ class Directory:
                 df.columns = df.columns.str.title()
                 df.rename(columns={'Size': 'Size (MB)'}, inplace=True)
 
-                if index > 0:
+                if (index == 0 and not recovery_mode) or \
+                     (recovery_mode and not os.path.isfile(report_file)):
+                    df.to_csv(report_file, index=False)
+                else:
                     report = pd.read_csv(report_file)
                     report = pd.concat([report, df], ignore_index=True)
                     report.to_csv(report_file, index=False)
-                elif (index == 0 and not recovery_mode) or \
-                     (recovery_mode and not os.path.isfile(report_file)):
-                    df.to_csv(report_file, index=False)
 
                 pbar.update(1)
 
