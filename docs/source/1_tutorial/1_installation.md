@@ -57,12 +57,11 @@ pip install pywin32
 
 <br>
 
-### Optional Developer Dependencies
+## Advanced: Installation for Developers
 
 Optional developer dependencies are defined in the `developer_requirements.txt` file. Once the library is cloned, these can be installed via `pip install -r developer_requirements.txt` or included when creating the venv.
 
 The developer dependencies are listed below and are oriented around build, documentation, and testing capabilities. 
-
 
 ```
 wheel==0.40.0
@@ -72,7 +71,17 @@ sphinx==7.2.6
 furo==2024.1.29
 myst-parser==2.0.0
 sphinx-inline-tabs==2023.4.21
-pywin32
 ipywidgets==8.1.1
 build==1.0.3
 ```
+
+<br>
+
+### Advanced: Installing using Docker
+
+If you have Docker installed, then you can use it to automatically install all core and developer project dependencies. To do this, follow these 2 steps:
+
+1. Install the `Remote Development` (by Microsoft) extension in VSCode
+2. Build the container: View (a tab at the top of the screen) > Command Palette > Dev Containers: Rebuild and Reopen in Container
+
+Note: This does not install GPU and Windows-exclusive dependencies.
