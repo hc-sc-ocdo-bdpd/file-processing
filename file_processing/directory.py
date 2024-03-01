@@ -268,7 +268,7 @@ class Directory:
                 df.columns = df.columns.str.title()
                 df.rename(columns={'Size': 'Size (MB)'}, inplace=True)
 
-                if index > 1:
+                if index > 0:
                     report = pd.read_csv(report_file)
                     report = pd.concat([report, df], ignore_index=True)
                     report.to_csv(report_file, index=False)
