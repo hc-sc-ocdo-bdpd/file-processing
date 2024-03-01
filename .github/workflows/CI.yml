@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build docker images
-        run: docker build -t idp .
+        run: docker build -t idp --build-arg DEV=true .
 
       - name: Run Pytest
         run: docker run -i -v $PWD:/srv -w/srv idp pytest tests/ --junit-xml=.test_report.xml
