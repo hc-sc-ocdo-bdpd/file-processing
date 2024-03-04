@@ -32,8 +32,8 @@ class PdfFileProcessor(FileProcessorStrategy):
                 metadata = reader.metadata
 
             self.metadata.update({'text': self.extract_text_from_pdf(self.file_path, reader),
-                                  'author': metadata.get('/Author'),
-                                  'producer': metadata.get('/Producer')})
+                                  'author': str(metadata.get('/Author')),
+                                  'producer': str(metadata.get('/Producer'))})
         else:
             self.metadata['has_password'] = True
 
