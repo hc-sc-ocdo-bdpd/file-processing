@@ -111,3 +111,23 @@ The `metadata` column with file-specific metadata appears.
 ```{image} ../resources/report_open_files_true.png
 :align: center
 ```
+
+<br>
+
+## Batch Running
+Parameters - `batch_size`, `recovery_mode`, `start_at`
+
+By default, files are read, filtered, then processed in batches of 500 before being written to the output CSV. This is to prevent losing all data if the program were to crash. A higher batch size is recommended for larger directories.
+
+Related to the issue of crashing is the option to enable `recovery_mode`, which reads how far the last execution got based on how many lines are in the CSV file. It will then compute the `start_at` index, which is the *n*th file to start processing at (irrespective of filters). This `start_at` parameter can also be manually set. Also note that `recovery_mode` will prevent the overwriting of the existing report - any further data will be appended to what is already there.
+
+Usage: By default, `batch_size=500`, `recovery_mode=False`, `start_at=0`. Suppose we are processing a large directory of ~10000 files and the program just crashed so we have an incomplete report. We would want a larger batch size and to enable `recovery_mode`:
+
+```python
+from file_processing import Directory
+
+directory = Directory('.')
+directory.generate_report(report_file='metadata.csv',
+                          batch_size=1000,
+                          recovery_mode=True)
+```
