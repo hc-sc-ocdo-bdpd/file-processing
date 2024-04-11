@@ -24,7 +24,7 @@ class Directory:
         filters = filters or {}
         batch = []
 
-        with tqdm(desc='Processing files', unit=' files completed') as pbar:
+        with tqdm(desc='Processing files', unit=' files completed', position=0, leave=True) as pbar:
             for dirpath, _, filenames in os.walk(self.path):
                 for filename in filenames:
                     pbar.update(1)
@@ -215,7 +215,7 @@ class Directory:
             start_at = len(df)
             logging.info('Recovery mode: starting index: %s', start_at)
 
-        with tqdm(desc='Processing batches', unit=' batches completed') as pbar:
+        with tqdm(desc='Processing batches', unit=' batches completed', position=1, leave=True) as pbar:
             for index, batch in enumerate(self._file_generator(filters, open_files, start_at, batch_size)):
                 # Extracting the attributes from the File object
                 check_empty = False
