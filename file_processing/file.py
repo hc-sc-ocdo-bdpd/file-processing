@@ -45,7 +45,7 @@ class File:
         self.processor = self._get_processor(use_ocr, ocr_path, use_transcriber, open_file)
         self.process()
 
-    def _get_processor(self, use_ocr: bool, ocr_path: str, 
+    def _get_processor(self, use_ocr: bool, ocr_path: str,
                        use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
         extension = self.path.suffix
         processor_class = File.PROCESSORS.get(extension, processors.GenericFileProcessor)
@@ -56,10 +56,10 @@ class File:
                 raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
 
             try:
-                pytesseract.pytesseract.tesseract_cmd = ocr_path
                 pytesseract.get_tesseract_version()
             except Exception:
-                raise TesseractNotFound("Tesseract is not installed or not added to PATH")
+                raise TesseractNotFound(f"Tesseract is not installed or not added to PATH. Path: ", \
+                                        pytesseract.pytesseract.tesseract_cmd)
 
             return OCRDecorator(processor, ocr_path)
 

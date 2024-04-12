@@ -8,18 +8,21 @@ from PIL import Image
 from file_processing.tools import FileProcessorStrategy
 from file_processing.tools.errors import OCRProcessingError
 
+try:
+    pytesseract.get_tesseract_version()
+except:
+    if sys.platform == 'win32':
+        pytesseract.pytesseract.tesseract_cmd = Path('C:/Users') / \
+        getpass.getuser() / 'AppData/Local/Programs/Tesseract-OCR/tesseract.exe'
+    elif sys.platform == 'linux':
+        pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+
 
 class OCRDecorator:
     def __init__(self, processor: FileProcessorStrategy, ocr_path: str) -> None:
         """Initializes the OCRDecorator with a given file processor."""
-
-        # Init for tesseract
-        if not ocr_path:
-            if sys.platform == 'win32':
-                pytesseract.pytesseract.tesseract_cmd = Path('C:/Users') / \
-                    getpass.getuser() / 'AppData/Local/Programs/Tesseract-OCR/tesseract.exe'
-            elif sys.platform == 'linux':
-                pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+        if ocr_path:
+            pytesseract.pytesseract.tesseract_cmd = ocr_path
 
         self._processor = processor
 
