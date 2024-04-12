@@ -56,6 +56,9 @@ class File:
                 raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
 
             try:
+                if ocr_path:
+                    pytesseract.pytesseract.tesseract_cmd = ocr_path
+
                 pytesseract.get_tesseract_version()
             except Exception:
                 raise TesseractNotFound(f"Tesseract is not installed or not added to PATH. Path: ", \
