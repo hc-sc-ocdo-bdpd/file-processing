@@ -3,10 +3,6 @@ FROM python:3.10.12-slim
 # Set working directory
 WORKDIR /workspace
 
-RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    tesseract-ocr
-
 RUN pip install -U \
     pip \
     setuptools \

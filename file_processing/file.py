@@ -1,13 +1,9 @@
 from pathlib import Path
-import pytesseract
 from file_processing import processors
-from file_processing.tools import FileProcessorStrategy, OCRDecorator, TranscriptionDecorator
-from file_processing.tools.errors import TesseractNotFound, NotOCRApplicableError, NotTranscriptionApplicableError
+from file_processing.tools import FileProcessorStrategy
 
 
 class File:
-    OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".gif", ".tiff", ".tif"}
-    TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
     PROCESSORS = {
         ".csv": processors.CsvFileProcessor,
@@ -39,39 +35,15 @@ class File:
         ".heif": processors.HeicFileProcessor
     }
 
-    def __init__(self, path: str, use_ocr: bool = False, ocr_path: str = None, 
-                 use_transcriber: bool = False, open_file: bool = True) -> None:
+    def __init__(self, path: str, open_file: bool = True) -> None:
         self.path = Path(path)
-        self.processor = self._get_processor(use_ocr, ocr_path, use_transcriber, open_file)
+        self.processor = self._get_processor(open_file)
         self.process()
 
-    def _get_processor(self, use_ocr: bool, ocr_path: str,
-                       use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
+    def _get_processor(self, open_file: bool) -> FileProcessorStrategy:
         extension = self.path.suffix
         processor_class = File.PROCESSORS.get(extension, processors.GenericFileProcessor)
         processor = processor_class(str(self.path), open_file)
-
-        if use_ocr:
-            if extension not in File.OCR_APPLICABLE_EXTENSIONS:
-                raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
-
-            try:
-                if ocr_path:
-                    pytesseract.pytesseract.tesseract_cmd = ocr_path
-
-                pytesseract.get_tesseract_version()
-            except Exception:
-                raise TesseractNotFound(f"Tesseract is not installed or not added to PATH. Path: ", \
-                                        pytesseract.pytesseract.tesseract_cmd)
-
-            return OCRDecorator(processor, ocr_path)
-
-        if use_transcriber:
-            if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
-                raise NotTranscriptionApplicableError(
-                    f"Transcription is not applicable for file type {extension}.")
-
-            return TranscriptionDecorator(processor)
 
         return processor
 

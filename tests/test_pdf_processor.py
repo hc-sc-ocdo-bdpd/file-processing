@@ -11,14 +11,6 @@ values = [
 ]
 
 
-@pytest.mark.parametrize(variable_names, values)
-def test_pdf_metadata(path, ocr_text_length):
-    file_obj = File(path, use_ocr=True)
-    # Must check approximate match as pytesseract transcribes differently based on OS
-    assert ocr_text_length == pytest.approx(
-        len(file_obj.metadata['ocr_text']), 1)
-
-
 locked_files = [
     ('tests/resources/test_files/SampleReport_Locked.pdf'),
     ('tests/resources/test_files/ArtificialNeuralNetworksForBeginners_Locked.pdf')
