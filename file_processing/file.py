@@ -1,7 +1,6 @@
 from pathlib import Path
-import pytesseract
 from file_processing import processors
-from file_processing.tools import FileProcessorStrategy, OCRDecorator, TranscriptionDecorator
+from file_processing.tools import FileProcessorStrategy
 from file_processing.tools.errors import TesseractNotFound, NotOCRApplicableError, NotTranscriptionApplicableError
 
 
@@ -50,6 +49,9 @@ class File:
         processor = processor_class(str(self.path), open_file)
 
         if use_ocr:
+            import pytesseract
+            from file_processing.tools.ocr_decorator import OCRDecorator
+
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
                 raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
 
@@ -61,6 +63,8 @@ class File:
             return OCRDecorator(processor)
 
         if use_transcriber:
+            from file_processing.tools.transcription_decorator import TranscriptionDecorator
+
             if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
                 raise NotTranscriptionApplicableError(
                     f"Transcription is not applicable for file type {extension}.")

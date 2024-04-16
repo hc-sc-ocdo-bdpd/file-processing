@@ -1,9 +1,10 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 from file_processing.similarity.file_metric_strategy import FileMetricStrategy
 
 class CosineSimilarity(FileMetricStrategy):
     def calculate(self):
+        from sklearn.feature_extraction.text import TfidfVectorizer
+        from sklearn.metrics.pairwise import cosine_similarity
+
         text1 = self.file1.metadata['text']
         text2 = self.file2.metadata['text']
 
