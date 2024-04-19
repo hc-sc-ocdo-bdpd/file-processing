@@ -4,12 +4,9 @@ import logging
 from typing import Optional
 from pathlib import Path
 
-import faiss
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-from sentence_transformers import SentenceTransformer
-from scipy.spatial.distance import cdist
 from file_processing import File
 from file_processing.tools.errors import EmptySelection
 
@@ -94,6 +91,9 @@ class Directory:
         :param threshold: The cutoff similarity score (0-1) to write to the report.
         :param top_n: The top n closest files to check for. Only compatible with threshold > 0.
         """
+        import faiss
+        from sentence_transformers import SentenceTransformer
+        from scipy.spatial.distance import cdist
 
         # Pre-processing data
         data = [file.processor.__dict__ for file in self._file_generator(filters, True)]
