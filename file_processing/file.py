@@ -38,12 +38,14 @@ class File:
         ".heif": processors.HeicFileProcessor
     }
 
-    def __init__(self, path: str, use_ocr: bool = False, use_transcriber: bool = False, open_file: bool = True) -> None:
+    def __init__(self, path: str, use_ocr: bool = False, ocr_path: str = None, 
+                 use_transcriber: bool = False, open_file: bool = True) -> None:
         self.path = Path(path)
-        self.processor = self._get_processor(use_ocr, use_transcriber, open_file)
+        self.processor = self._get_processor(use_ocr, ocr_path, use_transcriber, open_file)
         self.process()
 
-    def _get_processor(self, use_ocr: bool, use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
+    def _get_processor(self, use_ocr: bool, ocr_path: str,
+                       use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
         extension = self.path.suffix
         processor_class = File.PROCESSORS.get(extension, processors.GenericFileProcessor)
         processor = processor_class(str(self.path), open_file)
@@ -56,11 +58,15 @@ class File:
                 raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
 
             try:
+                if ocr_path:
+                    pytesseract.pytesseract.tesseract_cmd = ocr_path
+
                 pytesseract.get_tesseract_version()
             except Exception:
-                raise TesseractNotFound("Tesseract is not installed or not added to PATH")
+                raise TesseractNotFound(f"Tesseract is not installed or not added to PATH. Path: ", \
+                                        pytesseract.pytesseract.tesseract_cmd)
 
-            return OCRDecorator(processor)
+            return OCRDecorator(processor, ocr_path)
 
         if use_transcriber:
             from file_processing.tools.transcription_decorator import TranscriptionDecorator
