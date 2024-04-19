@@ -8,8 +8,20 @@
 
 The library can be installed directly from GitHub. This should take approximately 2-4 minutes.
 
+**Lite version:**
+
 ```js
-pip install git+https://github.com/hc-sc-ocdo-bdpd/file-processing-tools.git
+pip install -q "file_processing @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-tools.git"
+```
+
+**Full version:**
+```js
+pip install -q "file_processing[full] @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-tools.git"
+```
+
+**Developer version:**
+```js
+pip install -q "file_processing[developer,full] @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-tools.git"
 ```
 
 An alternative option is downloading the `dist/*.whl` file from GitHub and installing this via `pip install <path/to/whl/file>`.
@@ -22,7 +34,7 @@ It is not yet possible to directly install the library through `pypi` as the pro
 
 This project uses Tesseract for OCR and ffmpeg for transcription. Note that these are not hard requirements as OCR and transcription are configurable by the `use_ocr` and `use_transcription` parameters.
 
-**Tesseract**: This must be installed at: `C:/Users/USERNAME/AppData/Local/Programs/Tesseract-OCR/tesseract.exe` (Windows) or `/usr/bin/tesseract` (Linux). See [here for more details](https://github.com/UB-Mannheim/tesseract/wiki). 
+**Tesseract**: The recommended installation path is: `C:/Users/USERNAME/AppData/Local/Programs/Tesseract-OCR/tesseract.exe` (Windows) or `/usr/bin/tesseract` (Linux). See [here for more details](https://github.com/UB-Mannheim/tesseract/wiki). 
 
 **ffmpeg**: This can be installed through PowerShell:
 1. Install scoop: `iwr -useb get.scoop.sh | iex`

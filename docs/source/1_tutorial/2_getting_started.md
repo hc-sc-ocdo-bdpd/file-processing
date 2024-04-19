@@ -14,6 +14,12 @@ This import is for extracting metadata from a single file. The code below demons
 from file_processing import File
 
 file = File('path/to/file')
+
+# With OCR and a custom Tesseract path (requires full version):
+file = File('path/to/file', use_ocr=True, ocr_path='path/to/tesseract')
+
+# With transcription (requires full version):
+file = File('path/to/file', use_transcriber=True)
 ```
 
 <br>
@@ -66,6 +72,8 @@ Note: To access properties inside the `metadata` property, use `file.metadata['p
 <br>
 
 ### Measuring similarity between 2 files
+
+**Note**: This feature requires installation of the full library
 
 2 files must be created to use the similarity checker. There are 2 types of similarity checking which are demonstrated below:
 
