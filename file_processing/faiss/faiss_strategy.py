@@ -1,15 +1,11 @@
-import faiss
 import numpy as np
 from abc import ABC, abstractmethod
 
 class FAISSStrategy(ABC):
-    def __init__(self, embeddings: np.ndarray, k):
-        self.DIMENSION = embeddings.shape[1]
-        self.index = self._create_index(self)
+    def __init__(self, embeddings: np.ndarray) -> None:
+        self.dimension = embeddings.shape[1]
+        self.index = None
 
     @abstractmethod
-    def _create_index(self, embeddings: np.ndarray):
+    def query(self):
         pass
-
-    def query(self, xq: np.ndarray, k: int):
-        return self.index.search(xq, k)
