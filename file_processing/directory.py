@@ -12,14 +12,19 @@ from file_processing.tools.errors import EmptySelection
 
 
 class Directory:
-    def __init__(self, path: str, use_ocr: bool = False) -> None:
+    def __init__(self, path: str, use_ocr: bool = False, use_transcribers: bool = False) -> None:
         self.path = path
+        self.use_transcribers = use_transcribers
         self.use_ocr = use_ocr
 
     def _file_generator(self, filters: dict = None, open_files: bool = True,
                         start_at: int = 0, batch_size: int = 0):
         filters = filters or {}
         batch = []
+
+        # Set extensions for OCR and transcription 
+        OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".gif", ".tiff", ".tif"}
+        TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
         with tqdm(desc='Processing files', unit=' files completed', position=0, leave=True) as pbar:
             for dirpath, _, filenames in os.walk(self.path):
@@ -36,7 +41,19 @@ class Directory:
 
                         # Process the file
                         try:
-                            file_obj = File(file_path, use_ocr=self.use_ocr, open_file=open_files)
+                        
+                        # Separate and process files based on if use decorators, set the processor attribute for decorators 
+                            if self.use_ocr and any(file_path.lower().endswith(ext) for ext in OCR_APPLICABLE_EXTENSIONS):
+                                file_obj = File(file_path, use_ocr=True, open_file=open_files)
+                                file_obj.processor.__dict__ = file_obj.processor._processor.__dict__
+
+                            if self.use_transcribers and any(file_path.lower().endswith(ext) for ext in TRANSCRIPTION_APPLICABLE_EXTENSIONS):
+                                file_obj = File(file_path, use_transcriber=True, open_file=open_files)
+                                file_obj.processor.__dict__ = file_obj.processor._processor.__dict__
+
+                            if file_obj is None:
+                                file_obj = File(file_path, use_ocr=False, use_transcriber=False, open_file=open_files)
+
                             logging.info('Processing file: %s', file_path)
                         except Exception as e:
                             logging.error('Error processing %s: %s', file_path, type(e).__name__)
