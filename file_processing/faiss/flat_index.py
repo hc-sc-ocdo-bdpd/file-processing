@@ -4,7 +4,7 @@ from file_processing.faiss import faiss_strategy
 from importlib import reload
 reload(faiss_strategy)
 
-class IVFFlatIndex(faiss_strategy.FAISSIndex):
+class FlatIndex(faiss_strategy.FAISSIndex):
     def __init__(self, embeddings: np.ndarray = None, file_path: str = None) -> None:
         super().__init__(embeddings, file_path)
         if embeddings is not None:
