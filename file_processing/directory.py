@@ -41,16 +41,16 @@ class Directory:
 
                         # Process the file
                         try:
-                        
-                        # Separate and process files based on if use decorators, set the processor attribute for decorators 
+
+                        # Separate and process files based on if use decorators, add the processor attribute for decorators
                             if self.use_ocr and any(file_path.lower().endswith(ext) for ext in OCR_APPLICABLE_EXTENSIONS):
                                 file_obj = File(file_path, use_ocr=True, open_file=open_files)
-                                file_obj.processor.__dict__ = file_obj.processor._processor.__dict__
+                                file_obj.processor.__dict__.update(file_obj.processor._processor.__dict__)
 
                             if self.use_transcribers and any(file_path.lower().endswith(ext) for ext in TRANSCRIPTION_APPLICABLE_EXTENSIONS):
                                 file_obj = File(file_path, use_transcriber=True, open_file=open_files)
-                                file_obj.processor.__dict__ = file_obj.processor._processor.__dict__
-
+                                file_obj.processor.__dict__.update(file_obj.processor._processor.__dict__)
+                                
                             if file_obj is None:
                                 file_obj = File(file_path, use_ocr=False, use_transcriber=False, open_file=open_files)
 
@@ -286,6 +286,10 @@ class Directory:
                 df.columns = df.columns.str.title()
                 df.rename(columns={'Size': 'Size (MB)'}, inplace=True)
 
+                # Remove the Processor Column 
+                if ' Processor' in df.columns:
+                    df.drop(columns=[' Processor'], inplace=True)
+
                 if (index == 0 and not recovery_mode) or \
                      (recovery_mode and not os.path.isfile(report_file)):
                     df.to_csv(report_file, index=False)
@@ -319,3 +323,4 @@ class Directory:
             keyword_dict[keyword] = count
 
         return keyword_dict
+
