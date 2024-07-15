@@ -3,6 +3,7 @@ import numpy as np
 from file_processing.faiss_index import flat_index
 from file_processing.faiss_index import IVF_flat_index
 from file_processing.faiss_index import HNSW_index
+from file_processing.faiss_index import general_index
 
 def load_index(file_path: str):
     INDEXES = {
@@ -11,7 +12,10 @@ def load_index(file_path: str):
         faiss.swigfaiss.IndexHNSW: HNSW_index.HNSWIndex
     }
     index = faiss.read_index(file_path)
-    index_class = INDEXES.get(type(index))
+    if type(index) in INDEXES:
+        index_class = INDEXES.get(type(index))
+    else:
+        index_class = general_index.GeneralIndex
     return index_class(index=index)
 
 def create_flat_index(embeddings: np.ndarray, file_path: str = None):
