@@ -22,10 +22,6 @@ class Directory:
         filters = filters or {}
         batch = []
 
-        # Set extensions for OCR and transcription 
-        OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".gif", ".tiff", ".tif"}
-        TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
-
         with tqdm(desc='Processing files', unit=' files completed', position=0, leave=True) as pbar:
             for dirpath, _, filenames in os.walk(self.path):
                 for filename in filenames:
@@ -43,11 +39,11 @@ class Directory:
                         try:
 
                         # Separate and process files based on if use decorators, add the processor attribute for decorators
-                            if self.use_ocr and any(file_path.lower().endswith(ext) for ext in OCR_APPLICABLE_EXTENSIONS):
+                            if self.use_ocr and any(file_path.lower().endswith(ext) for ext in File.OCR_APPLICABLE_EXTENSIONS):
                                 file_obj = File(file_path, use_ocr=True, open_file=open_files)
                                 file_obj.processor.__dict__.update(file_obj.processor._processor.__dict__)
 
-                            if self.use_transcribers and any(file_path.lower().endswith(ext) for ext in TRANSCRIPTION_APPLICABLE_EXTENSIONS):
+                            if self.use_transcribers and any(file_path.lower().endswith(ext) for ext in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS):
                                 file_obj = File(file_path, use_transcriber=True, open_file=open_files)
                                 file_obj.processor.__dict__.update(file_obj.processor._processor.__dict__)
                                 
