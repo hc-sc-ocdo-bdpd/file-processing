@@ -252,6 +252,15 @@ class Directory:
                     if check_title_keywords and keywords:
                         file['title_keywords'] = self._count_keywords(file['file_name'], keywords)
 
+                # Merge ocr_text and text 
+                    if 'ocr_text' in file['metadata']:
+                        if 'text' not in file['metadata']:
+                            # Change key 'ocr_text' to 'text'
+                            file['metadata']['text'] = file['metadata'].pop('ocr_text')
+                        else:
+                            # Remove key 'ocr_text'
+                            file['metadata'].pop('ocr_text', None)
+                            
                 # Unpacking the metadata field so each metadata property becomes its own column
                 if split_metadata:
                     data = pd.json_normalize(data, max_level=1, sep='_')
