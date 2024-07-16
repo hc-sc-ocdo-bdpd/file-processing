@@ -77,7 +77,6 @@ target/
 # Jupyter Notebook and Generated Files
 .ipynb_checkpoints
 corrupted_file_report.csv
-*.faiss
 
 # IPython
 profile_default/

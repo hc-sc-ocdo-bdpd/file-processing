@@ -9,7 +9,7 @@ def load_index(file_path: str):
     INDEXES = {
         faiss.swigfaiss.IndexFlat: flat_index.FlatIndex,
         faiss.swigfaiss.IndexIVFFlat: IVF_flat_index.IVFFlatIndex,
-        faiss.swigfaiss.IndexHNSW: HNSW_index.HNSWFlatIndex
+        faiss.swigfaiss.IndexHNSWFlat: HNSW_index.HNSWIndex
     }
     index = faiss.read_index(file_path)
     if type(index) in INDEXES:
