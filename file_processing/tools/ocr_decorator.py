@@ -86,6 +86,61 @@ class OCRDecorator:
         return self._processor.file_name
 
     @property
+    def extension(self) -> str:
+        """Returns the file extension of the processed file."""
+        return self._processor.extension
+
+    @property
+    def owner(self) -> str:
+        """Returns the owner of the processed file."""
+        return self._processor.owner
+
+    @property
+    def size(self) -> str:
+        """Returns the size of the processed file."""
+        return self._processor.size
+
+    @property
+    def modification_time(self) -> str:
+        """Returns the modification time of the processed file."""
+        return self._processor.modification_time
+
+    @property
+    def access_time(self) -> str:
+        """Returns the access time of the processed file."""
+        return self._processor.access_time
+
+    @property
+    def creation_time(self) -> str:
+        """Returns the creation time of the processed file."""
+        return self._processor.creation_time
+
+    @property
+    def parent_directory(self) -> str:
+        """Returns the parent directory of the processed file."""
+        return self._processor.parent_directory
+
+    @property
+    def permissions(self) -> str:
+        """Returns the permissions of the processed file."""
+        return self._processor.permissions
+
+    @property
+    def is_file(self) -> bool:
+        """Returns True if the processed file is a regular file."""
+        return self._processor.is_file
+
+    @property
+    def is_symlink(self) -> bool:
+        """Returns True if the processed file is a symbolic link."""
+        return self._processor.is_symlink
+
+    @property
+    def absolute_path(self) -> str:
+        """Returns the absolute path of the processed file."""
+        return self._processor.absolute_path
+
+    @property
     def metadata(self) -> dict:
         """Returns the metadata of the processed file."""
         return self._processor.metadata
