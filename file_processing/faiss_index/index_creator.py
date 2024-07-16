@@ -24,13 +24,13 @@ def create_flat_index(embeddings: np.ndarray, file_path: str = None):
         index.save_index(file_path)
     return index
 
-def create_IVF_flat_index(embeddings: np.ndarray, nlist: int, file_path: str = None):
+def create_IVF_flat_index(embeddings: np.ndarray, nlist: int = None, file_path: str = None):
     index = IVF_flat_index.IVFFlatIndex(embeddings, nlist)
     if file_path is not None:
         index.save_index(file_path)
     return index
     
-def create_HNSW_index(embeddings: np.ndarray, M: int, efConstruction: int, file_path: str = None):
+def create_HNSW_index(embeddings: np.ndarray, M: int = 64, efConstruction: int = 64, file_path: str = None):
     index = HNSW_index.HNSWIndex(embeddings, embeddings, M, efConstruction)
     if file_path is not None:
         index.save_index(file_path)

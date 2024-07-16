@@ -5,7 +5,7 @@ from importlib import reload
 reload(faiss_strategy)
 
 class IVFFlatIndex(faiss_strategy.FAISSStrategy):
-    def _create_index(self, embeddings: np.ndarray, nlist: int = None):
+    def _create_index(self, embeddings: np.ndarray, nlist: int):
         dimension = embeddings.shape[1]
         if nlist is None:
             nlist = int(np.sqrt(embeddings.shape[0] / 2))
