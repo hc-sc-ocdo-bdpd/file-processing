@@ -6,6 +6,10 @@ reload(faiss_strategy)
 
 class HNSWIndex(faiss_strategy.FAISSStrategy):
     def _create_index(self, embeddings: np.ndarray, M: int, efConstruction: int):
+        if M is None:
+            M = 64
+        if efConstruction is None:
+            efConstruction = 64
         dimension = embeddings.shape[1]
         index = faiss.IndexHNSWFlat(dimension, M)
         index.hnsw.efConstruction = efConstruction

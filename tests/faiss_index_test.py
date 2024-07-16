@@ -23,8 +23,10 @@ create_ivf_values = [
     (test_embeddings, None, "resources/faiss_test_files/ivf.faiss"),
     (test_embeddings, 1, None),
     (test_embeddings, 2, None),
+    (test_embeddings, 10, "resources/faiss_test_files/ivf.faiss"),
     (test_embeddings, test_embeddings.shape[0], None),
     (test_embeddings, test_embeddings.shape[0] // 2, None)
+    # (test_embeddings[0,:], None, None)
 ]
 @pytest.mark.parametrize(create_ivf_variable_names, create_ivf_values)
 def test_create_ivf_flat_index(embeddings, nlist, file_path):
@@ -43,3 +45,16 @@ def test_create_ivf_flat_index_hyperparameter_errors(embeddings, nlist, file_pat
     with pytest.raises(Exception):
         faiss_index.create_IVF_flat_index(embeddings, nlist, file_path)
 
+create_hnsw_variable_names = "embeddings, M, efConstruction, file_path"
+create_hnsw_values = [
+    (test_embeddings, None, None, None),
+    (test_embeddings, None, None, "resources/faiss_test_files/hnsw.faiss"),
+    (test_embeddings, 32, None, None),
+    (test_embeddings, None, 40, None),
+    (test_embeddings, 128, 40, None),
+    (test_embeddings, 128, 40, "resources/faiss_test_files/hnsw.faiss")
+]
+@pytest.mark.parametrize(create_hnsw_variable_names, create_hnsw_values)
+def test_create_hnsw_index(embeddings, M, efConstruction, file_path):
+    index = faiss_index.create_HNSW_index(embeddings, M, efConstruction, file_path)
+    assert isinstance(index.index, faiss.swigfaiss.IndexHNSWFlat)
