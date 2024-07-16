@@ -39,6 +39,7 @@ create_ivf_error_values = [
     (test_embeddings, 2.5, None)
 ]
 @pytest.mark.parametrize(create_ivf_variable_names, create_ivf_error_values)
-def test_create_ivf_flat_index(embeddings, nlist, file_path):
+def test_create_ivf_flat_index_hyperparameter_errors(embeddings, nlist, file_path):
     with pytest.raises(Exception):
         faiss_index.create_IVF_flat_index(embeddings, nlist, file_path)
+

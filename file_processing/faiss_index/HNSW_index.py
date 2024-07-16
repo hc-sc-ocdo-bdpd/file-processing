@@ -7,7 +7,7 @@ reload(faiss_strategy)
 class HNSWIndex(faiss_strategy.FAISSStrategy):
     def _create_index(self, embeddings: np.ndarray, M: int, efConstruction: int):
         dimension = embeddings.shape[1]
-        index = faiss.IndexHNSW(dimension, M)
+        index = faiss.IndexHNSWFlat(dimension, M)
         index.hnsw.efConstruction = efConstruction
         index.add(embeddings)
         return index

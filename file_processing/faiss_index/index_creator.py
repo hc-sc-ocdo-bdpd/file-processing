@@ -9,7 +9,7 @@ def load_index(file_path: str):
     INDEXES = {
         faiss.swigfaiss.IndexFlat: flat_index.FlatIndex,
         faiss.swigfaiss.IndexIVFFlat: IVF_flat_index.IVFFlatIndex,
-        faiss.swigfaiss.IndexHNSW: HNSW_index.HNSWIndex
+        faiss.swigfaiss.IndexHNSW: HNSW_index.HNSWFlatIndex
     }
     index = faiss.read_index(file_path)
     if type(index) in INDEXES:
@@ -31,7 +31,7 @@ def create_IVF_flat_index(embeddings: np.ndarray, nlist: int = None, file_path: 
     return index
     
 def create_HNSW_index(embeddings: np.ndarray, M: int = 64, efConstruction: int = 64, file_path: str = None):
-    index = HNSW_index.HNSWIndex(embeddings, embeddings, M, efConstruction)
+    index = HNSW_index.HNSWIndex(embeddings, M, efConstruction)
     if file_path is not None:
         index.save_index(file_path)
     return index
