@@ -10,7 +10,8 @@ query_vec = np.load("resources/faiss_test_files/sample_query_vector.npy")
 create_flat_variable_names = "embeddings, file_path"
 create_flat_values = [
     (test_embeddings, None),
-    (test_embeddings, "resources/faiss_test_files/flat.faiss")
+    (test_embeddings, "resources/faiss_test_files/flat.faiss"),
+    (test_embeddings[:1,:], None)
 ]
 @pytest.mark.parametrize(create_flat_variable_names, create_flat_values)
 def test_create_flat_index(embeddings, file_path):
@@ -25,8 +26,8 @@ create_ivf_values = [
     (test_embeddings, 2, None),
     (test_embeddings, 10, "resources/faiss_test_files/ivf.faiss"),
     (test_embeddings, test_embeddings.shape[0], None),
-    (test_embeddings, test_embeddings.shape[0] // 2, None)
-    # (test_embeddings[0,:], None, None)
+    (test_embeddings, test_embeddings.shape[0] // 2, None),
+    (test_embeddings[:1,:], None, None)
 ]
 @pytest.mark.parametrize(create_ivf_variable_names, create_ivf_values)
 def test_create_ivf_flat_index(embeddings, nlist, file_path):
@@ -52,7 +53,8 @@ create_hnsw_values = [
     (test_embeddings, 32, None, None),
     (test_embeddings, None, 40, None),
     (test_embeddings, 128, 40, None),
-    (test_embeddings, 128, 40, "resources/faiss_test_files/hnsw.faiss")
+    (test_embeddings, 128, 40, "resources/faiss_test_files/hnsw.faiss"),
+    (test_embeddings[:1,:], None, None, None)
 ]
 @pytest.mark.parametrize(create_hnsw_variable_names, create_hnsw_values)
 def test_create_hnsw_index(embeddings, M, efConstruction, file_path):
