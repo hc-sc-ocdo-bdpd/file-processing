@@ -9,7 +9,7 @@ class IVFFlatIndex(faiss_strategy.FAISSStrategy):
     def _create_index(self, embeddings: np.ndarray, nlist: int):
         dimension = embeddings.shape[1]
         if nlist is None:
-            nlist = int(np.sqrt(embeddings.shape[0] / 2))
+            nlist = max(1, int(np.sqrt(embeddings.shape[0] / 2)))
         if not isinstance(nlist, int):
             raise TypeError("nlist must be an int type")
         if nlist < 1:
