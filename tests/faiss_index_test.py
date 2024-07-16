@@ -18,6 +18,18 @@ def test_create_flat_index(embeddings, file_path):
     index = faiss_index.create_flat_index(embeddings, file_path)
     assert isinstance(index.index, faiss.swigfaiss.IndexFlat)
 
+query_flat_variable_names = "embeddings, xq, k"
+query_flat_values = [
+    (test_embeddings, query_vec, 1),
+    (test_embeddings, query_vec, 3)
+]
+@pytest.mark.parametrize(query_flat_variable_names, query_flat_values)
+def test_flat_query(embeddings, xq, k):
+    index = faiss_index.create_flat_index(embeddings)
+    D, I = index.query(xq, k)
+    assert D.shape == I.shape
+    assert D.shape[1] == k
+
 create_ivf_variable_names = "embeddings, nlist, file_path"
 create_ivf_values = [
     (test_embeddings, None, None),
