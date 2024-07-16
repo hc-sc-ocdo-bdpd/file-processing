@@ -60,3 +60,17 @@ create_hnsw_values = [
 def test_create_hnsw_index(embeddings, M, efConstruction, file_path):
     index = faiss_index.create_HNSW_index(embeddings, M, efConstruction, file_path)
     assert isinstance(index.index, faiss.swigfaiss.IndexHNSWFlat)
+
+create_hnsw_error_values = [
+    (test_embeddings, -1, None, None),
+    (test_embeddings, -1, -1, None),
+    (test_embeddings, None, -1, None),
+    (test_embeddings, 5.5, 10, None),
+    (test_embeddings, 5, 7.5, None),
+    (test_embeddings, 2.5, 2.5, None),
+    (test_embeddings, -1, 2.5, None)
+]
+@pytest.mark.parametrize(create_hnsw_variable_names, create_hnsw_error_values)
+def test_create_hnsw_index_hyperparameter_errors(embeddings, M, efConstruction, file_path):
+    with pytest.raises(Exception):
+        faiss_index.create_HNSW_index(embeddings, M, efConstruction, file_path)
