@@ -25,12 +25,20 @@ create_ivf_values = [
     (test_embeddings, 2, None),
     (test_embeddings, test_embeddings.shape[0], None),
     (test_embeddings, test_embeddings.shape[0] // 2, None)
-    # (test_embeddings, test_embeddings.shape[0] + 1, None)
 ]
-
 @pytest.mark.parametrize(create_ivf_variable_names, create_ivf_values)
 def test_create_ivf_flat_index(embeddings, nlist, file_path):
     index = faiss_index.create_IVF_flat_index(embeddings, nlist, file_path)
     assert isinstance(index.index, faiss.swigfaiss.IndexIVFFlat)
     if nlist is not None:
         assert index.index.nlist == nlist
+
+create_ivf_error_values = [
+    (test_embeddings, test_embeddings.shape[0] + 1, None),
+    (test_embeddings, -1, None),
+    (test_embeddings, 2.5, None)
+]
+@pytest.mark.parametrize(create_ivf_variable_names, create_ivf_error_values)
+def test_create_ivf_flat_index(embeddings, nlist, file_path):
+    with pytest.raises(Exception):
+        faiss_index.create_IVF_flat_index(embeddings, nlist, file_path)
