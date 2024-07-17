@@ -1,8 +1,9 @@
 import faiss
 from abc import ABC, abstractmethod
 
+
 class FAISSStrategy(ABC):
-    def __init__(self, *args, index = None):
+    def __init__(self, *args, index=None):
         if index is not None:
             self.index = index
         else:
