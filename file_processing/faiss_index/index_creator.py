@@ -17,9 +17,9 @@ def load_index(file_path: str):
         An instance of the corresponding index class.
     """
     INDEXES = {
-        faiss.swigfaiss.IndexFlat: flat_index.FlatIndex,
-        faiss.swigfaiss.IndexIVFFlat: IVF_flat_index.IVFFlatIndex,
-        faiss.swigfaiss.IndexHNSWFlat: HNSW_index.HNSWIndex
+        faiss.IndexFlat: flat_index.FlatIndex,
+        faiss.IndexIVFFlat: IVF_flat_index.IVFFlatIndex,
+        faiss.IndexHNSWFlat: HNSW_index.HNSWIndex
     }
     index = faiss.read_index(file_path)
     if type(index) in INDEXES:

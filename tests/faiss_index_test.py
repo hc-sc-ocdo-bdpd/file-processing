@@ -17,7 +17,7 @@ create_flat_values = [
 @pytest.mark.parametrize(create_flat_variable_names, create_flat_values)
 def test_create_flat_index(embeddings, file_path):
     index = faiss_index.create_flat_index(embeddings, file_path)
-    assert isinstance(index.index, faiss.swigfaiss.IndexFlat)
+    assert isinstance(index.index, faiss.IndexFlat)
     if file_path is not None:
         assert os.path.exists(file_path)
         os.remove(file_path)
@@ -54,7 +54,7 @@ create_ivf_values = [
 @pytest.mark.parametrize(create_ivf_variable_names, create_ivf_values)
 def test_create_ivf_flat_index(embeddings, nlist, file_path):
     index = faiss_index.create_IVF_flat_index(embeddings, nlist, file_path)
-    assert isinstance(index.index, faiss.swigfaiss.IndexIVFFlat)
+    assert isinstance(index.index, faiss.IndexIVFFlat)
     if nlist is not None:
         assert index.index.nlist == nlist
     if file_path is not None:
@@ -121,7 +121,7 @@ create_hnsw_values = [
 @pytest.mark.parametrize(create_hnsw_variable_names, create_hnsw_values)
 def test_create_hnsw_index(embeddings, M, efConstruction, file_path):
     index = faiss_index.create_HNSW_index(embeddings, M, efConstruction, file_path)
-    assert isinstance(index.index, faiss.swigfaiss.IndexHNSWFlat)
+    assert isinstance(index.index, faiss.IndexHNSWFlat)
     if file_path is not None:
         assert os.path.exists(file_path)
         os.remove(file_path)
