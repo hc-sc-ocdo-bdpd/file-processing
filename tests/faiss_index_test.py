@@ -17,6 +17,9 @@ create_flat_values = [
 def test_create_flat_index(embeddings, file_path):
     index = faiss_index.create_flat_index(embeddings, file_path)
     assert isinstance(index.index, faiss.swigfaiss.IndexFlat)
+    if file_path is not None:
+        assert os.path.exists(file_path)
+        os.remove(file_path)
 
 query_flat_variable_names = "embeddings, xq, k"
 query_flat_values = [
@@ -53,6 +56,9 @@ def test_create_ivf_flat_index(embeddings, nlist, file_path):
     assert isinstance(index.index, faiss.swigfaiss.IndexIVFFlat)
     if nlist is not None:
         assert index.index.nlist == nlist
+    if file_path is not None:
+        assert os.path.exists(file_path)
+        os.remove(file_path)
 
 create_ivf_error_values = [
     (test_embeddings, test_embeddings.shape[0] + 1, None),
@@ -115,6 +121,9 @@ create_hnsw_values = [
 def test_create_hnsw_index(embeddings, M, efConstruction, file_path):
     index = faiss_index.create_HNSW_index(embeddings, M, efConstruction, file_path)
     assert isinstance(index.index, faiss.swigfaiss.IndexHNSWFlat)
+    if file_path is not None:
+        assert os.path.exists(file_path)
+        os.remove(file_path)
 
 create_hnsw_error_values = [
     (test_embeddings, -1, None, None),
@@ -129,6 +138,31 @@ create_hnsw_error_values = [
 def test_create_hnsw_index_hyperparameter_errors(embeddings, M, efConstruction, file_path):
     with pytest.raises(Exception):
         faiss_index.create_HNSW_index(embeddings, M, efConstruction, file_path)
+
+query_hnsw_variable_names = "embeddings, M, efConstruction, xq, k, efSearch"
+query_hnsw_values = [
+    (test_embeddings, 32, 32, query_vec, 0, None),
+    (test_embeddings, 32, 32, query_vec, 3, None),
+    (test_embeddings, 32, 32, query_vec, test_embeddings.shape[0], None),
+    (test_embeddings, 32, 32, query_vec, test_embeddings.shape[0] + 1, None),
+    (test_embeddings, 32, 32, query_vec, 1, 0),
+    (test_embeddings, 32, 32, query_vec, 1, 16),
+    (test_embeddings, 32, 32, query_vec, 2, 1),
+    (test_embeddings, 32, 32, query_vec, 3, 64)
+]
+@pytest.mark.parametrize(query_hnsw_variable_names, query_hnsw_values)
+def test_hnsw_query(embeddings, M, efConstruction, xq, k, efSearch):
+    index = faiss_index.create_HNSW_index(embeddings, M, efConstruction)
+    if k < 1:
+        with pytest.raises(Exception):
+            index.query(xq, k, efSearch)
+    elif (efSearch is not None) and (efSearch < 1):
+        with pytest.raises(Exception):
+            index.query(xq, k, efSearch)
+    else:
+        D, I = index.query(xq, k, efSearch)
+        assert D.shape == I.shape
+        assert D.shape[1] == k
 
 load_index_variable_names = "file_path, index_type"
 load_index_values = [
