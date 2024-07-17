@@ -251,19 +251,6 @@ class Directory:
                             file['metadata'].pop(field, None)
                     if check_title_keywords and keywords:
                         file['title_keywords'] = self._count_keywords(file['file_name'], keywords)
-
-                # Merge ocr_text into text if not the same 
-                    if 'ocr_text' in file['metadata']:
-                        if 'text' not in file['metadata']:
-                            # If 'text' doesn't exist, move 'ocr_text' to 'text'
-                            file['metadata']['text'] = file['metadata']['ocr_text']
-                        else:
-                            if file['metadata']['text'] == file['metadata']['ocr_text']:
-                                # If 'text' and 'ocr_text' are the same, no action needed, they are already merged
-                                pass
-                            else:
-                                # If 'text' and 'ocr_text' are different, append 'ocr_text' to 'text'
-                                file['metadata']['text'] += ' ' + file['metadata']['ocr_text']
                                             
                 # Unpacking the metadata field so each metadata property becomes its own column
                 if split_metadata:
