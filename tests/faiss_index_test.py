@@ -20,15 +20,21 @@ def test_create_flat_index(embeddings, file_path):
 
 query_flat_variable_names = "embeddings, xq, k"
 query_flat_values = [
-    (test_embeddings, query_vec, 1),
-    (test_embeddings, query_vec, 3)
+    (test_embeddings, query_vec, 0),
+    (test_embeddings, query_vec, 3),
+    (test_embeddings, query_vec, test_embeddings.shape[0]),
+    (test_embeddings, query_vec, test_embeddings.shape[0] + 1)
 ]
 @pytest.mark.parametrize(query_flat_variable_names, query_flat_values)
 def test_flat_query(embeddings, xq, k):
     index = faiss_index.create_flat_index(embeddings)
-    D, I = index.query(xq, k)
-    assert D.shape == I.shape
-    assert D.shape[1] == k
+    if k < 1:
+        with pytest.raises(Exception):
+            index.query(xq, k)
+    else:
+        D, I = index.query(xq, k)
+        assert D.shape == I.shape
+        assert D.shape[1] == k
 
 create_ivf_variable_names = "embeddings, nlist, file_path"
 create_ivf_values = [
@@ -57,6 +63,43 @@ create_ivf_error_values = [
 def test_create_ivf_flat_index_hyperparameter_errors(embeddings, nlist, file_path):
     with pytest.raises(Exception):
         faiss_index.create_IVF_flat_index(embeddings, nlist, file_path)
+
+query_ivf_variable_names = "embeddings, nlist, xq, k, nprobe"
+query_ivf_values = [
+    (test_embeddings, 5, query_vec, 0, None),
+    (test_embeddings, 5, query_vec, 3, None),
+    (test_embeddings, 5, query_vec, test_embeddings.shape[0], None),
+    (test_embeddings, 5, query_vec, test_embeddings.shape[0] + 1, None),
+    (test_embeddings, 5, query_vec, 1, 0),
+    (test_embeddings, 3, query_vec, 1, 4),
+    (test_embeddings, 3, query_vec, 2, 1),
+    (test_embeddings, 3, query_vec, 5, 1),
+    (test_embeddings, 3, query_vec, 1, 5),
+    (test_embeddings, 3, query_vec, 4, 5),
+    (test_embeddings, 3, query_vec, 5, 4),
+    (test_embeddings, 1, query_vec, 3, 1),
+    (test_embeddings, 3, query_vec, 3, 3),
+    (test_embeddings, test_embeddings.shape[0], query_vec, 3, test_embeddings.shape[0])
+]
+@pytest.mark.parametrize(query_ivf_variable_names, query_ivf_values)
+def test_ivf_query(embeddings, nlist, xq, k, nprobe):
+    index = faiss_index.create_IVF_flat_index(embeddings, nlist)
+    if k < 1:
+        with pytest.raises(Exception):
+            index.query(xq, k, nprobe)
+    elif (nprobe is not None) and (nprobe not in range(1, nlist + 1)):
+        with pytest.raises(Exception):
+            index.query(xq, k, nprobe)
+    else:
+        D, I = index.query(xq, k, nprobe)
+        assert D.shape == I.shape
+        assert D.shape[1] == k
+        # check against the flat index
+        if nlist == nprobe:
+            flat = faiss_index.create_flat_index(embeddings)
+            Df, If = flat.query(query_vec, k)
+            assert np.array_equal(D, Df)
+            assert np.array_equal(I, If)
 
 create_hnsw_variable_names = "embeddings, M, efConstruction, file_path"
 create_hnsw_values = [
