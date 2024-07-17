@@ -168,7 +168,8 @@ load_index_variable_names = "file_path, index_type"
 load_index_values = [
     ("resources/faiss_test_files/flat.faiss", faiss_index.flat_index.FlatIndex),
     ("resources/faiss_test_files/ivf.faiss", faiss_index.IVF_flat_index.IVFFlatIndex),
-    ("resources/faiss_test_files/hnsw.faiss", faiss_index.HNSW_index.HNSWIndex)
+    ("resources/faiss_test_files/hnsw.faiss", faiss_index.HNSW_index.HNSWIndex),
+    ("resources/faiss_test_files/ivfpq.faiss", faiss_index.general_index.GeneralIndex)
 ]
 @pytest.mark.parametrize(load_index_variable_names, load_index_values)
 def test_load_index(file_path, index_type):
