@@ -288,11 +288,11 @@ class Directory:
 
                 if (index == 0 and not recovery_mode) or \
                      (recovery_mode and not os.path.isfile(report_file)):
-                    df.to_csv(report_file, index=False)
+                    df.to_csv(report_file, index=False, escapechar = "\\")
                 else:
                     report = pd.read_csv(report_file)
                     report = pd.concat([report, df], ignore_index=True)
-                    report.to_csv(report_file, index=False)
+                    report.to_csv(report_file, index=False, escapechar = "\\")
 
                 pbar.update(1)
 
