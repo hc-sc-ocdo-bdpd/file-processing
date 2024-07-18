@@ -12,8 +12,9 @@ from file_processing.tools.errors import EmptySelection
 
 
 class Directory:
-    def __init__(self, path: str, use_ocr: bool = False) -> None:
+    def __init__(self, path: str, use_ocr: bool = False, use_transcribers: bool = False) -> None:
         self.path = path
+        self.use_transcribers = use_transcribers
         self.use_ocr = use_ocr
 
     def _file_generator(self, filters: dict = None, open_files: bool = True,
@@ -36,7 +37,19 @@ class Directory:
 
                         # Process the file
                         try:
-                            file_obj = File(file_path, use_ocr=self.use_ocr, open_file=open_files)
+
+                        # Separate and process files based on if use decorators, add the processor attribute for decorators
+                            if self.use_ocr and any(file_path.lower().endswith(ext) for ext in File.OCR_APPLICABLE_EXTENSIONS):
+                                file_obj = File(file_path, use_ocr=True, open_file=open_files)
+                                file_obj.processor.__dict__.update(file_obj.processor._processor.__dict__)
+
+                            if self.use_transcribers and any(file_path.lower().endswith(ext) for ext in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS):
+                                file_obj = File(file_path, use_transcriber=True, open_file=open_files)
+                                file_obj.processor.__dict__.update(file_obj.processor._processor.__dict__)
+                                
+                            if file_obj is None:
+                                file_obj = File(file_path, use_ocr=False, use_transcriber=False, open_file=open_files)
+
                             logging.info('Processing file: %s', file_path)
                         except Exception as e:
                             logging.error('Error processing %s: %s', file_path, type(e).__name__)
@@ -238,7 +251,7 @@ class Directory:
                             file['metadata'].pop(field, None)
                     if check_title_keywords and keywords:
                         file['title_keywords'] = self._count_keywords(file['file_name'], keywords)
-
+                                            
                 # Unpacking the metadata field so each metadata property becomes its own column
                 if split_metadata:
                     data = pd.json_normalize(data, max_level=1, sep='_')
@@ -268,6 +281,10 @@ class Directory:
                 df.columns = df.columns.str.replace('_', ' ')
                 df.columns = df.columns.str.title()
                 df.rename(columns={'Size': 'Size (MB)'}, inplace=True)
+
+                # Remove the Processor Column 
+                if ' Processor' in df.columns:
+                    df.drop(columns=[' Processor'], inplace=True)
 
                 if (index == 0 and not recovery_mode) or \
                      (recovery_mode and not os.path.isfile(report_file)):
@@ -302,3 +319,4 @@ class Directory:
             keyword_dict[keyword] = count
 
         return keyword_dict
+
