@@ -1,9 +1,11 @@
 import os
+import numpy as np
 import pandas as pd
 from typing import List
 from tqdm import tqdm
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from file_processing import Directory
+from sentence_transformers import SentenceTransformer
 
 class SearchDirectory:
     def __init__(self, folder_path: str):
@@ -17,6 +19,10 @@ class SearchDirectory:
         for chunk in splitter.split_text(text):
             chunks.append(chunk)
         return chunks
+    
+    # def _embed_string(self, text: str, encoder):
+    #             embedding = encoder.encode(text)
+    #             return embedding
 
     def get_report(self, directory_path: str) -> None:
         directory = Directory(directory_path)
@@ -63,4 +69,18 @@ class SearchDirectory:
             # Save the new DataFrame to a new CSV file
             chunked_df.to_csv(os.path.join(self.folder_path, 'data_chunked.csv'), index=False)
 
+            self.is_chunked = True
             print("Chunking complete and saved to 'data_chunked.csv'.")
+
+    def embed_text(self):
+        if self.is_chunked:
+            df = pd.read_csv(os.path.join(self.folder_path, 'data_chunked.csv'))
+            encoder = SentenceTransformer("paraphrase-MiniLM-L3-v2")
+
+            tqdm.pandas()
+            embeddings = np.array(df['content'].progress_apply(encoder.encode).to_list())
+
+            # Save the new DataFrame to a new CSV file
+            np.save(os.path.join(self.folder_path, "embeddings.npy"), embeddings)
+
+            print("Embeddings complete and saved to 'data_embedded.csv'.")
