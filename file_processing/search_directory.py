@@ -5,6 +5,7 @@ from typing import List
 from tqdm import tqdm
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from file_processing import Directory
+from file_processing import faiss_index
 from sentence_transformers import SentenceTransformer
 
 class SearchDirectory:
@@ -12,6 +13,8 @@ class SearchDirectory:
         self.folder_path = folder_path
         self.has_report = False
         self.is_chunked = False
+        self.has_embeddings = False
+        self.has_index = False
 
     def _get_text_chunks(self, text: str, chunk_size: int, chunk_overlap: int) -> List[str]:
         chunks = []
@@ -20,9 +23,9 @@ class SearchDirectory:
             chunks.append(chunk)
         return chunks
     
-    # def _embed_string(self, text: str, encoder):
-    #             embedding = encoder.encode(text)
-    #             return embedding
+    def _embed_string(self, text: str):
+                embedding = self.encoder.encode(text)
+                return embedding
 
     def get_report(self, directory_path: str) -> None:
         directory = Directory(directory_path)
@@ -75,12 +78,29 @@ class SearchDirectory:
     def embed_text(self):
         if self.is_chunked:
             df = pd.read_csv(os.path.join(self.folder_path, 'data_chunked.csv'))
-            encoder = SentenceTransformer("paraphrase-MiniLM-L3-v2")
+            self.encoder = SentenceTransformer("paraphrase-MiniLM-L3-v2")
 
             tqdm.pandas()
-            embeddings = np.array(df['content'].progress_apply(encoder.encode).to_list())
+            embeddings = np.array(df['content'].progress_apply(self._embed_string).to_list())
 
             # Save the new DataFrame to a new CSV file
             np.save(os.path.join(self.folder_path, "embeddings.npy"), embeddings)
 
+            self.has_embeddings = True
             print("Embeddings complete and saved to 'data_embedded.csv'.")
+
+    def create_index(self):
+        if self.has_embeddings:
+            embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
+            index = faiss_index.create_flat_index(embeddings, os.path.join(self.folder_path, "index.faiss"))
+
+            self.has_index = True
+            print("FAISS index created and saved to 'index.faiss'.")
+
+    def search(self, query: str, k: int = 1):
+        if self.has_index:
+            xq = np.expand_dims(self._embed_string(query), axis=0)
+            df = pd.read_csv(os.path.join(self.folder_path, 'data_chunked.csv'))
+            index = faiss_index.load_index(os.path.join(self.folder_path, "index.faiss"))
+            _, indexes = index.query(xq, k)
+            return df.iloc[indexes[0]]
