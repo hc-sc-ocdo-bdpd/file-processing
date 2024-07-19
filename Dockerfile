@@ -5,8 +5,8 @@ WORKDIR /workspace
 
 # docker build --build-arg DEV=true --build-arg FULL=true -t file_processing_tools:latest .
 # Whether to install optional dependencies
-ARG DEV=false
-ARG FULL=false
+ARG DEV=true
+ARG FULL=true
 
 RUN if [ "${FULL}" = "true" ]; then \
     apt-get update && apt-get install -y \
