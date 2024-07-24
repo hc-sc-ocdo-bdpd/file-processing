@@ -1,9 +1,9 @@
 import faiss
 import numpy as np
-from file_processing.faiss_index import faiss_strategy
+from file_processing.faiss_index.faiss_strategy import FAISSStrategy
 
 
-class FlatIndex(faiss_strategy.FAISSStrategy):
+class FlatIndex(FAISSStrategy):
     def _create_index(self, embeddings: np.ndarray):
         dimension = embeddings.shape[1]
         index = faiss.IndexFlatL2(dimension)

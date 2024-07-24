@@ -1,10 +1,10 @@
 import faiss
 import numpy as np
-from file_processing.faiss_index import faiss_strategy
+from file_processing.faiss_index.faiss_strategy import FAISSStrategy
 from file_processing.tools.errors import UnsupportedHyperparameterError
 
 
-class IVFFlatIndex(faiss_strategy.FAISSStrategy):
+class IVFFlatIndex(FAISSStrategy):
     def _create_index(self, embeddings: np.ndarray, nlist: int):
         dimension = embeddings.shape[1]
         if nlist is None:

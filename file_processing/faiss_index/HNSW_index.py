@@ -1,10 +1,10 @@
 import faiss
 import numpy as np
-from file_processing.faiss_index import faiss_strategy
+from file_processing.faiss_index.faiss_strategy import FAISSStrategy
 from file_processing.tools.errors import UnsupportedHyperparameterError
 
 
-class HNSWIndex(faiss_strategy.FAISSStrategy):
+class HNSWIndex(FAISSStrategy):
     def _create_index(self, embeddings: np.ndarray, M: int,
                       efConstruction: int):
         if M is None:

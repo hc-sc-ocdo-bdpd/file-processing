@@ -1,8 +1,8 @@
 import numpy as np
-from file_processing.faiss_index import faiss_strategy
+from file_processing.faiss_index.faiss_strategy import FAISSStrategy
 
 
-class GeneralIndex(faiss_strategy.FAISSStrategy):
+class GeneralIndex(FAISSStrategy):
     def _create_index(self):
         raise NotImplementedError()
 
