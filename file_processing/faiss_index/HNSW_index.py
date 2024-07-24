@@ -28,11 +28,9 @@ class HNSWIndex(faiss_strategy.FAISSStrategy):
         return index
 
     def query(self, xq: np.ndarray, k: int = 1, efSearch: int = None):
-        if k < 1:
-            raise UnsupportedHyperparameterError("k cannot be less than 1")
         if efSearch is not None:
             if efSearch < 1:
                 raise UnsupportedHyperparameterError(
                     "efSearch cannot be less than 1")
             self.index.hnsw.efSearch = efSearch
-        return self.index.search(xq, k)
+        return super().query(xq, k)

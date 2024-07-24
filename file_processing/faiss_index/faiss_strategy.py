@@ -1,4 +1,6 @@
 import faiss
+import numpy as np
+from file_processing.tools.errors import UnsupportedHyperparameterError
 from abc import ABC, abstractmethod
 
 
@@ -17,5 +19,7 @@ class FAISSStrategy(ABC):
         pass
 
     @abstractmethod
-    def query(self):
-        pass
+    def query(self, xq: np.ndarray, k: int):
+        if k < 1:
+            raise UnsupportedHyperparameterError("k cannot be less than 1")
+        return self.index.search(xq, k)

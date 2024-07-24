@@ -7,4 +7,4 @@ class GeneralIndex(faiss_strategy.FAISSStrategy):
         raise NotImplementedError()
 
     def query(self, xq: np.ndarray, k: int = 1):
-        return self.index.search(xq, k)
+        return super().query()

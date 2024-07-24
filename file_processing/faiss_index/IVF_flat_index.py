@@ -23,11 +23,9 @@ class IVFFlatIndex(faiss_strategy.FAISSStrategy):
         return index
 
     def query(self, xq: np.ndarray, k: int = 1, nprobe: int = None):
-        if k < 1:
-            raise UnsupportedHyperparameterError("k cannot be less than 1")
         if nprobe is not None:
             if nprobe not in range(1, self.index.nlist + 1):
                 raise UnsupportedHyperparameterError(
                     f"nprobe must be between 1 and {self.index.nlist}")
             self.index.nprobe = nprobe
-        return self.index.search(xq, k)
+        return super().query(xq, k)
