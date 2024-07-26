@@ -10,11 +10,15 @@ class FAISSStrategy(ABC):
         "IP": 0,
     }
 
-    def __init__(self, *args, metric: str, index=None):
+    def __init__(self, *args, metric: str=None, index=None):
         if index is not None:
             self.index = index
         else:
-            self.index = self._create_index(*args, self.METRICS[metric])
+            try:
+                metric_id = self.METRICS[metric]
+            except KeyError:
+                metric_id = 1
+            self.index = self._create_index(*args, metric_id)
 
     def save_index(self, output_path: str):
         faiss.write_index(self.index, output_path)
