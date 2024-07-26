@@ -7,20 +7,34 @@ from file_processing import faiss_index
 test_embeddings = np.load("tests/resources/faiss_test_files/sample_embeddings.npy")
 query_vec = np.load("tests/resources/faiss_test_files/sample_query_vector.npy")
 
+metric_dict = {
+    "L2": 1,
+    "IP": 0
+}
 
-create_flat_variable_names = "embeddings, file_path"
+
+create_flat_variable_names = "embeddings, file_path, metric"
 create_flat_values = [
-    (test_embeddings, None),
-    (test_embeddings, "tests/resources/faiss_test_files/flat_index.faiss"),
-    (test_embeddings[:1,:], None)
+    (test_embeddings, None, None),
+    (test_embeddings, "tests/resources/faiss_test_files/flat_index.faiss", None),
+    (test_embeddings[:1,:], None, None),
+    (test_embeddings, None, "L2"),
+    (test_embeddings, None, "IP"),
+    (test_embeddings, None, "Test")
 ]
 @pytest.mark.parametrize(create_flat_variable_names, create_flat_values)
-def test_create_flat_index(embeddings, file_path):
-    index = faiss_index.create_flat_index(embeddings, file_path)
+def test_create_flat_index(embeddings, file_path, metric):
+    index = faiss_index.create_flat_index(embeddings, file_path, metric)
     assert isinstance(index.index, faiss.IndexFlat)
+    assert index.index.ntotal == embeddings.shape[0]
     if file_path is not None:
         assert os.path.exists(file_path)
         os.remove(file_path)
+    try:
+        metric_id = metric_dict[metric]
+    except KeyError:
+        metric_id = 1
+    assert index.index.metric_type == metric_id
 
 query_flat_variable_names = "embeddings, xq, k"
 query_flat_values = [
@@ -40,36 +54,45 @@ def test_flat_query(embeddings, xq, k):
         assert D.shape == I.shape
         assert D.shape[1] == k
 
-create_ivf_variable_names = "embeddings, nlist, file_path"
+create_ivf_variable_names = "embeddings, nlist, file_path, metric"
 create_ivf_values = [
-    (test_embeddings, None, None),
-    (test_embeddings, None, "tests/resources/faiss_test_files/ivf_index.faiss"),
-    (test_embeddings, 1, None),
-    (test_embeddings, 2, None),
-    (test_embeddings, 10, "tests/resources/faiss_test_files/ivf_index.faiss"),
-    (test_embeddings, test_embeddings.shape[0], None),
-    (test_embeddings, test_embeddings.shape[0] // 2, None),
-    (test_embeddings[:1,:], None, None)
+    (test_embeddings, None, None, None),
+    (test_embeddings, None, "tests/resources/faiss_test_files/ivf_index.faiss", None),
+    (test_embeddings, 1, None, None),
+    (test_embeddings, 2, None, None),
+    (test_embeddings, 10, "tests/resources/faiss_test_files/ivf_index.faiss", "L2"),
+    (test_embeddings, test_embeddings.shape[0], None, None),
+    (test_embeddings, test_embeddings.shape[0] // 2, None, None),
+    (test_embeddings[:1,:], None, None, None),
+    (test_embeddings, None, None, "IP"),
+    (test_embeddings, None, None, "L2"),
+    (test_embeddings, None, None, "Test")
 ]
 @pytest.mark.parametrize(create_ivf_variable_names, create_ivf_values)
-def test_create_ivf_flat_index(embeddings, nlist, file_path):
-    index = faiss_index.create_IVF_flat_index(embeddings, nlist, file_path)
+def test_create_ivf_flat_index(embeddings, nlist, file_path, metric):
+    index = faiss_index.create_IVF_flat_index(embeddings, nlist, file_path, metric)
     assert isinstance(index.index, faiss.IndexIVFFlat)
+    assert index.index.ntotal == embeddings.shape[0]
     if nlist is not None:
         assert index.index.nlist == nlist
     if file_path is not None:
         assert os.path.exists(file_path)
         os.remove(file_path)
+    try:
+        metric_id = metric_dict[metric]
+    except KeyError:
+        metric_id = 1
+    assert index.index.metric_type == metric_id
 
 create_ivf_error_values = [
-    (test_embeddings, test_embeddings.shape[0] + 1, None),
-    (test_embeddings, -1, None),
-    (test_embeddings, 2.5, None)
+    (test_embeddings, test_embeddings.shape[0] + 1, None, None),
+    (test_embeddings, -1, None, None),
+    (test_embeddings, 2.5, None, None)
 ]
 @pytest.mark.parametrize(create_ivf_variable_names, create_ivf_error_values)
-def test_create_ivf_flat_index_hyperparameter_errors(embeddings, nlist, file_path):
+def test_create_ivf_flat_index_hyperparameter_errors(embeddings, nlist, file_path, metric):
     with pytest.raises(Exception):
-        faiss_index.create_IVF_flat_index(embeddings, nlist, file_path)
+        faiss_index.create_IVF_flat_index(embeddings, nlist, file_path, metric)
 
 query_ivf_variable_names = "embeddings, nlist, xq, k, nprobe"
 query_ivf_values = [
@@ -108,37 +131,46 @@ def test_ivf_query(embeddings, nlist, xq, k, nprobe):
             assert np.array_equal(D, Df)
             assert np.array_equal(I, If)
 
-create_hnsw_variable_names = "embeddings, M, efConstruction, file_path"
+create_hnsw_variable_names = "embeddings, M, efConstruction, file_path, metric"
 create_hnsw_values = [
-    (test_embeddings, None, None, None),
-    (test_embeddings, None, None, "tests/resources/faiss_test_files/hnsw_index.faiss"),
-    (test_embeddings, 32, None, None),
-    (test_embeddings, None, 40, None),
-    (test_embeddings, 128, 40, None),
-    (test_embeddings, 128, 40, "tests/resources/faiss_test_files/hnsw_index.faiss"),
-    (test_embeddings[:1,:], None, None, None)
+    (test_embeddings, None, None, None, None),
+    (test_embeddings, None, None, "tests/resources/faiss_test_files/hnsw_index.faiss", None),
+    (test_embeddings, 32, None, None, None),
+    (test_embeddings, None, 40, None, None),
+    (test_embeddings, 128, 40, None, None),
+    (test_embeddings, 128, 40, "tests/resources/faiss_test_files/hnsw_index.faiss", None),
+    (test_embeddings[:1,:], None, None, None, None),
+    (test_embeddings, None, None, None, "IP"),
+    (test_embeddings, None, None, None, "L2"),
+    (test_embeddings, None, None, None, "Test")
 ]
 @pytest.mark.parametrize(create_hnsw_variable_names, create_hnsw_values)
-def test_create_hnsw_index(embeddings, M, efConstruction, file_path):
-    index = faiss_index.create_HNSW_index(embeddings, M, efConstruction, file_path)
+def test_create_hnsw_index(embeddings, M, efConstruction, file_path, metric):
+    index = faiss_index.create_HNSW_index(embeddings, M, efConstruction, file_path, metric)
     assert isinstance(index.index, faiss.IndexHNSWFlat)
+    assert index.index.ntotal == embeddings.shape[0]
     if file_path is not None:
         assert os.path.exists(file_path)
         os.remove(file_path)
+    try:
+        metric_id = metric_dict[metric]
+    except KeyError:
+        metric_id = 1
+    assert index.index.metric_type == metric_id
 
 create_hnsw_error_values = [
-    (test_embeddings, -1, None, None),
-    (test_embeddings, -1, -1, None),
-    (test_embeddings, None, -1, None),
-    (test_embeddings, 5.5, 10, None),
-    (test_embeddings, 5, 7.5, None),
-    (test_embeddings, 2.5, 2.5, None),
-    (test_embeddings, -1, 2.5, None)
+    (test_embeddings, -1, None, None, None),
+    (test_embeddings, -1, -1, None, None),
+    (test_embeddings, None, -1, None, None),
+    (test_embeddings, 5.5, 10, None, None),
+    (test_embeddings, 5, 7.5, None, None),
+    (test_embeddings, 2.5, 2.5, None, None),
+    (test_embeddings, -1, 2.5, None, None)
 ]
 @pytest.mark.parametrize(create_hnsw_variable_names, create_hnsw_error_values)
-def test_create_hnsw_index_hyperparameter_errors(embeddings, M, efConstruction, file_path):
+def test_create_hnsw_index_hyperparameter_errors(embeddings, M, efConstruction, file_path, metric):
     with pytest.raises(Exception):
-        faiss_index.create_HNSW_index(embeddings, M, efConstruction, file_path)
+        faiss_index.create_HNSW_index(embeddings, M, efConstruction, file_path, metric)
 
 query_hnsw_variable_names = "embeddings, M, efConstruction, xq, k, efSearch"
 query_hnsw_values = [
