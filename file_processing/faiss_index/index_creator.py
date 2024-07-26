@@ -36,6 +36,7 @@ def create_flat_index(embeddings: np.ndarray, file_path: str = None, metric: str
     Args:
         embeddings (np.ndarray): An array of embeddings to index.
         file_path (str, optional): The path to save the index. If None, the index is not saved.
+        metric (str, optional): The metric used to compute distances. L2 and IP currently supported. Default is L2.
 
     Returns:
         FlatIndex: An instance of the FlatIndex containing the embeddings.
@@ -55,6 +56,7 @@ def create_IVF_flat_index(embeddings: np.ndarray, nlist: int = None,
         embeddings (np.ndarray): An array of embeddings to index.
         nlist (int, optional): Number of clusters for the IVF index. If None, a default will be used.
         file_path (str, optional): The path to save the index. If None, the index is not saved.
+        metric (str, optional): The metric used to compute distances. L2 and IP currently supported. Default is L2.
 
     Returns:
         IVFFlatIndex: An instance of the IVFFlatIndex containing the embeddings.
@@ -76,6 +78,7 @@ def create_HNSW_index(embeddings: np.ndarray, M: int = 64,
         M (int, optional): Number of bi-directional links created for each new element. Default is 64.
         efConstruction (int, optional): Size of the dynamic list for the nearest neighbors during construction. Default is 64.
         file_path (str, optional): The path to save the index. If None, the index is not saved.
+        metric (str, optional): The metric used to compute distances. L2 and IP currently supported. Default is L2.
 
     Returns:
         HNSWIndex: An instance of the HNSWIndex containing the embeddings.
