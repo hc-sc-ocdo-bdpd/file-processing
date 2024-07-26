@@ -6,7 +6,7 @@ from file_processing.tools.errors import UnsupportedHyperparameterError
 
 class HNSWIndex(FAISSStrategy):
     def _create_index(self, embeddings: np.ndarray, M: int,
-                      efConstruction: int):
+                      efConstruction: int, metric: int):
         if M is None:
             M = 64
         if efConstruction is None:
@@ -22,7 +22,7 @@ class HNSWIndex(FAISSStrategy):
             raise UnsupportedHyperparameterError(
                 "efConstruction cannot be less than 1")
         dimension = embeddings.shape[1]
-        index = faiss.IndexHNSWFlat(dimension, M)
+        index = faiss.IndexHNSWFlat(dimension, M, metric)
         index.hnsw.efConstruction = efConstruction
         index.add(embeddings)
         return index

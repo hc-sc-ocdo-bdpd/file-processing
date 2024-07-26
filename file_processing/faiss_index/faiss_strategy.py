@@ -5,11 +5,16 @@ from abc import ABC, abstractmethod
 
 
 class FAISSStrategy(ABC):
-    def __init__(self, *args, index=None):
+    METRICS = {
+        "L2": 1,
+        "IP": 0,
+    }
+
+    def __init__(self, *args, metric: str, index=None):
         if index is not None:
             self.index = index
         else:
-            self.index = self._create_index(*args)
+            self.index = self._create_index(*args, self.METRICS[metric])
 
     def save_index(self, output_path: str):
         faiss.write_index(self.index, output_path)

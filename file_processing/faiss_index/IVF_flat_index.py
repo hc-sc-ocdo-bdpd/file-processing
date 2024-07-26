@@ -5,7 +5,7 @@ from file_processing.tools.errors import UnsupportedHyperparameterError
 
 
 class IVFFlatIndex(FAISSStrategy):
-    def _create_index(self, embeddings: np.ndarray, nlist: int):
+    def _create_index(self, embeddings: np.ndarray, nlist: int, metric: int):
         dimension = embeddings.shape[1]
         if nlist is None:
             nlist = max(1, int(np.sqrt(embeddings.shape[0] / 2)))
@@ -16,8 +16,8 @@ class IVFFlatIndex(FAISSStrategy):
         if nlist > embeddings.shape[0]:
             raise UnsupportedHyperparameterError(
                 f"nlist value of {nlist} is larger than the number of documents in the index")
-        quantizer = faiss.IndexFlatL2(dimension)
-        index = faiss.IndexIVFFlat(quantizer, dimension, nlist)
+        quantizer = faiss.IndexFlat(dimension, metric)
+        index = faiss.IndexIVFFlat(quantizer, dimension, nlist, metric)
         index.train(embeddings)
         index.add(embeddings)
         return index
