@@ -1,4 +1,5 @@
 import os
+import re
 import numpy as np
 import pandas as pd
 from typing import List
@@ -11,10 +12,10 @@ from sentence_transformers import SentenceTransformer
 class SearchDirectory:
     def __init__(self, folder_path: str):
         self.folder_path = folder_path
-        self.has_report = False
-        self.is_chunked = False
-        self.has_embeddings = False
-        self.has_index = False
+        if os.path.exists(os.path.join(folder_path, "data_chunked.csv")):
+            self.chunks_path = os.path.join(folder_path, "data_chunked.csv")
+        else:
+            self.chunks_path = None
 
     def _get_text_chunks(self, text: str, chunk_size: int, chunk_overlap: int) -> List[str]:
         chunks = []
@@ -24,78 +25,113 @@ class SearchDirectory:
         return chunks
     
     def _embed_string(self, text: str):
-                embedding = self.encoder.encode(text)
-                return embedding
+        embedding = self.encoder.encode(text)
+        return embedding
+    
+    def load_embedding_model(self, model_name: str = "paraphrase-MiniLM-L3-v2"):
+        self.encoder = SentenceTransformer(model_name)
 
-    def get_report(self, directory_path: str) -> None:
+    def report_from_directory(self, directory_path: str) -> None:
         directory = Directory(directory_path)
         directory.generate_report(
             report_file = os.path.join(self.folder_path,"report.csv"),
             split_metadata=True,
             include_text=True,
         )
-        self.has_report = True
 
-    def chunk_text(self, chunk_size: int = 1024, chunk_overlap: int = 10):
-        if self.has_report:
-            report_path = os.path.join(self.folder_path,"report.csv")
-            df = pd.read_csv(report_path)[['File Path', 'File Name', 'Text']]
+    def chunk_text(self,
+                   input_file_path: str = None,
+                   document_path_column: str = "File Path",
+                   document_text_column: str = "Text",
+                   chunk_size: int = 1024,
+                   chunk_overlap: int = 10):
+        df = pd.read_csv(input_file_path)
 
-            # Initialize an empty list to collect all rows
-            all_new_rows = []
+        # Initialize an empty list to collect all rows
+        all_new_rows = []
 
-            # Get the total number of rows
-            total_rows = len(df)
-            print(f"Total rows (excluding header): {total_rows}")
+        # Get the total number of rows
+        total_rows = len(df)
+        print(f"Total rows (excluding header): {total_rows}")
 
-            # Process each row with tqdm to show progress
-            for index, row in tqdm(df.iterrows(), total=total_rows, desc="Processing rows"):
-                file_path = row['File Path']
-                content = row['Text']
-                file_name = row['File Name']
-                
-                # Get chunks for the current content
-                chunks = self._get_text_chunks(content, chunk_size, chunk_overlap)
-                
-                # Create new rows for each chunk
-                for chunk_text in chunks:
-                    new_row = {
-                        'file_path': file_path,
-                        'file_name': file_name,
-                        'content': chunk_text
-                    }
-                    all_new_rows.append(new_row)
+        # Process each row with tqdm to show progress
+        for index, row in tqdm(df.iterrows(), total=total_rows, desc="Processing rows"):
+            file_path = row[document_path_column]
+            content = row[document_text_column]
+            
+            # Get chunks for the current content
+            chunks = self._get_text_chunks(content, chunk_size, chunk_overlap)
+            
+            # Create new rows for each chunk
+            for chunk_text in chunks:
+                new_row = {
+                    'file_path': file_path,
+                    'content': chunk_text
+                }
+                all_new_rows.append(new_row)
 
-            # Create a new DataFrame from the collected new rows
-            chunked_df = pd.DataFrame(all_new_rows)
+        # Create a new DataFrame from the collected new rows
+        chunked_df = pd.DataFrame(all_new_rows)
 
-            # Save the new DataFrame to a new CSV file
-            chunked_df.to_csv(os.path.join(self.folder_path, 'data_chunked.csv'), index=False)
+        # Save the new DataFrame to a new CSV file
+        chunked_df.to_csv(os.path.join(self.folder_path, 'data_chunked.csv'), index=False)
+        self.chunks_path = os.path.join(self.folder_path, 'data_chunked.csv')
+        self.n_chunks = len(chunked_df)
 
-            self.is_chunked = True
-            print("Chunking complete and saved to 'data_chunked.csv'.")
+        print("Chunking complete and saved to 'data_chunked.csv'.")
 
-    def embed_text(self):
-        if self.is_chunked:
-            df = pd.read_csv(os.path.join(self.folder_path, 'data_chunked.csv'))
-            self.encoder = SentenceTransformer("paraphrase-MiniLM-L3-v2")
+    def embed_text(self, row_start: int = 0, row_end: int = None, batch_size: int = 1000):
+        if self.chunks_path is None:
+            print(f"Error: data_chunked.csv not located in {self.folder_path}")
+        else:
+            os.makedirs(os.path.join(self.folder_path, "embedding_batches"))
+            chunked_df = pd.read_csv(self.chunks_path)
 
-            tqdm.pandas()
-            embeddings = np.array(df['content'].progress_apply(self._embed_string).to_list())
+            if row_end is None:
+                row_end = len(chunked_df)
+            current_row = row_start
 
-            # Save the new DataFrame to a new CSV file
-            np.save(os.path.join(self.folder_path, "embeddings.npy"), embeddings)
+            while current_row < row_end:
+                df = chunked_df[current_row:min(row_end, current_row + batch_size)]
+
+                tqdm.pandas()
+                embeddings = np.array(df['content'].progress_apply(self._embed_string).to_list())
+
+                # Save the new DataFrame to a new CSV file
+                np.save(os.path.join(self.folder_path, f"embedding_batches/embeddings ({current_row}-{min(row_end, current_row + batch_size)}).npy"), embeddings)
+                print(f"Embedding batch complete and saved to {os.path.join(self.folder_path, f'embedding_batches/embeddings ({current_row}-{min(row_end, current_row + batch_size)}).npy')}.")
+                current_row += batch_size
 
             self.has_embeddings = True
             print("Embeddings complete and saved to 'data_embedded.csv'.")
 
-    def create_index(self):
-        if self.has_embeddings:
-            embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
-            index = faiss_index.create_flat_index(embeddings, os.path.join(self.folder_path, "index.faiss"))
+    def combine_embeddings(self):
+        batch_path = os.path.join(self.folder_path, "embedding_batches")
+        pattern = r"\((\d+)-(\d+)\)"
 
-            self.has_index = True
-            print("FAISS index created and saved to 'index.faiss'.")
+        file_ranges = []
+
+        for filename in os.listdir(batch_path):
+            match = re.search(pattern, filename)
+            file_ranges.append((filename, int(match.group(1)), int(match.group(2))))
+
+        file_ranges.sort(key=lambda x: x[1])
+
+        start = file_ranges[0][1]
+        for filename, batch_start, batch_end in file_ranges:
+            emb = np.load(os.path.join(batch_path, filename))
+            if batch_start == start:
+                emb_full = emb
+                end = batch_end
+            else:
+                if start >= batch_start:
+                    emb_full = np.vstack((emb_full, emb[start - batch_start:]))
+            start = batch_end
+        if len(emb_full) == self.n_chunks:
+            np.save(os.path.join(self.folder_path))
+
+    def create_index(self):
+        pass
 
     def search(self, query: str, k: int = 1):
         if self.has_index:
