@@ -19,8 +19,8 @@ class SearchDirectory:
         else:
             self.chunks_path = None
         # get json data
-        if os.path.exists(os.path.join(folder_path, "setup_data.josn")):
-            with open(os.path.join(folder_path, "setup_data.josn"), 'r') as f:
+        if os.path.exists(os.path.join(folder_path, "setup_data.json")):
+            with open(os.path.join(folder_path, "setup_data.json"), 'r') as f:
                 setup_data = json.load(f)
                 self.encoding_name = setup_data['encoding_model']
                 self.n_chunks = setup_data['number_of_chunks']
@@ -142,18 +142,18 @@ class SearchDirectory:
 
         file_ranges.sort(key=lambda x: x[1])
 
-        start = file_ranges[0][1]
+        start = 0
         for filename, batch_start, batch_end in file_ranges:
             emb = np.load(os.path.join(batch_path, filename))
-            if batch_start == start:
+            if batch_start == 0:
                 emb_full = emb
-                end = batch_end
             else:
                 if start >= batch_start:
                     emb_full = np.vstack((emb_full, emb[start - batch_start:]))
             start = batch_end
-        if len(emb_full) == self.n_chunks:
-            np.save(os.path.join(self.folder_path))
+        if emb_full.shape[0] == self.n_chunks:
+            np.save(os.path.join(self.folder_path, "embeddings.npy"), emb_full)
+            print("Embeddings combined and saved to embeddings.npy")
 
     def create_index(self):
         pass
