@@ -1,5 +1,6 @@
 import os
 import re
+import json
 import numpy as np
 import pandas as pd
 from typing import List
@@ -12,10 +13,23 @@ from sentence_transformers import SentenceTransformer
 class SearchDirectory:
     def __init__(self, folder_path: str):
         self.folder_path = folder_path
+        # get chunking file path
         if os.path.exists(os.path.join(folder_path, "data_chunked.csv")):
             self.chunks_path = os.path.join(folder_path, "data_chunked.csv")
         else:
             self.chunks_path = None
+        # get json data
+        if os.path.exists(os.path.join(folder_path, "setup_data.josn")):
+            with open(os.path.join(folder_path, "setup_data.josn"), 'r') as f:
+                setup_data = json.load(f)
+                self.encoding_name = setup_data['encoding_model']
+                self.n_chunks = setup_data['number_of_chunks']
+        else:
+            self.n_chunks = None
+            self.encoding_name = None
+
+        if self.encoding_name is not None:
+            self.load_embedding_model(self.encoding_name)
 
     def _get_text_chunks(self, text: str, chunk_size: int, chunk_overlap: int) -> List[str]:
         chunks = []
@@ -28,8 +42,18 @@ class SearchDirectory:
         embedding = self.encoder.encode(text)
         return embedding
     
+    def _save_to_json(self):
+        setup_data = {
+            'encoding_model': self.encoding_name,
+            'number_of_chunks': self.n_chunks
+        }
+        with open(os.path.join(self.folder_path, "setup_data.json"), 'w') as f:
+            json.dump(setup_data, f, indent=4)
+    
     def load_embedding_model(self, model_name: str = "paraphrase-MiniLM-L3-v2"):
+        self.encoding_name = model_name
         self.encoder = SentenceTransformer(model_name)
+        self._save_to_json()
 
     def report_from_directory(self, directory_path: str) -> None:
         directory = Directory(directory_path)
@@ -77,6 +101,7 @@ class SearchDirectory:
         chunked_df.to_csv(os.path.join(self.folder_path, 'data_chunked.csv'), index=False)
         self.chunks_path = os.path.join(self.folder_path, 'data_chunked.csv')
         self.n_chunks = len(chunked_df)
+        self._save_to_json()
 
         print("Chunking complete and saved to 'data_chunked.csv'.")
 
