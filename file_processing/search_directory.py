@@ -27,6 +27,11 @@ class SearchDirectory:
         else:
             self.n_chunks = None
             self.encoding_name = None
+        # get the faiss index
+        if os.path.exists(os.path.join(folder_path, "index.faiss")):
+            self.index = faiss_index.load_index(os.path.join(folder_path, "index.faiss"))
+        else:
+            self.index = None
 
         if self.encoding_name is not None:
             self.load_embedding_model(self.encoding_name)
@@ -155,13 +160,13 @@ class SearchDirectory:
             np.save(os.path.join(self.folder_path, "embeddings.npy"), emb_full)
             print("Embeddings combined and saved to embeddings.npy")
 
-    def create_index(self):
-        pass
+    def create_flat_index(self, embeddings: np.ndarray = None):
+        if embeddings is None:
+            embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
+        self.index = faiss_index.create_flat_index(embeddings, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def search(self, query: str, k: int = 1):
-        if self.has_index:
-            xq = np.expand_dims(self._embed_string(query), axis=0)
-            df = pd.read_csv(os.path.join(self.folder_path, 'data_chunked.csv'))
-            index = faiss_index.load_index(os.path.join(self.folder_path, "index.faiss"))
-            _, indexes = index.query(xq, k)
-            return df.iloc[indexes[0]]
+        xq = np.expand_dims(self._embed_string(query), axis=0)
+        df = pd.read_csv(os.path.join(self.folder_path, 'data_chunked.csv'))
+        _, indexes = self.index.query(xq, k)
+        return df.iloc[indexes[0]]
