@@ -14,13 +14,13 @@ class SearchDirectory:
     def __init__(self, folder_path: str):
         self.folder_path = folder_path
         # get chunking file path
-        if os.path.exists(os.path.join(folder_path, "data_chunked.csv")):
-            self.chunks_path = os.path.join(folder_path, "data_chunked.csv")
+        if os.path.exists(os.path.join(self.folder_path, "data_chunked.csv")):
+            self.chunks_path = os.path.join(self.folder_path, "data_chunked.csv")
         else:
             self.chunks_path = None
         # get json data
-        if os.path.exists(os.path.join(folder_path, "setup_data.json")):
-            with open(os.path.join(folder_path, "setup_data.json"), 'r') as f:
+        if os.path.exists(os.path.join(self.folder_path, "setup_data.json")):
+            with open(os.path.join(self.folder_path, "setup_data.json"), 'r') as f:
                 setup_data = json.load(f)
                 self.encoding_name = setup_data['encoding_model']
                 self.n_chunks = setup_data['number_of_chunks']
@@ -28,8 +28,8 @@ class SearchDirectory:
             self.n_chunks = None
             self.encoding_name = None
         # get the faiss index
-        if os.path.exists(os.path.join(folder_path, "index.faiss")):
-            self.index = faiss_index.load_index(os.path.join(folder_path, "index.faiss"))
+        if os.path.exists(os.path.join(self.folder_path, "index.faiss")):
+            self.index = faiss_index.load_index(os.path.join(self.folder_path, "index.faiss"))
         else:
             self.index = None
 
@@ -99,6 +99,11 @@ class SearchDirectory:
                    document_text_column: str = "Text",
                    chunk_size: int = 1024,
                    chunk_overlap: int = 10):
+        # check if there is a report
+        if os.path.exists(os.path.join(self.folder_path, "report.csv")):
+            input_file_path = os.path.join(self.folder_path, "report.csv")
+
+        # load into a dataframe
         df = pd.read_csv(input_file_path)
 
         # Initialize an empty list to collect all rows
