@@ -54,6 +54,31 @@ class SearchDirectory:
         }
         with open(os.path.join(self.folder_path, "setup_data.json"), 'w') as f:
             json.dump(setup_data, f, indent=4)
+
+    def _combine_embeddings(self):
+        batch_path = os.path.join(self.folder_path, "embedding_batches")
+        pattern = r"\((\d+)-(\d+)\)"
+
+        file_ranges = []
+
+        for filename in os.listdir(batch_path):
+            match = re.search(pattern, filename)
+            file_ranges.append((filename, int(match.group(1)), int(match.group(2))))
+
+        file_ranges.sort(key=lambda x: x[1])
+
+        start = 0
+        for filename, batch_start, batch_end in file_ranges:
+            emb = np.load(os.path.join(batch_path, filename))
+            if batch_start == 0:
+                emb_full = emb
+            else:
+                if start >= batch_start:
+                    emb_full = np.vstack((emb_full, emb[start - batch_start:]))
+            start = batch_end
+        if emb_full.shape[0] == self.n_chunks:
+            np.save(os.path.join(self.folder_path, "embeddings.npy"), emb_full)
+            print("Embeddings combined and saved to embeddings.npy")
     
     def load_embedding_model(self, model_name: str = "paraphrase-MiniLM-L3-v2"):
         self.encoding_name = model_name
@@ -110,55 +135,61 @@ class SearchDirectory:
 
         print("Chunking complete and saved to 'data_chunked.csv'.")
 
-    def embed_text(self, row_start: int = 0, row_end: int = None, batch_size: int = 1000):
+    def embed_text(self, row_start: int = 0, row_end: int = None, batch_size: int = 1000) -> None:
         if self.chunks_path is None:
             print(f"Error: data_chunked.csv not located in {self.folder_path}")
         else:
-            os.makedirs(os.path.join(self.folder_path, "embedding_batches"))
+            os.makedirs(os.path.join(self.folder_path, "embedding_batches"), exist_ok=True)
             chunked_df = pd.read_csv(self.chunks_path)
 
             if row_end is None:
                 row_end = len(chunked_df)
-            current_row = row_start
+        
+            batch_path = os.path.join(self.folder_path, "embedding_batches")
+            pattern = r"\((\d+)-(\d+)\)"
 
-            while current_row < row_end:
-                df = chunked_df[current_row:min(row_end, current_row + batch_size)]
+            contained_ranges = []
 
-                tqdm.pandas()
-                embeddings = np.array(df['content'].progress_apply(self._embed_string).to_list())
+            for filename in os.listdir(batch_path):
+                match = re.search(pattern, filename)
+                batch_start = int(match.group(1))
+                batch_end = int(match.group(2))
+                if (batch_start < row_end) and (batch_end > row_start):
+                    if batch_start < row_start:
+                        batch_start = row_start
+                    if batch_end > row_end:
+                        batch_end = row_end
+                    contained_ranges.append((batch_start, batch_end))
+            
+            contained_ranges.sort(key=lambda x: x[1])
+            print(contained_ranges)
 
-                # Save the new DataFrame to a new CSV file
-                np.save(os.path.join(self.folder_path, f"embedding_batches/embeddings ({current_row}-{min(row_end, current_row + batch_size)}).npy"), embeddings)
-                print(f"Embedding batch complete and saved to {os.path.join(self.folder_path, f'embedding_batches/embeddings ({current_row}-{min(row_end, current_row + batch_size)}).npy')}.")
-                current_row += batch_size
+            segments = []
+            for batch_start, batch_end in contained_ranges:
+                print(row_start)
+                if row_start < row_end:
+                    if (batch_start > row_start):
+                        segments.append((row_start, batch_start))
+                    row_start = batch_end
+            if row_start < row_end:
+                segments.append((row_start, row_end))
 
-            self.has_embeddings = True
-            print("Embeddings complete and saved to 'data_embedded.csv'.")
+            for start, end in segments:
+                print(start, end)
+                current_row = start
 
-    def combine_embeddings(self):
-        batch_path = os.path.join(self.folder_path, "embedding_batches")
-        pattern = r"\((\d+)-(\d+)\)"
+                while current_row < end:
+                    df = chunked_df[current_row:min(end, current_row + batch_size)]
 
-        file_ranges = []
+                    tqdm.pandas()
+                    embeddings = np.array(df['content'].progress_apply(self._embed_string).to_list())
 
-        for filename in os.listdir(batch_path):
-            match = re.search(pattern, filename)
-            file_ranges.append((filename, int(match.group(1)), int(match.group(2))))
+                    # Save the new DataFrame to a new CSV file
+                    np.save(os.path.join(self.folder_path, f"embedding_batches/embeddings ({current_row}-{min(end, current_row + batch_size)}).npy"), embeddings)
+                    print(f"Embedding batch complete and saved to embeddings ({current_row}-{min(end, current_row + batch_size)}).npy').")
+                    current_row += batch_size
 
-        file_ranges.sort(key=lambda x: x[1])
-
-        start = 0
-        for filename, batch_start, batch_end in file_ranges:
-            emb = np.load(os.path.join(batch_path, filename))
-            if batch_start == 0:
-                emb_full = emb
-            else:
-                if start >= batch_start:
-                    emb_full = np.vstack((emb_full, emb[start - batch_start:]))
-            start = batch_end
-        if emb_full.shape[0] == self.n_chunks:
-            np.save(os.path.join(self.folder_path, "embeddings.npy"), emb_full)
-            print("Embeddings combined and saved to embeddings.npy")
+            self._combine_embeddings()
 
     def create_flat_index(self, embeddings: np.ndarray = None):
         if embeddings is None:
