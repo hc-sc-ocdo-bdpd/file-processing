@@ -196,8 +196,21 @@ class SearchDirectory:
             embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
         self.index = faiss_index.create_flat_index(embeddings, file_path=os.path.join(self.folder_path, "index.faiss"))
 
-    def search(self, query: str, k: int = 1):
+    def create_ivf_flat_index(self, embeddings: np.ndarray = None, nlist: int = None):
+        if embeddings is None:
+            embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
+        self.index = faiss_index.create_IVF_flat_index(embeddings, nlist=nlist, file_path=os.path.join(self.folder_path, "index.faiss"))
+
+    def create_hnsw_index(self,
+                          embeddings: np.ndarray = None,
+                          M: int = 64,
+                          efConstruction: int = 64):
+        if embeddings is None:
+            embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
+        self.index = faiss_index.create_HNSW_index(embeddings, M=M, efConstruction=efConstruction, file_path=os.path.join(self.folder_path, "index.faiss"))
+
+    def search(self, query: str, k: int = 1, *args):
         xq = np.expand_dims(self._embed_string(query), axis=0)
         df = pd.read_csv(os.path.join(self.folder_path, 'data_chunked.csv'))
-        _, indexes = self.index.query(xq, k)
+        _, indexes = self.index.query(xq, k, args)
         return df.iloc[indexes[0]]
