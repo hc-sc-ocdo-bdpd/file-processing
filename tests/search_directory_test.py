@@ -35,6 +35,11 @@ def test_load_chunks_without_csv(tmp_path):
     with pytest.raises(Exception):
         search.chunk_text("tests/resources/directory_test_files/Test_excel_file.xlsx")
 
+def test_load_chunks_with_name_issues(tmp_path):
+    search = SearchDirectory(tmp_path)
+    with pytest.raises(Exception):
+        search.chunk_text("tests/resources/directory_test_files/2021_Census_English.csv")
+
 @pytest.fixture(scope="module")
 def directory_with_chunks(resource_folder, tmp_path_factory):
     file_path = tmp_path_factory.mktemp("just_chunks")
