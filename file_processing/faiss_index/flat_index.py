@@ -1,17 +1,14 @@
 import faiss
 import numpy as np
-from file_processing.faiss_index import faiss_strategy
-from file_processing.tools.errors import UnsupportedHyperparameterError
+from file_processing.faiss_index.faiss_strategy import FAISSStrategy
 
 
-class FlatIndex(faiss_strategy.FAISSStrategy):
-    def _create_index(self, embeddings: np.ndarray):
+class FlatIndex(FAISSStrategy):
+    def _create_index(self, embeddings: np.ndarray, metric: int):
         dimension = embeddings.shape[1]
-        index = faiss.IndexFlatL2(dimension)
+        index = faiss.IndexFlat(dimension, metric)
         index.add(embeddings)
         return index
 
     def query(self, xq: np.ndarray, k: int = 1):
-        if k < 1:
-            raise UnsupportedHyperparameterError("k cannot be less than 1")
-        return self.index.search(xq, k)
+        return super().query(xq, k)
