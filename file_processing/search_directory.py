@@ -99,9 +99,13 @@ class SearchDirectory:
                    document_text_column: str = "Text",
                    chunk_size: int = 1024,
                    chunk_overlap: int = 10):
+        
         # check if there is a report
-        if os.path.exists(os.path.join(self.folder_path, "report.csv")):
+        if (input_file_path is None) and (os.path.exists(os.path.join(self.folder_path, "report.csv"))):
             input_file_path = os.path.join(self.folder_path, "report.csv")
+        else:
+            raise FileNotFoundError("No input file specified and no report provided. \
+                                    Please provide a file path to a .csv or run 'report_from_directory'.")
 
         # load into a dataframe
         df = pd.read_csv(input_file_path)
