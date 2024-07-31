@@ -11,6 +11,8 @@ def resource_folder():
 def embedding_model():
     return "paraphrase-MiniLM-L3-v2"
 
+# Test chunking step
+
 def test_empty_directory(tmp_path):
     SearchDirectory(tmp_path)
     assert not any(os.scandir(tmp_path))
@@ -28,6 +30,11 @@ def test_chunk_without_file(tmp_path):
     with pytest.raises(Exception):
         search.chunk_text()
 
+def test_load_chunks_without_csv(tmp_path):
+    search = SearchDirectory(tmp_path)
+    with pytest.raises(Exception):
+        search.chunk_text("tests/resources/directory_test_files/Test_excel_file.xlsx")
+
 @pytest.fixture(scope="module")
 def directory_with_chunks(resource_folder, tmp_path_factory):
     file_path = tmp_path_factory.mktemp("just_chunks")
@@ -39,6 +46,8 @@ def directory_with_chunks(resource_folder, tmp_path_factory):
 def test_load_with_chunks(directory_with_chunks):
     search = SearchDirectory(directory_with_chunks)
     assert search.n_chunks is not None
+
+# Test load embedding step
 
 def test_load_embedding_model(directory_with_chunks, embedding_model):
     search = SearchDirectory(directory_with_chunks)
@@ -59,3 +68,5 @@ def test_load_after_model_defined(directory_with_embeding_module, embedding_mode
     search = SearchDirectory(directory_with_embeding_module)
     assert search.encoder is not None
     assert search.encoding_name == embedding_model
+
+# Test embedding step
