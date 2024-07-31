@@ -102,11 +102,12 @@ class SearchDirectory:
                    chunk_overlap: int = 10):
         
         # check if there is a report
-        if (input_file_path is None) and (os.path.exists(os.path.join(self.folder_path, "report.csv"))):
-            input_file_path = os.path.join(self.folder_path, "report.csv")
-        else:
-            raise FileNotFoundError("No input file specified and no report provided. \
-                                    Please provide a file path to a .csv or run 'report_from_directory'.")
+        if input_file_path is None:
+            if os.path.exists(os.path.join(self.folder_path, "report.csv")):
+                input_file_path = os.path.join(self.folder_path, "report.csv")
+            else:
+                raise FileNotFoundError("No input file specified and no report provided. \
+                                        Please provide a file path to a .csv or run 'report_from_directory'.")
 
         # load into a dataframe
         if input_file_path.lower().endswith('.csv'):
@@ -116,9 +117,9 @@ class SearchDirectory:
         
         # check if the column names are valid
         if document_path_column not in df.columns:
-            raise KeyError(f"{document_path_column} is not a column in {input_file_path}.")
+            raise KeyError(f"'{document_path_column}' is not a column in {input_file_path}.")
         elif document_text_column not in df.columns:
-            raise KeyError(f"{document_text_column} is not a column in {input_file_path}.")
+            raise KeyError(f"'{document_text_column}' is not a column in {input_file_path}.")
 
         # Initialize an empty list to collect all rows
         all_new_rows = []

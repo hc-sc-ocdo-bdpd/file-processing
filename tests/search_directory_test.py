@@ -39,7 +39,7 @@ def test_load_chunks_with_name_issues(tmp_path):
     search = SearchDirectory(tmp_path)
     with pytest.raises(Exception):
         search.chunk_text("tests/resources/directory_test_files/2021_Census_English.csv")
-
+    
 @pytest.fixture(scope="module")
 def directory_with_chunks(resource_folder, tmp_path_factory):
     file_path = tmp_path_factory.mktemp("just_chunks")
@@ -51,6 +51,14 @@ def directory_with_chunks(resource_folder, tmp_path_factory):
 def test_load_with_chunks(directory_with_chunks):
     search = SearchDirectory(directory_with_chunks)
     assert search.n_chunks is not None
+
+def test_load_chunks_different_column_names(directory_with_chunks, tmp_path):
+    search1 = SearchDirectory(tmp_path)
+    search1.chunk_text("tests/resources/document_search_test_files/report_modified.csv",
+                       "path",
+                       "content")
+    search2 = SearchDirectory(directory_with_chunks)
+    assert search2.n_chunks == search1.n_chunks
 
 # Test load embedding step
 
