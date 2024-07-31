@@ -113,6 +113,12 @@ class SearchDirectory:
             df = pd.read_csv(input_file_path)
         else:
             raise FileTypeError(f"File path {input_file_path} is not a .csv file.")
+        
+        # check if the column names are valid
+        if document_path_column not in df.columns:
+            raise KeyError(f"{document_path_column} is not a column in {input_file_path}.")
+        elif document_text_column not in df.columns:
+            raise KeyError(f"{document_text_column} is not a column in {input_file_path}.")
 
         # Initialize an empty list to collect all rows
         all_new_rows = []
