@@ -23,6 +23,11 @@ def test_chunk_from_report(resource_folder, tmp_path):
     assert os.path.exists(tmp_path / "data_chunked.csv")
     assert os.path.exists(tmp_path / "setup_data.json")
 
+def test_chunk_without_file(tmp_path):
+    search = SearchDirectory(tmp_path)
+    with pytest.raises(Exception):
+        search.chunk_text()
+
 @pytest.fixture(scope="module")
 def directory_with_chunks(resource_folder, tmp_path_factory):
     file_path = tmp_path_factory.mktemp("just_chunks")
