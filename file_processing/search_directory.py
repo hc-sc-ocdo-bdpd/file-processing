@@ -8,6 +8,7 @@ from tqdm import tqdm
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from file_processing import Directory
 from file_processing import faiss_index
+from file_processing.tools.errors import FileTypeError
 from sentence_transformers import SentenceTransformer
 
 class SearchDirectory:
@@ -108,7 +109,10 @@ class SearchDirectory:
                                     Please provide a file path to a .csv or run 'report_from_directory'.")
 
         # load into a dataframe
-        df = pd.read_csv(input_file_path)
+        if input_file_path.lower().endswith('.csv'):
+            df = pd.read_csv(input_file_path)
+        else:
+            raise FileTypeError(f"File path {input_file_path} is not a .csv file.")
 
         # Initialize an empty list to collect all rows
         all_new_rows = []
