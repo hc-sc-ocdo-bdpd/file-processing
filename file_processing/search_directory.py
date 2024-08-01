@@ -168,6 +168,16 @@ class SearchDirectory:
 
             if (row_end is None) or (row_end > n_chunks):
                 row_end = n_chunks
+
+            for row in (row_start, row_end):
+                if row < -n_chunks - 1:
+                    raise IndexError(f"Row index {row} is out of bounds for {n_chunks} chunks.")
+                elif row < 0:
+                    row = n_chunks + row + 1
+            if row_start >= n_chunks:
+                raise IndexError(f"Start index of {row_start} is out of bounds for {n_chunks} chunks")
+            if row_end <= row_start:
+                raise ValueError(f"Row end ({row_end}) cannot be less than the row start ({row_start}).")
         
             batch_path = os.path.join(self.folder_path, "embedding_batches")
             pattern = r"\((\d+)-(\d+)\)"
