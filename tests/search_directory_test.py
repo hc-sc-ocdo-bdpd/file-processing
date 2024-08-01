@@ -1,7 +1,7 @@
 import os
 import pytest
 import shutil
-import pandas as pd
+import numpy as np
 from file_processing import SearchDirectory
 
 @pytest.fixture(scope="module")
@@ -125,9 +125,32 @@ def test_embedding_creation(directory_with_embeding_module, start, end, batch, c
         for file in expected_files:
             assert f"embeddings ({file}).npy" in os.listdir(directory_with_embeding_module / "embedding_batches")
         assert os.path.exists(directory_with_embeding_module / "embeddings.npy") == combined
+        if combined:
+            embeddings = np.load(directory_with_embeding_module / "embeddings.npy")
+            assert embeddings.shape[0] == search.n_chunks
     finally:
         # remove created files
         if clean_files:
             shutil.rmtree(directory_with_embeding_module / "embedding_batches")
             if os.path.exists(directory_with_embeding_module / "embeddings.npy"):
                 os.remove(directory_with_embeding_module / "embeddings.npy")
+
+def test_overlapping_embedding_files(embedding_model, directory_with_embeding_module):
+    search2 = SearchDirectory(directory_with_embeding_module)
+    search2.embed_text()
+    search1 = SearchDirectory("tests/resources/document_search_test_files")
+    search1.chunk_text("tests/resources/document_search_test_files/report_modified.csv",
+                       "path",
+                       "content")
+    search1.load_embedding_model(embedding_model)
+    search1.embed_text(batch_size=30)
+    try:
+        embeddings1 = np.load("tests/resources/document_search_test_files/embeddings.npy")
+        embeddings2 = np.load(directory_with_embeding_module / "embeddings.npy")
+        assert np.allclose(embeddings1, embeddings2)
+    finally:
+        os.remove("tests/resources/document_search_test_files/data_chunked.csv")
+        os.remove("tests/resources/document_search_test_files/setup_data.json")
+        os.remove("tests/resources/document_search_test_files/embeddings.npy")
+        shutil.rmtree(directory_with_embeding_module / "embedding_batches")
+        os.remove(directory_with_embeding_module / "embeddings.npy")
