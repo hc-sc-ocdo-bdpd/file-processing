@@ -164,9 +164,10 @@ class SearchDirectory:
         else:
             os.makedirs(os.path.join(self.folder_path, "embedding_batches"), exist_ok=True)
             chunked_df = pd.read_csv(self.chunks_path)
+            n_chunks = len(chunked_df)
 
-            if row_end is None:
-                row_end = len(chunked_df)
+            if (row_end is None) or (row_end > n_chunks):
+                row_end = n_chunks
         
             batch_path = os.path.join(self.folder_path, "embedding_batches")
             pattern = r"\((\d+)-(\d+)\)"
