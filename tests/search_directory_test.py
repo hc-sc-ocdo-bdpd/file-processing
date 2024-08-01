@@ -97,6 +97,7 @@ values = [
     (25, 60, 20, False, ['25-45', '45-60'], False),
     (0, None, 15, True, ['0-15', '15-25', '25-45', '45-60', '60-75', '75-76'], True),
     (0, 80, 40, True, ['0-40', '40-76'], True),
+    (0, -1, 100, True, ['0-76'], True)
 ]
 
 @pytest.mark.parametrize(variable_names, values)
