@@ -68,18 +68,21 @@ class SearchDirectory:
 
         file_ranges.sort(key=lambda x: x[1])
 
-        start = 0
-        for filename, batch_start, batch_end in file_ranges:
-            emb = np.load(os.path.join(batch_path, filename))
-            if batch_start == 0:
-                emb_full = emb
-            else:
-                if start >= batch_start:
-                    emb_full = np.vstack((emb_full, emb[start - batch_start:]))
-            start = batch_end
-        if emb_full.shape[0] == self.n_chunks:
-            np.save(os.path.join(self.folder_path, "embeddings.npy"), emb_full)
-            print("Embeddings combined and saved to embeddings.npy")
+        if file_ranges[0][1] == 0:
+            start = 0
+            for filename, batch_start, batch_end in file_ranges:
+                emb = np.load(os.path.join(batch_path, filename))
+                if batch_start == 0:
+                    emb_full = emb
+                else:
+                    if start >= batch_start:
+                        emb_full = np.vstack((emb_full, emb[start - batch_start:]))
+                start = batch_end
+            if emb_full.shape[0] == self.n_chunks:
+                np.save(os.path.join(self.folder_path, "embeddings.npy"), emb_full)
+                print("Embeddings combined and saved to embeddings.npy")
+        else:
+            print("Embeddings not yet combined. The remainder of the embeddings left must be completed before they can be combined.")
     
     def load_embedding_model(self, model_name: str = "paraphrase-MiniLM-L3-v2"):
         self.encoding_name = model_name

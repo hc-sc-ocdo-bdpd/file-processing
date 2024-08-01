@@ -1,5 +1,6 @@
 import os
 import pytest
+import shutil
 import pandas as pd
 from file_processing import SearchDirectory
 
@@ -83,3 +84,22 @@ def test_load_after_model_defined(directory_with_embeding_module, embedding_mode
     assert search.encoding_name == embedding_model
 
 # Test embedding step
+
+variable_names = "start, end, batch, expected_files"
+values = [
+    (0, None, 100, ["0-76"]),
+    (0, None, 20, ["0-20", '20-40', '40-60', '60-76']),
+    (10, None, 30, ["10-40", "40-70", "70-76"]),
+    (20, 25, 1, ["20-21", '21-22', '22-23', '23-24', '24-25'])
+]
+
+@pytest.mark.parametrize(variable_names, values)
+def test_embedding_creation(directory_with_embeding_module, start, end, batch, expected_files):
+    search = SearchDirectory(directory_with_embeding_module)
+    search.embed_text(start, end, batch)
+    try:
+        for file in expected_files:
+            assert f"embeddings ({file}).npy" in os.listdir(directory_with_embeding_module / "embedding_batches")
+    finally:
+        # remove created files
+        shutil.rmtree(directory_with_embeding_module / "embedding_batches")
