@@ -97,14 +97,28 @@ values = [
     (25, 60, 20, False, ['25-45', '45-60'], False),
     (0, None, 15, True, ['0-15', '15-25', '25-45', '45-60', '60-75', '75-76'], True),
     (0, 80, 40, True, ['0-40', '40-76'], True),
-    (0, -1, 100, True, ['0-76'], True)
+    (0, -1, 100, True, ['0-76'], True),
+    (-4, -1, 2, True, ['73-75', '75-76'], False),
+    (-77, -1, 100, True, ['0-76'], True),
+    (-77, 76, 100, True, ['0-76'], True),
+    (10, -2, 100, True, ['10-75'], False),
+    (-78, None, 100, True, [], False),
+    (0, 0, 100, True, [], False),
+    (-1, None, 100, True, [], False),
+    (76, 80, 100, True, [], False),
+    (75, 80, 100, True, ['75-76'], False),
+    (0, -77, 100, True, [], False)
 ]
 
 @pytest.mark.parametrize(variable_names, values)
 def test_embedding_creation(directory_with_embeding_module, start, end, batch, clean_files, expected_files, combined):
     search = SearchDirectory(directory_with_embeding_module)
-    search.embed_text(start, end, batch)
     try:
+        if len(expected_files) == 0:
+            with pytest.raises(Exception):
+                search.embed_text(start, end, batch)
+        else:
+            search.embed_text(start, end, batch)
         for file in expected_files:
             assert f"embeddings ({file}).npy" in os.listdir(directory_with_embeding_module / "embedding_batches")
         assert os.path.exists(directory_with_embeding_module / "embeddings.npy") == combined
