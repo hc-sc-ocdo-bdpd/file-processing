@@ -85,27 +85,30 @@ def test_load_after_model_defined(directory_with_embeding_module, embedding_mode
 
 # Test embedding step
 
-variable_names = "start, end, batch, clean_files, expected_files"
+variable_names = "start, end, batch, clean_files, expected_files, combined"
 values = [
-    (0, None, 100, False, ["0-76"]),
-    (0, None, 100, False, ['0-76']),
-    (10, 40, 10, True, ['0-76']),
-    (0, None, 20, True, ["0-20", '20-40', '40-60', '60-76']),
-    (10, None, 30, True, ["10-40", "40-70", "70-76"]),
-    (20, 25, 1, True, ["20-21", '21-22', '22-23', '23-24', '24-25']),
-    (25, 60, 20, False, ['25-45', '45-60']),
-    (0, None, 15, True, ['0-15', '15-25', '25-45', '45-60', '60-75', '75-76']),
-    (0, 80, 40, True, ['0-40', '40-76'])
+    (0, None, 100, False, ["0-76"], True),
+    (0, None, 100, False, ['0-76'], True),
+    (10, 40, 10, True, ['0-76'], True),
+    (0, None, 20, True, ["0-20", '20-40', '40-60', '60-76'], True),
+    (10, None, 30, True, ["10-40", "40-70", "70-76"], False),
+    (20, 25, 1, True, ["20-21", '21-22', '22-23', '23-24', '24-25'], False),
+    (25, 60, 20, False, ['25-45', '45-60'], False),
+    (0, None, 15, True, ['0-15', '15-25', '25-45', '45-60', '60-75', '75-76'], True),
+    (0, 80, 40, True, ['0-40', '40-76'], True)
 ]
 
 @pytest.mark.parametrize(variable_names, values)
-def test_embedding_creation(directory_with_embeding_module, start, end, batch, clean_files, expected_files):
+def test_embedding_creation(directory_with_embeding_module, start, end, batch, clean_files, expected_files, combined):
     search = SearchDirectory(directory_with_embeding_module)
     search.embed_text(start, end, batch)
     try:
         for file in expected_files:
             assert f"embeddings ({file}).npy" in os.listdir(directory_with_embeding_module / "embedding_batches")
+        assert os.path.exists(directory_with_embeding_module / "embeddings.npy") == combined
     finally:
         # remove created files
         if clean_files:
             shutil.rmtree(directory_with_embeding_module / "embedding_batches")
+            if os.path.exists(directory_with_embeding_module / "embeddings.npy"):
+                os.remove(directory_with_embeding_module / "embeddings.npy")
