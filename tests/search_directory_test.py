@@ -154,3 +154,31 @@ def test_overlapping_embedding_files(embedding_model, directory_with_embeding_mo
         os.remove("tests/resources/document_search_test_files/embeddings.npy")
         shutil.rmtree(directory_with_embeding_module / "embedding_batches")
         os.remove(directory_with_embeding_module / "embeddings.npy")
+
+# Test FAISS search step
+
+def test_flat_faiss_index_creation(directory_with_embeding_module):
+    search = SearchDirectory(directory_with_embeding_module)
+    try:
+        search.embed_text()
+        search.create_flat_index()
+        assert os.path.exists(directory_with_embeding_module / "index.faiss")
+    finally:
+        shutil.rmtree(directory_with_embeding_module / "embedding_batches")
+        os.remove(directory_with_embeding_module / "embeddings.npy")
+        os.remove(directory_with_embeding_module / "index.faiss")
+
+
+# @pytest.fixture(scope="module")
+# def directory_with_faiss(resource_folder, tmp_path_factory, embedding_model):
+#     file_path = tmp_path_factory.mktemp("with_faiss")
+#     search = SearchDirectory(file_path)
+#     search.report_from_directory(resource_folder)
+#     search.chunk_text()
+#     search.load_embedding_model(embedding_model)
+#     search.embed_text()
+#     search.create_flat_index()
+#     return file_path
+
+
+

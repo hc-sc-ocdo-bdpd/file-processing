@@ -238,18 +238,18 @@ class SearchDirectory:
             self._combine_embeddings()
 
     def create_flat_index(self, embeddings: np.ndarray = None):
-        self._check_for_embeddings(embeddings)
+        embeddings = self._check_for_embeddings(embeddings)
         self.index = faiss_index.create_flat_index(embeddings, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def create_ivf_flat_index(self, embeddings: np.ndarray = None, nlist: int = None):
-        self._check_for_embeddings(embeddings)
+        embeddings = self._check_for_embeddings(embeddings)
         self.index = faiss_index.create_IVF_flat_index(embeddings, nlist=nlist, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def create_hnsw_index(self,
                           embeddings: np.ndarray = None,
                           M: int = 64,
                           efConstruction: int = 64):
-        self._check_for_embeddings(embeddings)
+        embeddings = self._check_for_embeddings(embeddings)
         self.index = faiss_index.create_HNSW_index(embeddings, M=M, efConstruction=efConstruction, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def search(self, query: str, k: int = 1, *args):
