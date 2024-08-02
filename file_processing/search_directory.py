@@ -255,5 +255,5 @@ class SearchDirectory:
     def search(self, query: str, k: int = 1, *args):
         xq = np.expand_dims(self._embed_string(query), axis=0)
         df = pd.read_csv(os.path.join(self.folder_path, 'data_chunked.csv'))
-        _, indexes = self.index.query(xq, k, args)
+        _, indexes = self.index.query(xq, k, *args)
         return df.iloc[indexes[0]]

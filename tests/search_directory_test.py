@@ -198,8 +198,20 @@ def directory_with_faiss(resource_folder, tmp_path_factory, embedding_model):
     search.chunk_text()
     search.load_embedding_model(embedding_model)
     search.embed_text()
-    search.create_flat_index()
+    search.create_ivf_flat_index()
     return file_path
 
+search_variable_names = "query, k, nprobe"
+general_query = "What is the meaning of life, the universe, and everything?"
+search_values = [
+    (general_query, 3, 1),
+    (general_query, 3, 3),
+    (general_query, 1, 3)
+]
 
-
+@pytest.mark.parametrize(search_variable_names, search_values)
+def test_faiss_search(directory_with_faiss, query, k, nprobe):
+    search_ivf = SearchDirectory(directory_with_faiss)
+    results_ivf = search_ivf.search(query, k, nprobe)
+    assert search_ivf.index.index.nprobe == nprobe
+    assert len(results_ivf) == k
