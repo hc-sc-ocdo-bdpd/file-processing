@@ -83,6 +83,14 @@ class SearchDirectory:
                 print("Embeddings combined and saved to embeddings.npy")
         else:
             print("Embeddings not yet combined. The remainder of the embeddings left must be completed before they can be combined.")
+
+    def _check_for_embeddings(self, embeddings: np.ndarray) -> np.ndarray:
+        if embeddings is None:
+            if os.path.exists(os.path.join(self.folder_path, "embeddings.npy")):
+                embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
+            else:
+                raise FileNotFoundError("No embeddings found.")
+        return embeddings
     
     def load_embedding_model(self, model_name: str = "paraphrase-MiniLM-L3-v2"):
         self.encoding_name = model_name
@@ -230,21 +238,18 @@ class SearchDirectory:
             self._combine_embeddings()
 
     def create_flat_index(self, embeddings: np.ndarray = None):
-        if embeddings is None:
-            embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
+        self._check_for_embeddings(embeddings)
         self.index = faiss_index.create_flat_index(embeddings, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def create_ivf_flat_index(self, embeddings: np.ndarray = None, nlist: int = None):
-        if embeddings is None:
-            embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
+        self._check_for_embeddings(embeddings)
         self.index = faiss_index.create_IVF_flat_index(embeddings, nlist=nlist, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def create_hnsw_index(self,
                           embeddings: np.ndarray = None,
                           M: int = 64,
                           efConstruction: int = 64):
-        if embeddings is None:
-            embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
+        self._check_for_embeddings(embeddings)
         self.index = faiss_index.create_HNSW_index(embeddings, M=M, efConstruction=efConstruction, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def search(self, query: str, k: int = 1, *args):
