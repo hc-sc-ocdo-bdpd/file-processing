@@ -85,6 +85,11 @@ def test_load_after_model_defined(directory_with_embeding_module, embedding_mode
 
 # Test embedding step
 
+def test_embedding_without_model(directory_with_chunks):
+    search = SearchDirectory(directory_with_chunks)
+    with pytest.raises(Exception):
+        search.embed_text()
+
 variable_names = "start, end, batch, clean_files, expected_files, combined"
 values = [
     (0, None, 100, False, ["0-76"], True),
