@@ -1,12 +1,12 @@
 import faiss
 import numpy as np
-from file_processing.faiss_index import faiss_strategy
+from file_processing.faiss_index.faiss_strategy import FAISSStrategy
 from file_processing.tools.errors import UnsupportedHyperparameterError
 
 
-class HNSWIndex(faiss_strategy.FAISSStrategy):
+class HNSWIndex(FAISSStrategy):
     def _create_index(self, embeddings: np.ndarray, M: int,
-                      efConstruction: int):
+                      efConstruction: int, metric: int):
         if M is None:
             M = 64
         if efConstruction is None:
@@ -22,17 +22,15 @@ class HNSWIndex(faiss_strategy.FAISSStrategy):
             raise UnsupportedHyperparameterError(
                 "efConstruction cannot be less than 1")
         dimension = embeddings.shape[1]
-        index = faiss.IndexHNSWFlat(dimension, M)
+        index = faiss.IndexHNSWFlat(dimension, M, metric)
         index.hnsw.efConstruction = efConstruction
         index.add(embeddings)
         return index
 
     def query(self, xq: np.ndarray, k: int = 1, efSearch: int = None):
-        if k < 1:
-            raise UnsupportedHyperparameterError("k cannot be less than 1")
         if efSearch is not None:
             if efSearch < 1:
                 raise UnsupportedHyperparameterError(
                     "efSearch cannot be less than 1")
             self.index.hnsw.efSearch = efSearch
-        return self.index.search(xq, k)
+        return super().query(xq, k)

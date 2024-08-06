@@ -10,3 +10,4 @@ openpyxl>=3.1.2
 pandas>=2.0.3
 tqdm==4.66.1
 mutagen==1.47.0
+numpy<2
