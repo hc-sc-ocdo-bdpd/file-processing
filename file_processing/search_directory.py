@@ -170,11 +170,10 @@ class SearchDirectory:
         print("Chunking complete and saved to 'data_chunked.csv'.")
 
     def embed_text(self, row_start: int = 0, row_end: int = None, batch_size: int = 1000) -> None:
-        print(self.encoding_name, self.encoder)
         if self.chunks_path is None:
             raise FileNotFoundError(f"Error: data_chunked.csv not located in {self.folder_path}")
         if self.encoder is None:
-            raise EncodingModelError("No encoding model found. Run 'load_embedding_model' first.")
+            raise EncodingModelError("Error: no encoding model found. Run 'load_embedding_model' first.")
         else:
             os.makedirs(os.path.join(self.folder_path, "embedding_batches"), exist_ok=True)
             chunked_df = pd.read_csv(self.chunks_path)
@@ -257,8 +256,12 @@ class SearchDirectory:
         self.index = faiss_index.create_HNSW_index(embeddings, M=M, efConstruction=efConstruction, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def search(self, query: str, k: int = 1, *args):
+        if self.chunks_path is None:
+            raise FileNotFoundError(f"Error: data_chunked.csv not located in {self.folder_path}")
         if self.index is None:
             raise FileNotFoundError(f"Error: no FAISS index found in {self.folder_path}")
+        if self.encoder is None:
+            raise EncodingModelError("Error: no encoding model found. Run 'load_embedding_model' first.")
         xq = np.expand_dims(self._embed_string(query), axis=0)
         df = pd.read_csv(os.path.join(self.folder_path, 'data_chunked.csv'))
         _, indexes = self.index.query(xq, k, *args)

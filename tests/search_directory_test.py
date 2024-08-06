@@ -220,3 +220,18 @@ def test_faiss_search(directory_with_faiss, query, k, nprobe):
     results_ivf = search_ivf.search(query, k, nprobe)
     assert search_ivf.index.index.nprobe == nprobe
     assert len(results_ivf) == k
+
+def test_search_no_chunks(tmp_path):
+    search = SearchDirectory(tmp_path)
+    with pytest.raises(Exception):
+        search.search("Test")
+
+def test_search_no_embedding_model(directory_with_chunks):
+    search = SearchDirectory(directory_with_chunks)
+    with pytest.raises(Exception):
+        search.search("Test")
+
+def test_search_no_faiss(directory_with_embeding_module):
+    search = SearchDirectory(directory_with_embeding_module)
+    with pytest.raises (Exception):
+        search.search("Test")
