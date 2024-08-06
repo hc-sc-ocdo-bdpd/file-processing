@@ -9,6 +9,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from file_processing import Directory
 from file_processing import faiss_index
 from file_processing.tools.errors import FileTypeError
+from file_processing.tools.errors import EncodingModelError
 from sentence_transformers import SentenceTransformer
 
 class SearchDirectory:
@@ -33,9 +34,11 @@ class SearchDirectory:
             self.index = faiss_index.load_index(os.path.join(self.folder_path, "index.faiss"))
         else:
             self.index = None
-
+        # load the encoding model
         if self.encoding_name is not None:
             self.load_embedding_model(self.encoding_name)
+        else:
+            self.encoder = None
 
     def _get_text_chunks(self, text: str, chunk_size: int, chunk_overlap: int) -> List[str]:
         chunks = []
@@ -167,8 +170,11 @@ class SearchDirectory:
         print("Chunking complete and saved to 'data_chunked.csv'.")
 
     def embed_text(self, row_start: int = 0, row_end: int = None, batch_size: int = 1000) -> None:
+        print(self.encoding_name, self.encoder)
         if self.chunks_path is None:
-            print(f"Error: data_chunked.csv not located in {self.folder_path}")
+            raise FileNotFoundError(f"Error: data_chunked.csv not located in {self.folder_path}")
+        if self.encoder is None:
+            raise EncodingModelError("No encoding model found. Run 'load_embedding_model' first.")
         else:
             os.makedirs(os.path.join(self.folder_path, "embedding_batches"), exist_ok=True)
             chunked_df = pd.read_csv(self.chunks_path)
@@ -251,6 +257,8 @@ class SearchDirectory:
         self.index = faiss_index.create_HNSW_index(embeddings, M=M, efConstruction=efConstruction, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def search(self, query: str, k: int = 1, *args):
+        if self.index is None:
+            raise FileNotFoundError(f"Error: no FAISS index found in {self.folder_path}")
         xq = np.expand_dims(self._embed_string(query), axis=0)
         df = pd.read_csv(os.path.join(self.folder_path, 'data_chunked.csv'))
         _, indexes = self.index.query(xq, k, *args)

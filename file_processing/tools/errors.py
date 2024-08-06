@@ -49,7 +49,11 @@ class EmptySelection(FileProcessorError):
 
 
 class FileTypeError(FileProcessorError):
-    """Provided file is of the incorrect file type."""
+    """Raised when the provided file is of the incorrect file type."""
+
+
+class EncodingModelError(FileProcessorError):
+    """Raised when there is no encoding model specified."""
 
 
 class NotDocumentBasedFile(KeyError):
