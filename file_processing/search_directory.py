@@ -216,7 +216,6 @@ class SearchDirectory:
 
             segments = []
             for batch_start, batch_end in contained_ranges:
-                print(row_start)
                 if row_start < row_end:
                     if (batch_start > row_start):
                         segments.append((row_start, batch_start))
