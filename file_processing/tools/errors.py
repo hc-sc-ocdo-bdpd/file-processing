@@ -48,11 +48,17 @@ class EmptySelection(FileProcessorError):
     """Raised when the input directory is empty. This may be caused by the filter conditions."""
 
 
+class FileTypeError(FileProcessorError):
+    """Provided file is of the incorrect file type."""
+
+
 class NotDocumentBasedFile(KeyError):
     """Raised during file similarity testing when the input file does not have a 'text' field."""
 
+
 class FAISSIndexError(Exception):
     """Base exception for FAISS related issues"""
+
 
 class UnsupportedHyperparameterError(FAISSIndexError):
     """Raised when a hyperparameter value cannot be used in the FAISS index"""
