@@ -208,7 +208,6 @@ class SearchDirectory:
                     contained_ranges.append((batch_start, batch_end))
             
             contained_ranges.sort(key=lambda x: x[1])
-            print(contained_ranges)
 
             segments = []
             for batch_start, batch_end in contained_ranges:
@@ -221,7 +220,6 @@ class SearchDirectory:
                 segments.append((row_start, row_end))
 
             for start, end in segments:
-                print(start, end)
                 current_row = start
 
                 while current_row < end:
