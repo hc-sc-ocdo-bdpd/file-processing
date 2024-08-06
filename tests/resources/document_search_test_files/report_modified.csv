@@ -1,5 +1,5 @@
-path,name,content
-tests\resources\similarity_test_files\aviation_safety.txt,aviation_safety.txt,"Aviation safety in Canada
+path,content
+tests\resources\similarity_test_files\aviation_safety.txt,"Aviation safety in Canada
 From: Transport Canada
 
 
@@ -66,7 +66,7 @@ guide the industry through the certification process
 ensure aircraft designs meet internationally accepted design standards
 support the industry to take corrective action
 Cabin "
-tests\resources\similarity_test_files\canadian_constitution.txt,canadian_constitution.txt,"The Canadian Constitution
+tests\resources\similarity_test_files\canadian_constitution.txt,"The Canadian Constitution
 A constitution provides the fundamental rules and principles that govern a country. It creates many of the institutions and branches of government, and defines their powers.
 
 Did you know?
@@ -91,7 +91,7 @@ Parliament is the legislative branch of the federal government. Parliament consi
 The Department of Justice
 The Minister of Justice is responsible for the Department of Justice, which provides legal services such as drafting laws and providing legal advice to the government and its departments. The department also develops criminal law and public law, as well as policies and programs for victims, families, children and youth criminal justice. The Minister of Justice is also the Attorney General or chief law officer of Canada
 Our Constitution also includes provisions relating to the judicial branch of government, composed of judges. The judiciary must interpret and apply the law an"
-tests\resources\similarity_test_files\climate_change_causes.txt,climate_change_causes.txt,"Causes of climate change
+tests\resources\similarity_test_files\climate_change_causes.txt,"Causes of climate change
 What is the most important cause of climate change?
 Human activity is the main cause of climate change. People burn fossil fuels and convert land from forests to agriculture. Since the beginning of the Industrial Revolution, people have burned more and more fossil fuels and changed vast areas of land from forests to farmland.
 
@@ -117,7 +117,7 @@ What is climate change?
 Climate change is a long-term shift in weather conditions identified by changes in temperature, precipitation, winds, and other indicators. Climate change can involve both changes in average conditions and changes in variability, including, for example, extreme events.
 
 The earth's climate is naturally variable on all time scales. However, its long-term state and average temperature are regulated by the balance between incoming and outgoing energy, which determines the Earth's energy balance. Any factor that causes a sustained change to the amount of incoming energy or the amount of outgoing energy can lead to climate change. Di"
-tests\resources\similarity_test_files\coronavirus_symptoms.txt,coronavirus_symptoms.txt,"COVID-19: Symptoms, treatment, what to do if you feel sick
+tests\resources\similarity_test_files\coronavirus_symptoms.txt,"COVID-19: Symptoms, treatment, what to do if you feel sick
 Current situation
 Symptoms and treatment
 Prevention and risks
@@ -197,7 +197,7 @@ new onset of confusion
 difficulty waking up or staying awake
 pale, grey or blue-coloured skin, lips or nail beds
 Follow instructions for safe transport if"
-tests\resources\similarity_test_files\CPP_disability_benefits.txt,CPP_disability_benefits.txt,"Canada Pension Plan disability benefits
+tests\resources\similarity_test_files\CPP_disability_benefits.txt,"Canada Pension Plan disability benefits
 
 Overview
 The Canada Pension Plan (CPP) disability benefit is a monthly payment you can get if you:
@@ -249,7 +249,7 @@ Once you have earned $6,600 (before tax) in 2023, you must contact Service Canad
 if you earn below $6,600 (before tax), this alone should not affect your disability benefits
 if you earn between $6,600 and $18,508.36 (before tax), this may show that you are regularly capable of working and it may affect your disability benefits
 if you earn $18,508.36 (before tax) or more, this demonstrates you are regularly capable of working and you will likely"
-tests\resources\similarity_test_files\CPP_retirement_pension.txt,CPP_retirement_pension.txt,"CPP Retirement pension
+tests\resources\similarity_test_files\CPP_retirement_pension.txt,"CPP Retirement pension
 
 Overview
 The Canada Pension Plan (CPP) retirement pension is a monthly, taxable benefit that replaces part of your income when you retire. If you qualify, you’ll receive the CPP retirement pension for the rest of your life. To qualify you must:
@@ -297,7 +297,7 @@ The CPP now consists of:
 
 the base (or original CPP)
 t"
-tests\resources\similarity_test_files\documents_for_express_entry.txt,documents_for_express_entry.txt,"Documents for Express Entry
+tests\resources\similarity_test_files\documents_for_express_entry.txt,"Documents for Express Entry
 You need certain documents at different stages of the Express Entry application process.
 
 Documents for your profile
@@ -338,7 +338,7 @@ authority to release personal information to a designated individual form (PDF, 
 any other documents that you feel are relevant to your application
 Next step
 Submit a profile"
-tests\resources\similarity_test_files\EI_regular_benefits.txt,EI_regular_benefits.txt,"EI regular benefits
+tests\resources\similarity_test_files\EI_regular_benefits.txt,"EI regular benefits
 
 How much you could receive
 From: Employment and Social Development Canada
@@ -389,7 +389,7 @@ Regional rate of unemployment	Required weeks
 To find out the rate of unemployment in your region, visit EI Program Characteristics.
 
 Once the "
-tests\resources\similarity_test_files\express_entry.txt,express_entry.txt,"How Express Entry works
+tests\resources\similarity_test_files\express_entry.txt,"How Express Entry works
 Express Entry is an online system that we use to manage immigration applications from skilled workers.
 
 There are 3 immigration programs managed through Express Entry:
@@ -444,7 +444,7 @@ We send invitations to apply to the candidates with the highest scores in the po
 We’ll process most complete applications that have all supporting documents in 6 months or less.
 
 Apply through Express Entry"
-tests\resources\similarity_test_files\funding_culture_history_sport.txt,funding_culture_history_sport.txt,"Funding - Culture, history and sport
+tests\resources\similarity_test_files\funding_culture_history_sport.txt,"Funding - Culture, history and sport
 COVID-19: Support for the culture, heritage and sport sectors
 
 Filter items
@@ -468,7 +468,7 @@ Canadian Conservation Institute internship programs	The Canadian Conservation In
 Canadian Film or Video Production Tax Credit	The Canadian Film or Video Production Tax Credit supports Canadian programming and the development of an active domestic production sector.
 Celebrate Canada	Celebrate Canada provides funding for activities organized on National Indigenous Peoples Day, Saint-Jean-Baptiste Day, Canadian Multiculturalism Day and Canada Day.
 Commemora"
-tests\resources\similarity_test_files\healthcare_system.txt,healthcare_system.txt,"Canada's health care system
+tests\resources\similarity_test_files\healthcare_system.txt,"Canada's health care system
 Learn about Canada's health care system, including Medicare, funding, accessing health care services and delivery.
 
 On this page
@@ -524,7 +524,7 @@ The provincial and territorial plans must provide all residents reasonable acces
 
 Federal funding for health care
 The federal government pr"
-tests\resources\similarity_test_files\history_of_canada.txt,history_of_canada.txt,"History of Canada
+tests\resources\similarity_test_files\history_of_canada.txt,"History of Canada
 Canadian history does not begin with the arrival of European explorers over 500 years ago; people have been living in the country that we now call Canada for thousands of years.
 
 Canada’s original inhabitants
@@ -553,7 +553,7 @@ The year 1870 – three years after Confederation – brought multiple historic 
 Canada’s purchase of Rupert’s Land from the Hudson’s Bay Company, which had been granted a charter to the area by the British government exactly two centuries earlier. Rupert's Land spanned all land drained by rivers flowing into Hudson Bay – roughly 40 per cent of present-day Canada. The selling price was 300,000 pounds sterling.
 Britain’s transfer of the North-Western Territory to Canada. Previously, the Hudson’s Bay Company had an exclusive licence to trade in this area, which stretched west to the colony of British Columbia and north to the Arctic Circle. When it was discovered in the mid-1800s that the Prairies had enormous farming potential, the British government refused to renew the company’s licence. With the Hudson's Bay Company out of the area, Britain was free to turn it over to Canada.
 The combination of Rupert’s Land and the North-Western Territory to form the Northwest Territories, follo"
-tests\resources\similarity_test_files\how_courts_are_organized.txt,how_courts_are_organized.txt,"How the Courts are Organized
+tests\resources\similarity_test_files\how_courts_are_organized.txt,"How the Courts are Organized
 Previous Page Table of Contents Next Page
 Each type of court has its own jurisdiction, which means that it has the authority to decide specific types of cases. Canada has four levels of court.
 
@@ -599,7 +599,7 @@ claims involving money, up to a certain amount (set by the province or territory
 small claims (civil cases that resolve private disputes involving limited sums of money); and
 all preliminary inquiries (hearings to determine whether there is enough evidence to justify a full trial in serious criminal cases).
 Some courts at this level are dedicated to particular types of offences or groups of offenders. One example is the Drug Treatment Court. The objective of these courts is to address the needs of non-violent offenders who are charged with criminal offences that were motivated by their addiction. Those who qualify are offered judicial supervision and treatment for their addiction, with the help of community support services. S"
-tests\resources\similarity_test_files\national_security_act.txt,national_security_act.txt,"Our Security, Our Rights
+tests\resources\similarity_test_files\national_security_act.txt,"Our Security, Our Rights
 
 On June 21, 2019, an Act respecting national security matters (the National Security Act, 2017) received royal assent.
 
@@ -615,7 +615,7 @@ Canadians were clear in the consultation they expect their rights and freedoms t
 
 Strengthening security and protecting rights
 As the threat environment has evolved, so too must the legislative landscape and the political environment in which it operates. The measures outlined in this section demonstrate how the National Security Act, 2017 strengthens Canada's ability to address new threats and safeguard Canadian's rights and freedoms."
-tests\resources\similarity_test_files\net_zero_emissions_by_2050.txt,net_zero_emissions_by_2050.txt,"Net-zero emissions by 2050
+tests\resources\similarity_test_files\net_zero_emissions_by_2050.txt,"Net-zero emissions by 2050
 
 The transition to a cleaner, prosperous economy needs to be both an immediate priority and a sustained effort over the years and decades ahead. Canada must keep innovating to meet this long-term goal, strengthening and building on existing measures that fight climate change and transform the economy.
 
@@ -640,7 +640,7 @@ Net-Zero Advisory Body
 The Net-Zero Advisory Body (NZAB) was launched in February 2021. With up to 15 members that bring together relevant experience and knowledge, the Advisory Body provides independent advice to the Minister of Environment and Climate Change that supports achieving Canada’s net-zero target.
 
 In November 2021, the Minister of Environment a"
-tests\resources\similarity_test_files\origin_of_name_canada.txt,origin_of_name_canada.txt,"Origin of the name ""Canada""
+tests\resources\similarity_test_files\origin_of_name_canada.txt,"Origin of the name ""Canada""
 Today, it seems impossible to imagine Canada by any other name. However, there were a number of other interesting suggestions and events leading up to the formal christening of our nation in 1867.
 
 Aboriginal roots
@@ -663,7 +663,7 @@ The debate was placed in perspective by Thomas D’Arcy McGee, who declared on F
 “I read in one newspaper not less than a dozen attempts to derive a new name. One individual chooses Tuponia and another Hochelaga as a suitable name for the new nationality. Now I ask any honourable member of this House how he would feel if he woke up some fine morning and found himself instead of a Canadian, a Tuponian or a Hochelagander.”
 
 Fortunately for posterity, McGee’s wit and reasoning – along with common sense – prevailed, and on July 1, 1867, the provinces of Canada, Nova Scotia, and New Brunswick became “one Dominion under the name of Canada.”"
-tests\resources\similarity_test_files\personal_income_tax.txt,personal_income_tax.txt,"Personal income tax
+tests\resources\similarity_test_files\personal_income_tax.txt,"Personal income tax
 
 Get ready to do your taxes
 
@@ -729,7 +729,7 @@ After you file your tax return
 Get your notice of assessment, find out the status of your refund, or make a change to your tax return
 
 If you need more information, you can get ans"
-tests\resources\similarity_test_files\start_a_business.txt,start_a_business.txt,"Starting a business
+tests\resources\similarity_test_files\start_a_business.txt,"Starting a business
 Table of contents
 Before you start: The plan
 
@@ -792,7 +792,7 @@ Choosing a name…
 
 Choosing a location
 For most businesses, choosing an appropriate location is critical, and the address is often needed for registrations, licences and permits. Your ideal location will depend on your business ne"
-tests\resources\similarity_test_files\travel_advisories.txt,travel_advisories.txt,"Travel advice and advisories by destination
+tests\resources\similarity_test_files\travel_advisories.txt,"Travel advice and advisories by destination
 COVID-19: travel health notice for all travellers
 
 The Government of Canada’s official source of travel information and advice, the Travel Advice and Advisories help you to make informed decisions and travel safely while you are outside Canada. Check the page for your destination often, because safety and security conditions may change. See Travel Advice and Advisories – FAQ for more information.
@@ -878,7 +878,7 @@ Exercise a high degree of caution (with regional advisories)	2023-12-20 10:49:17
   Malawi	
 Exercise a high degree of caution	2023-12-20 10:49:17
 "
-tests\resources\similarity_test_files\visitors_to_canada.txt,visitors_to_canada.txt,"Travellers
+tests\resources\similarity_test_files\visitors_to_canada.txt,"Travellers
 Visitors to Canada
 Have proper identification
 You must carry proper identification for yourself and any children travelling with you to help confirm your legal right or authorization to enter Canada when you arrive.
