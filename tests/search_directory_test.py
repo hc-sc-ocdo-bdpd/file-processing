@@ -140,8 +140,12 @@ def test_embedding_creation(directory_with_embeding_module, start, end, batch, c
             if os.path.exists(directory_with_embeding_module / "embeddings.npy"):
                 os.remove(directory_with_embeding_module / "embeddings.npy")
 
-def test_overlapping_embedding_files(embedding_model, directory_with_embeding_module):
-    search2 = SearchDirectory(directory_with_embeding_module)
+def test_overlapping_embedding_files(embedding_model, tmp_path):
+    search2 = SearchDirectory(tmp_path)
+    search2.chunk_text("tests/resources/document_search_test_files/report_modified.csv",
+                       "path",
+                       "content")
+    search2.load_embedding_model(embedding_model)
     search2.embed_text()
     search1 = SearchDirectory("tests/resources/document_search_test_files")
     search1.chunk_text("tests/resources/document_search_test_files/report_modified.csv",
@@ -151,14 +155,12 @@ def test_overlapping_embedding_files(embedding_model, directory_with_embeding_mo
     search1.embed_text(batch_size=30)
     try:
         embeddings1 = np.load("tests/resources/document_search_test_files/embeddings.npy")
-        embeddings2 = np.load(directory_with_embeding_module / "embeddings.npy")
+        embeddings2 = np.load(tmp_path / "embeddings.npy")
         assert np.allclose(embeddings1, embeddings2)
     finally:
         os.remove("tests/resources/document_search_test_files/data_chunked.csv")
         os.remove("tests/resources/document_search_test_files/setup_data.json")
         os.remove("tests/resources/document_search_test_files/embeddings.npy")
-        shutil.rmtree(directory_with_embeding_module / "embedding_batches")
-        os.remove(directory_with_embeding_module / "embeddings.npy")
 
 # Test FAISS search step
 
