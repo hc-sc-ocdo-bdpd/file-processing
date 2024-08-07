@@ -13,7 +13,12 @@ from file_processing.tools.errors import EncodingModelError
 from sentence_transformers import SentenceTransformer
 
 class SearchDirectory:
-    def __init__(self, folder_path: str):
+    def __init__(self, folder_path: str) -> None:
+        """
+        Initializes the SearchDirectory object with paths to data and model files.
+
+        :param folder_path: Path to the folder containing data and setup files.
+        """
         self.folder_path = folder_path
         # get chunking file path
         if os.path.exists(os.path.join(self.folder_path, "data_chunked.csv")):
@@ -41,17 +46,36 @@ class SearchDirectory:
             self.encoder = None
 
     def _get_text_chunks(self, text: str, chunk_size: int, chunk_overlap: int) -> List[str]:
+        """
+        Splits the input text into smaller chunks with specified size and overlap.
+
+        :param text: The text to be split into chunks.
+        :param chunk_size: Number of characters in each chunk.
+        :param chunk_overlap: Number of overlapping characters between chunks.
+
+        :return: A list of text chunks.
+        """
         chunks = []
         splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         for chunk in splitter.split_text(text):
             chunks.append(chunk)
         return chunks
     
-    def _embed_string(self, text: str):
+    def _embed_string(self, text: str) -> np.ndarray:
+        """
+        Converts a text string into a vector representation using the encoding model.
+
+        :param text: The text to be embedded.
+
+        :return: The embedding vector of the input text.
+        """
         embedding = self.encoder.encode(text)
         return embedding
     
-    def _save_to_json(self):
+    def _save_to_json(self) -> None:
+        """
+        Saves the encoding model name and number of chunks to a JSON file in the folder.
+        """
         setup_data = {
             'encoding_model': self.encoding_name,
             'number_of_chunks': self.n_chunks
@@ -59,7 +83,10 @@ class SearchDirectory:
         with open(os.path.join(self.folder_path, "setup_data.json"), 'w') as f:
             json.dump(setup_data, f, indent=4)
 
-    def _combine_embeddings(self):
+    def _combine_embeddings(self) -> None:
+        """
+        Combines individual embedding files into a single numpy array and saves it as 'embeddings.npy'.
+        """
         batch_path = os.path.join(self.folder_path, "embedding_batches")
         pattern = r"\((\d+)-(\d+)\)"
 
@@ -88,19 +115,28 @@ class SearchDirectory:
             print("Embeddings not yet combined. The remainder of the embeddings left must be completed before they can be combined.")
 
     def _check_for_embeddings(self, embeddings: np.ndarray) -> np.ndarray:
+        """
+        Checks for the provided embeddings or loads them from a file if not provided.
+
+        :param embeddings: Pre-existing embeddings to check.
+
+        :return: The embeddings, either provided or loaded from file.
+
+        :raises FileNotFoundError: If embeddings are not found and no file exists.
+        """
         if embeddings is None:
             if os.path.exists(os.path.join(self.folder_path, "embeddings.npy")):
                 embeddings = np.load(os.path.join(self.folder_path, "embeddings.npy"))
             else:
                 raise FileNotFoundError("No embeddings found.")
         return embeddings
-    
-    def load_embedding_model(self, model_name: str = "paraphrase-MiniLM-L3-v2"):
-        self.encoding_name = model_name
-        self.encoder = SentenceTransformer(model_name)
-        self._save_to_json()
 
     def report_from_directory(self, directory_path: str) -> None:
+        """
+        Generates a report from the specified directory and saves it as 'report.csv'.
+
+        :param directory_path: Path to the directory to generate the report from.
+        """
         directory = Directory(directory_path)
         directory.generate_report(
             report_file = os.path.join(self.folder_path,"report.csv"),
@@ -113,8 +149,21 @@ class SearchDirectory:
                    document_path_column: str = "File Path",
                    document_text_column: str = "Text",
                    chunk_size: int = 1024,
-                   chunk_overlap: int = 10):
-        
+                   chunk_overlap: int = 10) -> None:
+        """
+        Chunks the text data from a CSV file into smaller pieces and saves the result to 'data_chunked.csv'.
+
+        :param input_file_path: Path to the CSV file containing text to chunk. If None, uses 'report.csv' in the folder.
+        :param document_path_column: Column name for file paths in the CSV.
+        :param document_text_column: Column name for text content in the CSV.
+        :param chunk_size: Number of characters in each chunk.
+        :param chunk_overlap: Number of overlapping characters between chunks.
+
+        :raises FileNotFoundError: If no input file is specified and no report exists.
+        :raises FileTypeError: If the input file is not a CSV.
+        :raises KeyError: If specified columns are not found in the CSV.
+        """
+
         # check if there is a report
         if input_file_path is None:
             if os.path.exists(os.path.join(self.folder_path, "report.csv")):
@@ -169,7 +218,25 @@ class SearchDirectory:
 
         print("Chunking complete and saved to 'data_chunked.csv'.")
 
+    def load_embedding_model(self, model_name: str = "paraphrase-MiniLM-L3-v2") -> None:
+        """
+        Loads the specified embedding model and saves the model name to JSON.
+
+        :param model_name: Name of the embedding model to load.
+        """
+        self.encoding_name = model_name
+        self.encoder = SentenceTransformer(model_name)
+        self._save_to_json()
+
     def embed_text(self, row_start: int = 0, row_end: int = None, batch_size: int = 1000) -> None:
+        """
+        Embeds text chunks from the 'data_chunked.csv' file into vectors and saves them in batches.
+        If all batches are complete then it combines the batches and saves the embeddings to 'embeddings.npy'.
+
+        :param row_start: Starting index of rows to process.
+        :param row_end: Ending index of rows to process. If None, processes till the end.
+        :param batch_size: Number of rows to process in each batch.
+        """
         if self.chunks_path is None:
             raise FileNotFoundError(f"Error: data_chunked.csv not located in {self.folder_path}")
         if self.encoder is None:
@@ -239,22 +306,52 @@ class SearchDirectory:
 
             self._combine_embeddings()
 
-    def create_flat_index(self, embeddings: np.ndarray = None):
+    def create_flat_index(self, embeddings: np.ndarray = None) -> None:
+        """
+        Creates a FAISS flat index from the provided embeddings and saves it to a file.
+
+        :param embeddings: The embeddings to use for creating the index. If None, the method will load embeddings from file.
+        """
         embeddings = self._check_for_embeddings(embeddings)
         self.index = faiss_index.create_flat_index(embeddings, file_path=os.path.join(self.folder_path, "index.faiss"))
 
-    def create_ivf_flat_index(self, embeddings: np.ndarray = None, nlist: int = None):
+    def create_ivf_flat_index(self, embeddings: np.ndarray = None, nlist: int = None) -> None:
+        """
+        Creates a FAISS IVF flat index from the provided embeddings and saves it to a file.
+
+        :param embeddings: The embeddings to use for creating the index. If None, the method will load embeddings from file.
+        :param nlist: Number of partitions (clusters) in the IVF index.
+        """
         embeddings = self._check_for_embeddings(embeddings)
         self.index = faiss_index.create_IVF_flat_index(embeddings, nlist=nlist, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def create_hnsw_index(self,
                           embeddings: np.ndarray = None,
                           M: int = 64,
-                          efConstruction: int = 64):
+                          efConstruction: int = 64) -> None:
+        """
+        Creates a FAISS HNSW index from the provided embeddings and saves it to a file.
+
+        :param embeddings: The embeddings to use for creating the index. If None, the method will load embeddings from file.
+        :param M: The number of neighbors to use in the HNSW graph.
+        :param efConstruction: The size of the dynamic list used during the construction of the HNSW graph.
+        """
         embeddings = self._check_for_embeddings(embeddings)
         self.index = faiss_index.create_HNSW_index(embeddings, M=M, efConstruction=efConstruction, file_path=os.path.join(self.folder_path, "index.faiss"))
 
     def search(self, query: str, k: int = 1, *args):
+        """
+        Searches the FAISS index for the most similar chunks to the provided query based on the embeddings.
+
+        :param query: The query string to search for.
+        :param k: The number of nearest neighbors to retrieve.
+        :param args: Additional arguments passed to the FAISS query method.
+
+        :return: A DataFrame containing the most similar chunks based on the query.
+        
+        :raises FileNotFoundError: If 'data_chunked.csv' or FAISS index is not found.
+        :raises EncodingModelError: If no encoding model is loaded.
+        """
         if self.chunks_path is None:
             raise FileNotFoundError(f"Error: data_chunked.csv not located in {self.folder_path}")
         if self.index is None:
