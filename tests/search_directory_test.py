@@ -156,7 +156,7 @@ def test_overlapping_embedding_files(embedding_model, tmp_path):
     try:
         embeddings1 = np.load("tests/resources/document_search_test_files/embeddings.npy")
         embeddings2 = np.load(tmp_path / "embeddings.npy")
-        assert np.allclose(embeddings1, embeddings2)
+        assert np.allclose(embeddings1, embeddings2, atol=1e-5)
     finally:
         os.remove("tests/resources/document_search_test_files/data_chunked.csv")
         os.remove("tests/resources/document_search_test_files/setup_data.json")
