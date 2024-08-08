@@ -31,6 +31,7 @@ Once all steps are completed, the following files will be contained in the speci
 <br>
 
 ## Generating Report
+Creates - `report.csv`
 
 If working with a directory of files, the `report_from_directory()` function generates a `report.csv` file that contains the text and metadata of any text-based files in that directory.
 
@@ -44,6 +45,8 @@ search.report_from_directory("text/documents/directory/path")
 
 ## Chunking Text
 Parameters - `input_file_path`, `document_path_column`, `document_text_column`, `chunk_size`, `chunk_overlap`
+
+Creates - `data_chunked.csv`, `setup_data.json`
 
 Many embedding models and LLMs have a limited context window. This means any large text files need to be broken down into chunks before being passed into these models. The `chunk_text()` method is used for this purpose.
 
@@ -67,3 +70,71 @@ search.chunk_text()
 ```
 
 Both of these approaches will produce a chunked CSV file.
+
+<br>
+
+## Loading Embedding Model
+Parameters - `model_name`
+
+Creates - `setup_data.json`
+
+The `load_embedding_model()` function is used to specify and load the embedding model that will be used in the text embedding and search steps. This function supports models that are hosted in the `sentence_transformers` library.
+
+```python
+search.load_embedding_model("paraphrase-MiniLM-L3-v2")
+```
+
+<br>
+
+## Text Embedding
+Parameters - `row_start`, `row_end`, `batch_size`
+
+Creates - `embedding_batches/`, `embeddings.npy`
+
+The `embed_text()` function takes in the `data_chunked.csv` file and outputs an embedding file called `embeddings.npy`. Because the embeddings can be a time intensive computation, the embeddings are saved in batches of a specified size to the `embedding_batches/` folder in order to save progress. Once all of the chunk embeddings are saved in the `embedding_batches` folder the embeddings are combined and saved to `embeddings.npy`.
+
+```python
+from file_processing import SearchDirectory
+search = SearchDirectory("path/to/folder")
+search.report_from_directory("text/documents/directory/path")
+search.chunk_text()
+search.load_embedding_model("paraphrase-MiniLM-L3-v2")
+search.chunk_text(batch_size=100)
+```
+
+<br>
+
+## FAISS Index Creation
+Parameters - `embeddings`
+
+Creates - `index.faiss`
+
+There are a few different functions to create FAISS indexes adopted from the `file_processing.faiss_index` library with the same functionality. The only difference is that the FAISS index is automatically saved to the folder. If the embeddings is not specified, it will check if `embeddings.npy` is contained in the folder and it will use that file.
+
+```python
+from file_processing import SearchDirectory
+search = SearchDirectory("path/to/folder")
+search.report_from_directory("text/documents/directory/path")
+search.chunk_text()
+search.load_embedding_model("paraphrase-MiniLM-L3-v2")
+search.chunk_text(batch_size=100)
+search.create_ivf_flat_index(nlist=16)
+```
+
+<br>
+
+## Search Function
+Parameters - `query`, `k`, `args`
+
+The `search()` function takes in a query and returns the `k` closest matching chunks and corresponding file paths. The function also can take in arguments that can specify the FAISS index search hyperparameters.
+
+```python
+from file_processing import SearchDirectory
+search = SearchDirectory("path/to/folder")
+search.report_from_directory("text/documents/directory/path")
+search.chunk_text()
+search.load_embedding_model("paraphrase-MiniLM-L3-v2")
+search.chunk_text(batch_size=100)
+search.create_ivf_flat_index(nlist=16)
+search.search("What is the meaning of life, the universe, and everything?", k=3, nprobe=2)
+```
