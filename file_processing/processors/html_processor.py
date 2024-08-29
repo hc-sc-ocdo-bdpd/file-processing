@@ -1,5 +1,5 @@
 import chardet
-from file_processing.tools import FileProcessorStrategy
+from file_processing.file_processor_strategy import FileProcessorStrategy
 from file_processing.tools.errors import FileProcessingFailedError
 
 # Specialized python library for pulling html/xml data...

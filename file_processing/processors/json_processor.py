@@ -1,7 +1,7 @@
 import json
 from json.decoder import JSONDecodeError
 import chardet
-from file_processing.tools import FileProcessorStrategy
+from file_processing.file_processor_strategy import FileProcessorStrategy
 from file_processing.tools.errors import FileProcessingFailedError, FileCorruptionError
 
 

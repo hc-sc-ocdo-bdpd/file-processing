@@ -2,7 +2,7 @@ from io import BytesIO
 from openpyxl import load_workbook
 import msoffcrypto
 from file_processing.tools.errors import FileProcessingFailedError, FileCorruptionError
-from file_processing.tools import FileProcessorStrategy
+from file_processing.file_processor_strategy import FileProcessorStrategy
 
 
 class XlsxFileProcessor(FileProcessorStrategy):
