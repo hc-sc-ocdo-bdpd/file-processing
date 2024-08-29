@@ -6,7 +6,7 @@ from mutagen.oggvorbis import OggVorbis
 from mutagen.aiff import AIFF
 from mutagen.wave import WAVE
 from mutagen.mp4 import MP4
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy
 
 class AudioFileProcessor(FileProcessorStrategy):

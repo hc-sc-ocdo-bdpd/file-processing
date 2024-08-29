@@ -1,5 +1,6 @@
 import shutil
 import logging
+from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy
 
 class GenericFileProcessor(FileProcessorStrategy):

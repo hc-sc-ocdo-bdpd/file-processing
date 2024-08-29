@@ -1,6 +1,6 @@
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError, FileCorruptionError
+from file_processing.errors import FileProcessingFailedError, FileCorruptionError
 
 corrupted_files_processing = [
     'tests/resources/test_files/2021_Census_English_corrupted.csv',

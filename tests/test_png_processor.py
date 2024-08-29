@@ -2,7 +2,7 @@ import os
 from unittest.mock import patch
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 
 # Note: test_save_png_metadata tests both files for "original_format == 'PNG'
 # when creating a copy, the original_format metadata for Health_Canada_logo.png

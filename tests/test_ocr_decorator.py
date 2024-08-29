@@ -3,7 +3,7 @@ import os
 from unittest.mock import patch
 import pytest
 from file_processing import File
-from file_processing.tools.errors import NotOCRApplicableError
+from file_processing.errors import NotOCRApplicableError
 
 PDF_SAMPLES = ["tests/resources/test_files/test_ocr_text.pdf", "tests/resources/test_files/test_ocr_text_2.pdf"]
 JPEG_SAMPLES = ["tests/resources/test_files/test_ocr_text.jpg", "tests/resources/test_files/test_ocr_text_2.jpg"]

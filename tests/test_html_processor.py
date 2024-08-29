@@ -2,7 +2,7 @@ import os
 from unittest.mock import patch
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 
 
 variable_names = "path, text_length, num_lines, num_words"

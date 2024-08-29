@@ -1,7 +1,7 @@
 from PIL import Image
 from pillow_heif import register_heif_opener
 from file_processing.file_processor_strategy import FileProcessorStrategy
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 
 register_heif_opener()  # Supports .heic, .heics, .heif, .heifs, .hif
 

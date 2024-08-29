@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 from pptx import Presentation
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 
 
 variable_names = "path, text_length, num_slides, last_modified_by, author"

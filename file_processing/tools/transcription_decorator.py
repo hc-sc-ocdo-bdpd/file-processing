@@ -1,7 +1,7 @@
 import whisper
 import torch
 from file_processing.file_processor_strategy import FileProcessorStrategy
-from file_processing.tools.errors import TranscriptionProcessingError
+from file_processing.errors import TranscriptionProcessingError
 
 class TranscriptionDecorator:
     def __init__(self, processor: FileProcessorStrategy) -> None:

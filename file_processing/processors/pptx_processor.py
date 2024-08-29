@@ -1,7 +1,7 @@
 from io import BytesIO
 from pptx import Presentation
 import msoffcrypto
-from file_processing.tools.errors import FileProcessingFailedError, FileCorruptionError
+from file_processing.errors import FileProcessingFailedError, FileCorruptionError
 from file_processing.file_processor_strategy import FileProcessorStrategy
 
 

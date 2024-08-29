@@ -1,5 +1,5 @@
 from striprtf.striprtf import rtf_to_text
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy
 
 

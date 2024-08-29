@@ -1,7 +1,7 @@
 from unittest.mock import patch
 import pytest
 from file_processing import File
-from file_processing.tools.errors import NotTranscriptionApplicableError
+from file_processing.errors import NotTranscriptionApplicableError
 
 variable_names = "path, transcription"
 values = [

@@ -1,7 +1,7 @@
 from pathlib import Path
 from file_processing import processors
 from file_processing.file_processor_strategy import FileProcessorStrategy
-from file_processing.tools.errors import TesseractNotFound, NotOCRApplicableError, NotTranscriptionApplicableError
+from file_processing.errors import TesseractNotFound, NotOCRApplicableError, NotTranscriptionApplicableError
 
 
 class File:

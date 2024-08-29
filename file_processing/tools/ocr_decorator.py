@@ -6,7 +6,7 @@ import pypdf
 import pytesseract
 from PIL import Image
 from file_processing.file_processor_strategy import FileProcessorStrategy
-from file_processing.tools.errors import OCRProcessingError
+from file_processing.errors import OCRProcessingError
 
 try:
     pytesseract.get_tesseract_version()

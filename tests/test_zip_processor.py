@@ -5,7 +5,7 @@ import tempfile
 import zipfile
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
 
 variable_names = "path, num_files, file_types, file_names"
 values = [
