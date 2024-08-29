@@ -52,7 +52,7 @@ class File:
 
         if use_ocr:
             import pytesseract
-            from file_processing.tools.ocr_decorator import OCRDecorator
+            from file_processing.decorators.ocr_decorator import OCRDecorator
 
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
                 raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
@@ -69,7 +69,7 @@ class File:
             return OCRDecorator(processor, ocr_path)
 
         if use_transcriber:
-            from file_processing.tools.transcription_decorator import TranscriptionDecorator
+            from file_processing.decorators.transcription_decorator import TranscriptionDecorator
 
             if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
                 raise NotTranscriptionApplicableError(
