@@ -1,5 +1,3 @@
-
-
 class FileProcessorError(Exception):
     """Base exception for the file processing library."""
 
@@ -44,6 +42,10 @@ class TesseractNotFound(Exception):
     """Raised when Tesseract is either not installed or not added to PATH."""
 
 
+class OptionalDependencyNotInstalledError(FileProcessorError):
+    """Raised when an optional dependency is not installed but is required."""
+
+
 class EmptySelection(FileProcessorError):
     """Raised when the input directory is empty. This may be caused by the filter conditions."""
 
@@ -51,8 +53,10 @@ class EmptySelection(FileProcessorError):
 class NotDocumentBasedFile(KeyError):
     """Raised during file similarity testing when the input file does not have a 'text' field."""
 
+
 class FAISSIndexError(Exception):
-    """Base exception for FAISS related issues"""
+    """Base exception for FAISS related issues."""
+
 
 class UnsupportedHyperparameterError(FAISSIndexError):
-    """Raised when a hyperparameter value cannot be used in the FAISS index"""
+    """Raised when a hyperparameter value cannot be used in the FAISS index."""
