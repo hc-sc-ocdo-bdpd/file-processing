@@ -1,7 +1,13 @@
 from pathlib import Path
 from file_processing import processors
 from file_processing.file_processor_strategy import FileProcessorStrategy
-from file_processing.errors import TesseractNotFound, NotOCRApplicableError, NotTranscriptionApplicableError
+from file_processing.errors import (
+    FileProcessingFailedError,
+    TesseractNotFound,
+    NotOCRApplicableError,
+    NotTranscriptionApplicableError,
+    OptionalDependencyNotInstalledError
+)
 
 
 class File:
@@ -51,20 +57,24 @@ class File:
         processor = processor_class(str(self.path), open_file)
 
         if use_ocr:
-            import pytesseract
-            from file_processing.decorators.ocr_decorator import OCRDecorator
-
-            if extension not in File.OCR_APPLICABLE_EXTENSIONS:
-                raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
-
+            # Attempt to import the OCR library only when needed
             try:
+                from file_processing_ocr.ocr_decorator import OCRDecorator
+                import pytesseract
+
+                if extension not in File.OCR_APPLICABLE_EXTENSIONS:
+                    raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
+
+                # Check for Tesseract installation
                 if ocr_path:
                     pytesseract.pytesseract.tesseract_cmd = ocr_path
 
                 pytesseract.get_tesseract_version()
+            except ImportError:
+                raise OptionalDependencyNotInstalledError("OCR functionality requires the 'file-processing-ocr' library. "
+                                                          "Please install it using 'pip install file-processing-ocr'.")
             except Exception:
-                raise TesseractNotFound(f"Tesseract is not installed or not added to PATH. Path: ", \
-                                        pytesseract.pytesseract.tesseract_cmd)
+                raise TesseractNotFound(f"Tesseract is not installed or not added to PATH. Path: {pytesseract.pytesseract.tesseract_cmd}")
 
             return OCRDecorator(processor, ocr_path)
 
