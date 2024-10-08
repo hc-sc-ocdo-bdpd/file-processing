@@ -9,16 +9,18 @@ from mutagen.oggvorbis import OggVorbis
 from mutagen.mp4 import MP4
 from file_processing.errors import FileProcessingFailedError
 from file_processing import File
+from file_processing_test_data import get_test_files_path
 
+test_files_path = get_test_files_path()
 
 variable_names = "path, bitrate, length, artist, date, title, organization"
 values = [
-    ("tests/resources/test_files/sample_speech.aiff", 256000, 3.18, '', '', '', ''),
-    ("tests/resources/test_files/sample_speech.flac", 109089, 14.92, '', '', '', ''),
-    ("tests/resources/test_files/sample_speech.mp3", 24000, 15.012, '', '', '', ''),
-    ("tests/resources/test_files/sample_speech.mp4", 58503, 14.804, '', '', '', ''),
-    ("tests/resources/test_files/sample_speech.ogg", 48000, 14.97, '', '', '', ''),
-    ("tests/resources/test_files/sample_speech.wav", 256000, 14.92, '', '', '', '')
+    (test_files_path / 'sample_speech.aiff', 256000, 3.18, '', '', '', ''),
+    (test_files_path / 'sample_speech.flac', 109089, 14.92, '', '', '', ''),
+    (test_files_path / 'sample_speech.mp3', 24000, 15.012, '', '', '', ''),
+    (test_files_path / 'sample_speech.mp4', 58503, 14.804, '', '', '', ''),
+    (test_files_path / 'sample_speech.ogg', 48000, 14.97, '', '', '', ''),
+    (test_files_path / 'sample_speech.wav', 256000, 14.92, '', '', '', '')
 ]
 
 
@@ -100,7 +102,7 @@ def test_not_opening_file(path, bitrate, length, artist, date, title, organizati
         mock_open.assert_not_called()
 
 invalid_save_locations = [
-    ('tests/resources/test_files/sample_speech.mp3', '/non_existent_folder/sample_speech.mp3')
+    (test_files_path / 'sample_speech.mp3', '/non_existent_folder/sample_speech.mp3')
 ]
 
 
@@ -112,7 +114,7 @@ def test_audio_invalid_save_location(path, save_path):
 
 
 corrupted_files = [
-    'tests/resources/test_files/sample_speech_corrupted.mp3'
+    test_files_path / 'sample_speech_corrupted.mp3'
 ]
 
 

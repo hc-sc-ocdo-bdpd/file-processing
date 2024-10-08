@@ -3,11 +3,14 @@ from unittest.mock import patch
 import pytest
 from file_processing import File
 from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
+
+test_files_path = get_test_files_path()
 
 variable_names = "path, num_keys, key_names, empty_values"
 values = [
-   ('tests/resources/test_files/coffee.json', 15, ['quiz', 'sport', 'q1', 'question', 'options', 'answer', 'maths', 'q1', 'question', 'options', 'answer', 'q2', 'question', 'options', 'answer'], 0),
-   ('tests/resources/test_files/sample.json', 9, ['array', 'boolean', 'color', 'null', 'number', 'object', 'a', 'c', 'string'], 1)
+   (test_files_path / 'coffee.json', 15, ['quiz', 'sport', 'q1', 'question', 'options', 'answer', 'maths', 'q1', 'question', 'options', 'answer', 'q2', 'question', 'options', 'answer'], 0),
+   (test_files_path / 'sample.json', 9, ['array', 'boolean', 'color', 'null', 'number', 'object', 'a', 'c', 'string'], 1)
 ]
 
 

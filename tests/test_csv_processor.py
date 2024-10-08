@@ -3,11 +3,14 @@ from unittest.mock import patch
 import pytest
 from file_processing import File
 from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
+
+test_files_path = get_test_files_path()
 
 variable_names = "path, text_length, encoding, num_rows, num_cols, num_cells, empty_cells"
 values = [
-   ('tests/resources/test_files/2021_Census_English.csv', 6084302, 'ISO-8859-1', 36835, 23, 847205, 253932),
-   ('tests/resources/test_files/Approved_Schools_2023_10_01.csv', 1403268, 'UTF-8-SIG', 5385, 13, 70005, 73)
+   (test_files_path / '2021_Census_English.csv', 6084302, 'ISO-8859-1', 36835, 23, 847205, 253932),
+   (test_files_path / 'Approved_Schools_2023_10_01.csv', 1403268, 'UTF-8-SIG', 5385, 13, 70005, 73)
 ]
 
 

@@ -6,15 +6,18 @@ import zipfile
 import pytest
 from file_processing import File
 from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
+
+test_files_path = get_test_files_path()
 
 variable_names = "path, num_files, file_types, file_names"
 values = [
-    ('tests/resources/test_files/SampleReport.zip', 3, {'docx': 2, 'pptx': 1}, ['SampleReport.docx', 'SampleReport.pptx', 'HealthCanadaOverviewFromWikipedia.docx']),
-    ('tests/resources/test_files/Empty.zip', 0, {}, [])
+    (test_files_path / 'SampleReport.zip', 3, {'docx': 2, 'pptx': 1}, ['SampleReport.docx', 'SampleReport.pptx', 'HealthCanadaOverviewFromWikipedia.docx']),
+    (test_files_path / 'Empty.zip', 0, {}, [])
 ]
 
 
-@pytest.fixture(params=values, ids=[x[0] for x in values])
+@pytest.fixture(params=values, ids=[str(x[0]) for x in values])
 def file_obj(request):
     return File(request.param[0])
 

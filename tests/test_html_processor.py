@@ -3,11 +3,13 @@ from unittest.mock import patch
 import pytest
 from file_processing import File
 from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
 
+test_files_path = get_test_files_path()
 
 variable_names = "path, text_length, num_lines, num_words"
 values = [
-    ('tests/resources/test_files/Health - Canada.ca.html', 165405, 3439, 11162)
+    (test_files_path / 'Health - Canada.ca.html', 165405, 3439, 11162)
 ]
 
 

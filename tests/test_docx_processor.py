@@ -4,12 +4,14 @@ from docx import Document
 import pytest
 from file_processing import File
 from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
 
+test_files_path = get_test_files_path()
 
 variable_names = "path, text_length, last_modified_by, author"
 values = [
-    ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.docx', 1631, 'Test last_modified_by One', 'Test Author One'),
-    ('tests/resources/test_files/SampleReport.docx', 3220, 'last_modified_by Test Author', 'Second Test Author')
+    (test_files_path / 'HealthCanadaOverviewFromWikipedia.docx', 1631, 'Test last_modified_by One', 'Test Author One'),
+    (test_files_path / 'SampleReport.docx', 3220, 'last_modified_by Test Author', 'Second Test Author')
 ]
 
 
@@ -63,8 +65,8 @@ def test_not_opening_file(path):
 
 
 locked_files = [
-    ('tests/resources/test_files/SampleReport_Locked.docx'),
-    ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.docx')
+    (test_files_path / 'SampleReport_Locked.docx'),
+    (test_files_path / 'HealthCanadaOverviewFromWikipedia_Locked.docx')
 ]
 
 

@@ -2,11 +2,13 @@ from pathlib import Path
 import pytest
 from file_processing import File
 from file_processing.processors.generic_processor import GenericFileProcessor
+from file_processing_test_data import get_test_files_path
 
+test_files_path = get_test_files_path()
 
 unsupported_files = [
-    'tests/resources/test_files/unsupported_file_1.xyz',
-    'tests/resources/test_files/unsupported_file_2.abcd'
+    test_files_path / 'unsupported_file_1.xyz',
+    test_files_path / 'unsupported_file_2.abcd'
 ]
 
 

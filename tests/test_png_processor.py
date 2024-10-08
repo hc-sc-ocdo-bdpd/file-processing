@@ -3,6 +3,9 @@ from unittest.mock import patch
 import pytest
 from file_processing import File
 from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
+
+test_files_path = get_test_files_path()
 
 # Note: test_save_png_metadata tests both files for "original_format == 'PNG'
 # when creating a copy, the original_format metadata for Health_Canada_logo.png
@@ -10,8 +13,8 @@ from file_processing.errors import FileProcessingFailedError
 
 variable_names = "path, original_format, mode, width, height"
 values = [
-    ('tests/resources/test_files/Health_Canada_logo.png', 'GIF', 'P', 303, 40),
-    ('tests/resources/test_files/MapCanada.png', 'PNG', 'RGBA', 3000, 2408)
+    (test_files_path / 'Health_Canada_logo.png', 'GIF', 'P', 303, 40),
+    (test_files_path / 'MapCanada.png', 'PNG', 'RGBA', 3000, 2408)
 ]
 
 
