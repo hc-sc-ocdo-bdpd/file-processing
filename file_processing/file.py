@@ -79,11 +79,16 @@ class File:
             return OCRDecorator(processor, ocr_path)
 
         if use_transcriber:
-            from file_processing.decorators.transcription_decorator import TranscriptionDecorator
+            # Attempt to import the transcription library only when needed
+            try:
+                from file_processing_transcription.transcription_decorator import TranscriptionDecorator
 
-            if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
-                raise NotTranscriptionApplicableError(
-                    f"Transcription is not applicable for file type {extension}.")
+                if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
+                    raise NotTranscriptionApplicableError(
+                        f"Transcription is not applicable for file type {extension}.")
+            except ImportError:
+                raise OptionalDependencyNotInstalledError("Transcription functionality requires the 'file-processing-transcription' library. "
+                                                          "Please install it using 'pip install file-processing-transcription'.")
 
             return TranscriptionDecorator(processor)
 
