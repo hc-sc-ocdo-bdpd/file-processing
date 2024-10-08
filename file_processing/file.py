@@ -52,6 +52,11 @@ class File:
         
     def _get_processor(self, use_ocr: bool, ocr_path: str,
                     use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
+        # Check if the path is a directory and assign DirectoryProcessor
+        if self.path.is_dir():
+            return processors.DirectoryProcessor(str(self.path), open_file)
+
+        # If not a directory, proceed with file processor logic
         extension = self.path.suffix
         processor_class = File.PROCESSORS.get(extension, processors.GenericFileProcessor)
         processor = processor_class(str(self.path), open_file)

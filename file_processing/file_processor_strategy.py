@@ -2,11 +2,16 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 import sys
 import importlib.util
-
+from file_processing.errors import FileProcessingFailedError
 
 class FileProcessorStrategy(ABC):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
         self.file_path = Path(file_path)
+
+        # Check if the file or directory exists
+        if not self.file_path.exists():
+            raise FileProcessingFailedError(f"File or directory does not exist: {file_path}")
+
         self.open_file = open_file
         self.file_name = self.file_path.name
         self.owner = self._find_owner(file_path)
@@ -28,12 +33,10 @@ class FileProcessorStrategy(ABC):
             owner_sid = sd.GetSecurityDescriptorOwner()
             name, domain, _ = win32security.LookupAccountSid(None, owner_sid)
             return f'{domain}/{name}'
-
         return ''
 
     @abstractmethod
     def process(self) -> None:
-        # Abstract method to be implemented by subclasses for file processing
         if not self.open_file:
             return
 
