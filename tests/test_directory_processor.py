@@ -73,7 +73,7 @@ def test_list_subdirectories_in_top_level(temp_directory_with_files):
 @pytest.mark.parametrize("invalid_path", ["/invalid_directory", "nonexistent_folder"])
 def test_invalid_directory_path(invalid_path):
     with pytest.raises(FileProcessingFailedError):
-        File(invalid_path)  # Using File instead of DirectoryProcessor
+        File(invalid_path)
 
 # Test saving directory metadata (though saving may not apply directly to directories)
 def test_save_directory_metadata(temp_directory_with_files):
@@ -88,4 +88,4 @@ def test_save_directory_metadata(temp_directory_with_files):
     dir_processor = File(str(temp_dir))
     with pytest.raises(FileProcessingFailedError):
         # Trying to save to an invalid location
-        dir_processor.processor.save("/non_existent_folder/save_file.txt")  # Access via the processor
+        dir_processor.processor.save("/non_existent_folder/save_file.txt")
