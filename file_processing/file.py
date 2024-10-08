@@ -49,21 +49,22 @@ class File:
         self.path = Path(path)
         self.processor = self._get_processor(use_ocr, ocr_path, use_transcriber, open_file)
         self.process()
-
+        
     def _get_processor(self, use_ocr: bool, ocr_path: str,
-                       use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
+                    use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
         extension = self.path.suffix
         processor_class = File.PROCESSORS.get(extension, processors.GenericFileProcessor)
         processor = processor_class(str(self.path), open_file)
 
         if use_ocr:
-            # Attempt to import the OCR library only when needed
+            # Check if the file extension is applicable for OCR first
+            if extension not in File.OCR_APPLICABLE_EXTENSIONS:
+                raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
+
+            # Attempt to import the OCR library only when needed and after checking applicability
             try:
                 from file_processing_ocr.ocr_decorator import OCRDecorator
                 import pytesseract
-
-                if extension not in File.OCR_APPLICABLE_EXTENSIONS:
-                    raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
 
                 # Check for Tesseract installation
                 if ocr_path:
@@ -72,7 +73,7 @@ class File:
                 pytesseract.get_tesseract_version()
             except ImportError:
                 raise OptionalDependencyNotInstalledError("OCR functionality requires the 'file-processing-ocr' library. "
-                                                          "Please install it using 'pip install file-processing-ocr'.")
+                                                        "Please install it using 'pip install file-processing-ocr'.")
             except Exception:
                 raise TesseractNotFound(f"Tesseract is not installed or not added to PATH. Path: {pytesseract.pytesseract.tesseract_cmd}")
 
@@ -88,11 +89,12 @@ class File:
                         f"Transcription is not applicable for file type {extension}.")
             except ImportError:
                 raise OptionalDependencyNotInstalledError("Transcription functionality requires the 'file-processing-transcription' library. "
-                                                          "Please install it using 'pip install file-processing-transcription'.")
+                                                        "Please install it using 'pip install file-processing-transcription'.")
 
             return TranscriptionDecorator(processor)
 
         return processor
+
 
     def save(self, output_path: str = None) -> None:
         self.processor.save(output_path)
