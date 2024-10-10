@@ -5,7 +5,7 @@ python_pptx==1.0.2
 msoffcrypto_tool==5.4.2
 chardet==5.2.0
 mutagen==1.47.0
-docx==0.2.4
+docx==1.1.2
 openpyxl==3.1.5
 extract_msg==0.50.1
 pypdf==5.0.1
