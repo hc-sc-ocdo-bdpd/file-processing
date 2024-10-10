@@ -1,40 +1,12 @@
-from setuptools import setup, find_packages
+from setuptools import setup
+
+# Read requirements from requirements.txt
+def read_requirements():
+    with open("requirements.txt") as req_file:
+        return req_file.readlines()
 
 setup(
     name="file-processing",
     version="1.0.0",
-    packages=find_packages(),
-    install_requires=[
-        'pytesseract==0.3.10',
-        'scikit-learn==1.3.0',
-        'openai-whisper',
-        'faiss-cpu==1.7.4',
-        'sentence-transformers==2.2.2',
-        'Levenshtein==0.21.1',
-        'torch==2.3.1',
-        'pypdf==4.0.0',
-        'python-docx==0.8.11',
-        'extract-msg==0.45.0',
-        'python-pptx==0.6.21',
-        'striprtf==0.0.26',
-        'chardet==5.2.0',
-        'Pillow>=10.0.0',
-        'pillow-heif==0.14.0',
-        'openpyxl>=3.1.2',
-        'pandas>=2.0.3',
-        'tqdm==4.66.1',
-        'mutagen==1.47.0',
-        'numpy<2',
-        'wheel==0.40.0',
-        'pytest==7.4.0',
-        'pytest-order==1.2.0',
-        'sphinx==7.2.6',
-        'furo==2024.1.29',
-        'myst-parser==2.0.0',
-        'sphinx-inline-tabs==2023.4.21',
-        'ipywidgets==8.1.1',
-        'build==1.0.3',
-        'ipykernel==6.29.5',
-        # 'file-processing-test-data @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-test-data.git@main'
-    ],
+    install_requires=read_requirements(),
 )
