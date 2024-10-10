@@ -35,6 +35,6 @@ setup(
         'ipywidgets==8.1.1',
         'build==1.0.3',
         'ipykernel==6.29.5',
-        'file-processing-test-data @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-test-data.git@main'
+        # 'file-processing-test-data @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-test-data.git@main'
     ],
 )
