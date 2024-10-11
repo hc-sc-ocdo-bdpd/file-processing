@@ -1,14 +1,14 @@
-pytest==8.3.3
-Pillow==10.4.0
-pillow_heif==0.18.0
-python_pptx==1.0.2
-msoffcrypto_tool==5.4.2
-chardet==5.2.0
-mutagen==1.47.0
-python-docx==1.1.2
-openpyxl==3.1.5
-extract_msg==0.50.1
-pypdf==5.0.1
-striprtf==0.0.26
-ipykernel==6.29.5
+pytest
+Pillow
+pillow_heif
+python_pptx
+msoffcrypto_tool
+chardet
+mutagen
+python-docx
+openpyxl
+extract_msg
+pypdf
+striprtf
+ipykernel
 file-processing-test-data @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-test-data.git@main
