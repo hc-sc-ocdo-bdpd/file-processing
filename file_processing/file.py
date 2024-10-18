@@ -41,7 +41,8 @@ class File:
         ".tif": processors.TiffFileProcessor,
         ".tiff": processors.TiffFileProcessor,
         ".heic": processors.HeicFileProcessor,
-        ".heif": processors.HeicFileProcessor
+        ".heif": processors.HeicFileProcessor,
+        ".gguf": processors.GgufFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False, ocr_path: str = None, 
