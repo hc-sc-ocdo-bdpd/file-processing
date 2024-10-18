@@ -9,8 +9,8 @@ test_files_path = get_test_files_path()
 
 variable_names = "path, text_length, num_cells, num_code_cells, num_markdown_cells"
 values = [
-    (test_files_path / 'convolutional_network_raw.ipynb', 5312, 7, 5, 2),
-    (test_files_path / 'neural_network.ipynb', 4404, 11, 9, 2)
+    (test_files_path / 'convolutional_network_raw.ipynb', 5454, 7, 5, 2),
+    (test_files_path / 'neural_network.ipynb', 4516, 11, 9, 2)
 ]
 
 @pytest.mark.parametrize(variable_names, values)
