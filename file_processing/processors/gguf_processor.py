@@ -91,34 +91,6 @@ class GgufFileProcessor(FileProcessorStrategy):
                     tensor_info = self._read_tensor_info(f)
                     self.tensors_info.append(tensor_info)
 
-                # Store additional metadata keys from README example
-                additional_metadata = {
-                    "general.architecture": self.metadata.get("general.architecture", "N/A"),
-                    "general.name": self.metadata.get("general.name", "N/A"),
-                    "llama.vocab_size": self.metadata.get("llama.vocab_size", "N/A"),
-                    "llama.context_length": self.metadata.get("llama.context_length", "N/A"),
-                    "llama.embedding_length": self.metadata.get("llama.embedding_length", "N/A"),
-                    "llama.block_count": self.metadata.get("llama.block_count", "N/A"),
-                    "llama.feed_forward_length": self.metadata.get("llama.feed_forward_length", "N/A"),
-                    "llama.attention.head_count": self.metadata.get("llama.attention.head_count", "N/A"),
-                    "llama.attention.head_count_kv": self.metadata.get("llama.attention.head_count_kv", "N/A"),
-                    "llama.rope.dimension_count": self.metadata.get("llama.rope.dimension_count", "N/A"),
-                    "llama.rope.freq_base": self.metadata.get("llama.rope.freq_base", "N/A"),
-                    "general.file_type": self.metadata.get("general.file_type", "N/A"),
-                    "tokenizer.ggml.model": self.metadata.get("tokenizer.ggml.model", "N/A"),
-                    "tokenizer.ggml.tokens": self.metadata.get("tokenizer.ggml.tokens", []),
-                    "tokenizer.ggml.scores": self.metadata.get("tokenizer.ggml.scores", []),
-                    "tokenizer.ggml.token_type": self.metadata.get("tokenizer.ggml.token_type", []),
-                    "tokenizer.ggml.merges": self.metadata.get("tokenizer.ggml.merges", []),
-                    "tokenizer.ggml.bos_token_id": self.metadata.get("tokenizer.ggml.bos_token_id", "N/A"),
-                    "tokenizer.ggml.eos_token_id": self.metadata.get("tokenizer.ggml.eos_token_id", "N/A"),
-                    "general.quantization_version": self.metadata.get("general.quantization_version", "N/A"),
-                    "tokenizer.chat_template": self.metadata.get("tokenizer.chat_template", "N/A")
-                }
-
-                # Update metadata dictionary with the additional keys
-                self.metadata.update(additional_metadata)
-
                 # Store extracted metadata
                 self.metadata.update({
                     "magic_number": self.magic_number.decode("utf-8"),
