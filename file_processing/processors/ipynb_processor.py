@@ -15,13 +15,16 @@ class IpynbFileProcessor(FileProcessorStrategy):
                 notebook = json.load(f)
             cells = notebook.get('cells', [])
             text = []
+
             for cell in cells:
                 if cell['cell_type'] == 'markdown':
-                    text.append(' '.join(cell['source']))
+                    text.append(''.join(cell['source']))
                 elif cell['cell_type'] == 'code':
-                    text.append(' '.join(cell['source']))
+                    text.append(''.join(cell['source']))
+
+            full_text = '\n'.join(text)
             self.metadata.update({
-                'text': '\n'.join(text),
+                'text': full_text,
                 'num_cells': len(cells),
                 'num_code_cells': sum(1 for cell in cells if cell['cell_type'] == 'code'),
                 'num_markdown_cells': sum(1 for cell in cells if cell['cell_type'] == 'markdown')
@@ -46,3 +49,4 @@ class IpynbFileProcessor(FileProcessorStrategy):
         except Exception as e:
             raise FileProcessingFailedError(
                 f"Error encountered while saving file {self.file_path} to {save_path}: {e}")
+
