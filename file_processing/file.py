@@ -42,7 +42,8 @@ class File:
         ".tiff": processors.TiffFileProcessor,
         ".heic": processors.HeicFileProcessor,
         ".heif": processors.HeicFileProcessor,
-        ".gguf": processors.GgufFileProcessor
+        ".gguf": processors.GgufFileProcessor,
+        ".whl": processors.WhlFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False, ocr_path: str = None, 
