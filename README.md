@@ -117,13 +117,24 @@ To add support for a new file type:
            pass
    ```
 
-2. **Register the New Processor**:
+2. **Register the New Processor in `file.py`**:
 
    Add your new processor to the `PROCESSORS` dictionary in `file_processing/file.py`:
 
    ```python
    File.PROCESSORS['.custom_extension'] = CustomFileProcessor
    ```
+
+3. **Update the `__init__.py` File**:
+
+   Add an import statement for your new processor in `file_processing/processors/__init__.py`:
+
+   ```python
+   from .custom_processor import CustomFileProcessor
+   ```
+
+Following these steps ensures your new processor is correctly integrated with the `file-processing` library.
+
 
 ---
 
