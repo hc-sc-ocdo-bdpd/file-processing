@@ -1,8 +1,8 @@
 from io import BytesIO
 import msoffcrypto
 from docx import Document
-from file_processing.tools.errors import FileProcessingFailedError, FileCorruptionError
-from file_processing.tools import FileProcessorStrategy
+from file_processing.errors import FileProcessingFailedError, FileCorruptionError
+from file_processing.file_processor_strategy import FileProcessorStrategy
 
 
 class DocxFileProcessor(FileProcessorStrategy):

@@ -1,7 +1,13 @@
 from pathlib import Path
 from file_processing import processors
-from file_processing.tools import FileProcessorStrategy
-from file_processing.tools.errors import TesseractNotFound, NotOCRApplicableError, NotTranscriptionApplicableError
+from file_processing.file_processor_strategy import FileProcessorStrategy
+from file_processing.errors import (
+    FileProcessingFailedError,
+    TesseractNotFound,
+    NotOCRApplicableError,
+    NotTranscriptionApplicableError,
+    OptionalDependencyNotInstalledError
+)
 
 
 class File:
@@ -35,7 +41,9 @@ class File:
         ".tif": processors.TiffFileProcessor,
         ".tiff": processors.TiffFileProcessor,
         ".heic": processors.HeicFileProcessor,
-        ".heif": processors.HeicFileProcessor
+        ".heif": processors.HeicFileProcessor,
+        ".ipynb": processors.IpynbFileProcessor,
+        ".gguf": processors.GgufFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False, ocr_path: str = None, 
@@ -43,41 +51,57 @@ class File:
         self.path = Path(path)
         self.processor = self._get_processor(use_ocr, ocr_path, use_transcriber, open_file)
         self.process()
-
+        
     def _get_processor(self, use_ocr: bool, ocr_path: str,
-                       use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
+                    use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
+        # Check if the path is a directory and assign DirectoryProcessor
+        if self.path.is_dir():
+            return processors.DirectoryProcessor(str(self.path), open_file)
+
+        # If not a directory, proceed with file processor logic
         extension = self.path.suffix
         processor_class = File.PROCESSORS.get(extension, processors.GenericFileProcessor)
         processor = processor_class(str(self.path), open_file)
 
         if use_ocr:
-            import pytesseract
-            from file_processing.tools.ocr_decorator import OCRDecorator
-
+            # Check if the file extension is applicable for OCR first
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
                 raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
 
+            # Attempt to import the OCR library only when needed and after checking applicability
             try:
+                from file_processing_ocr.ocr_decorator import OCRDecorator
+                import pytesseract
+
+                # Check for Tesseract installation
                 if ocr_path:
                     pytesseract.pytesseract.tesseract_cmd = ocr_path
 
                 pytesseract.get_tesseract_version()
+            except ImportError:
+                raise OptionalDependencyNotInstalledError("OCR functionality requires the 'file-processing-ocr' library. "
+                                                        "Please install it using 'pip install file-processing-ocr'.")
             except Exception:
-                raise TesseractNotFound(f"Tesseract is not installed or not added to PATH. Path: ", \
-                                        pytesseract.pytesseract.tesseract_cmd)
+                raise TesseractNotFound(f"Tesseract is not installed or not added to PATH. Path: {pytesseract.pytesseract.tesseract_cmd}")
 
             return OCRDecorator(processor, ocr_path)
 
         if use_transcriber:
-            from file_processing.tools.transcription_decorator import TranscriptionDecorator
+            # Attempt to import the transcription library only when needed
+            try:
+                from file_processing_transcription.transcription_decorator import TranscriptionDecorator
 
-            if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
-                raise NotTranscriptionApplicableError(
-                    f"Transcription is not applicable for file type {extension}.")
+                if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
+                    raise NotTranscriptionApplicableError(
+                        f"Transcription is not applicable for file type {extension}.")
+            except ImportError:
+                raise OptionalDependencyNotInstalledError("Transcription functionality requires the 'file-processing-transcription' library. "
+                                                        "Please install it using 'pip install file-processing-transcription'.")
 
             return TranscriptionDecorator(processor)
 
         return processor
+
 
     def save(self, output_path: str = None) -> None:
         self.processor.save(output_path)

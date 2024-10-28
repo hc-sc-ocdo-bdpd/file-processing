@@ -3,13 +3,15 @@ from unittest.mock import patch
 import pytest
 from pptx import Presentation
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
 
+test_files_path = get_test_files_path()
 
 variable_names = "path, text_length, num_slides, last_modified_by, author"
 values = [
-    ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pptx', 1655, 4, 'Test last_modified_by One', 'Test Author One'),
-    ('tests/resources/test_files/SampleReport.pptx', 2037, 5, 'last_modified_by Test Author', 'Second Test Author')
+    (test_files_path / 'HealthCanadaOverviewFromWikipedia.pptx', 1655, 4, 'Test last_modified_by One', 'Test Author One'),
+    (test_files_path / 'SampleReport.pptx', 2037, 5, 'last_modified_by Test Author', 'Second Test Author')
 ]
 
 
@@ -66,8 +68,8 @@ def test_not_opening_file(path):
 
 
 locked_files = [
-    ('tests/resources/test_files/SampleReport_Locked.pptx'),
-    ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia_Locked.pptx')
+    (test_files_path / 'SampleReport_Locked.pptx'),
+    (test_files_path / 'HealthCanadaOverviewFromWikipedia_Locked.pptx')
 ]
 
 

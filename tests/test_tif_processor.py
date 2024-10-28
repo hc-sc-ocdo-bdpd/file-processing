@@ -2,12 +2,15 @@ import os
 from unittest.mock import patch
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
+
+test_files_path = get_test_files_path()
 
 variable_names = "path, original_format, mode, width, height"
 values = [
-    ('tests/resources/test_files/CanadaLogo.tif', 'TIFF', 'RGB', 215, 74),
-    ('tests/resources/test_files/MSWordIcon.tiff', 'TIFF', 'RGBA', 79, 106)
+    (test_files_path / 'CanadaLogo.tif', 'TIFF', 'RGB', 215, 74),
+    (test_files_path / 'MSWordIcon.tiff', 'TIFF', 'RGBA', 79, 106)
 ]
 
 

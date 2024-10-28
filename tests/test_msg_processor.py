@@ -3,13 +3,15 @@ from unittest.mock import patch
 from datetime import datetime
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
 
+test_files_path = get_test_files_path()
 
 variable_names = "path, text_length, subject, date, sender"
 values = [
-    ('tests/resources/test_files/Test Email.msg', 19, 'Test Email', 'Mon, 18 Sep 2023 13:57:16 -0400', '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'),
-    ('tests/resources/test_files/Health Canada Overview from Wikipedia.msg', 13876, 'Health Canada Overview from Wikipedia', 'Tue, 31 Oct 2023 14:54:03 -0400', '"Prazuch, Karolina (HC/SC)" <karolina.prazuch@hc-sc.gc.ca>')
+    (test_files_path / 'Test Email.msg', 19, 'Test Email', 'Mon, 18 Sep 2023 13:57:16 -0400', '"Burnett, Taylen (HC/SC)" <Taylen.Burnett@hc-sc.gc.ca>'),
+    (test_files_path / 'Health Canada Overview from Wikipedia.msg', 13876, 'Health Canada Overview from Wikipedia', 'Tue, 31 Oct 2023 14:54:03 -0400', '"Prazuch, Karolina (HC/SC)" <karolina.prazuch@hc-sc.gc.ca>')
 ]
 
 
@@ -17,11 +19,16 @@ values = [
 def test_msg_metadata(path, text_length, subject, date, sender):
     file_obj = File(path)
 
-    # Compare dates from different timezones
-    processed_date = datetime.strptime(
-        file_obj.metadata['date'], "%a, %d %b %Y %H:%M:%S %z")
+    # Process the date comparison
+    if isinstance(file_obj.metadata['date'], str):
+        processed_date = datetime.strptime(
+            file_obj.metadata['date'], "%a, %d %b %Y %H:%M:%S %z")
+    else:
+        processed_date = file_obj.metadata['date']
+    
     true_date = datetime.strptime(date, "%a, %d %b %Y %H:%M:%S %z")
 
+    # Assert metadata correctness
     assert len(file_obj.metadata['text']) == text_length
     assert file_obj.metadata['subject'] == subject
     assert processed_date == true_date
@@ -31,6 +38,7 @@ def test_msg_metadata(path, text_length, subject, date, sender):
 @pytest.mark.parametrize(variable_names, values)
 def test_save_msg_metadata(copy_file, text_length, subject, date, sender):
     test_msg_metadata(copy_file, text_length, subject, date, sender)
+
 
 
 @pytest.mark.parametrize("path", map(lambda x: x[0], values))

@@ -1,24 +1,27 @@
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError, FileCorruptionError
+from file_processing.errors import FileProcessingFailedError, FileCorruptionError
+from file_processing_test_data import get_test_files_path
+
+test_files_path = get_test_files_path()
 
 corrupted_files_processing = [
-    'tests/resources/test_files/2021_Census_English_corrupted.csv',
-    'tests/resources/test_files/Health - Canada.ca_corrupted.html',
-    'tests/resources/test_files/MapCanada_corrupted.jpg',
-    'tests/resources/test_files/Test Email_corrupted.msg',
-    'tests/resources/test_files/SampleReportScreenShot_corrupted.pdf',
-    'tests/resources/test_files/MapCanada_corrupted.png',
-    'tests/resources/test_files/callbacks_corrupted.py',
-    'tests/resources/test_files/Test_for_RTF_corrupted.rtf',
-    'tests/resources/test_files/government_of_canada_wikipedia_corrupted.txt',
-    'tests/resources/test_files/Sample_corrupted.xml',
-    'tests/resources/test_files/SampleReport_corrupted.zip',
-    'tests/resources/test_files/MSEdgeIcon_corrupted.gif',
-    'tests/resources/test_files/MSWordIcon_corrupted.tiff',
-    'tests/resources/test_files/MapleLeaf_corrupted.heif',
-    'tests/resources/test_files/MapleLeaf_corrupted.heic',
-    'tests/resources/test_files/CanadaLogo_corrupted.tif'
+    test_files_path / '2021_Census_English_corrupted.csv',
+    test_files_path / 'Health - Canada.ca_corrupted.html',
+    test_files_path / 'MapCanada_corrupted.jpg',
+    test_files_path / 'Test Email_corrupted.msg',
+    test_files_path / 'SampleReportScreenShot_corrupted.pdf',
+    test_files_path / 'MapCanada_corrupted.png',
+    test_files_path / 'callbacks_corrupted.py',
+    test_files_path / 'Test_for_RTF_corrupted.rtf',
+    test_files_path / 'government_of_canada_wikipedia_corrupted.txt',
+    test_files_path / 'Sample_corrupted.xml',
+    test_files_path / 'SampleReport_corrupted.zip',
+    test_files_path / 'MSEdgeIcon_corrupted.gif',
+    test_files_path / 'MSWordIcon_corrupted.tiff',
+    test_files_path / 'MapleLeaf_corrupted.heif',
+    test_files_path / 'MapleLeaf_corrupted.heic',
+    test_files_path / 'CanadaLogo_corrupted.tif'
 ]
 
 
@@ -29,10 +32,10 @@ def test_corrupted_file_processing_error(path):
 
 
 corrupted_files_corruption = [
-    'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.docx',
-    'tests/resources/test_files/coffee_corrupted.json',
-    'tests/resources/test_files/HealthCanadaOverviewFromWikipedia_corrupted.pptx',
-    'tests/resources/test_files/Test_excel_file_corrupted.xlsx',
+    test_files_path / 'HealthCanadaOverviewFromWikipedia_corrupted.docx',
+    test_files_path / 'coffee_corrupted.json',
+    test_files_path / 'HealthCanadaOverviewFromWikipedia_corrupted.pptx',
+    test_files_path / 'Test_excel_file_corrupted.xlsx',
 ]
 
 

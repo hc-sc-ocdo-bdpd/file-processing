@@ -1,13 +1,15 @@
 from unittest.mock import patch
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
 
+test_files_path = get_test_files_path()
 
 variable_names = "path, num_lines, num_functions, num_classes, num_imports, num_docstrings"
 values = [
-    ('tests/resources/test_files/backend.py', 6503, 224, 5, 69, 194),
-    ('tests/resources/test_files/align.py', 213, 8, 0, 16, 3)
+    (test_files_path / 'backend.py', 6503, 224, 5, 69, 194),
+    (test_files_path / 'align.py', 213, 8, 0, 16, 3)
 ]
 
 
@@ -35,7 +37,7 @@ def test_save_python_metadata(copy_file, num_lines, num_functions, num_classes, 
 
 
 invalid_save_locations_python = [
-    ('tests/resources/test_files/backend.py', '/non_existent_folder/backend.py')
+    (test_files_path / 'backend.py', '/non_existent_folder/backend.py')
 ]
 
 

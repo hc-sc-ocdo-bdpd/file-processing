@@ -2,11 +2,14 @@ import os
 from unittest.mock import patch
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
+
+test_files_path = get_test_files_path()
 
 variable_names = "path, text_length, num_lines, num_words"
 values = [
-    ('tests/resources/test_files/Sample.xml', 4429, 120, 336)
+    (test_files_path / 'Sample.xml', 4429, 120, 336)
 ]
 
 

@@ -2,12 +2,15 @@ import os
 from unittest.mock import patch
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
+
+test_files_path = get_test_files_path()
 
 variable_names = "path, original_format, mode, width, height, animated, frames"
 values = [
-   ('tests/resources/test_files/MapleLeaf.gif', 'GIF', 'P', 480, 480, True, 27),
-   ('tests/resources/test_files/MSEdgeIcon.gif', 'GIF', 'P', 79, 100, False, 1)
+   (test_files_path / 'MapleLeaf.gif', 'GIF', 'P', 480, 480, True, 27),
+   (test_files_path / 'MSEdgeIcon.gif', 'GIF', 'P', 79, 100, False, 1)
 ]
 
 

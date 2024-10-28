@@ -2,12 +2,15 @@ import os
 from unittest.mock import patch
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
+
+test_files_path = get_test_files_path()
 
 variable_names = "path, ocr_text_length"
 values = [
-    ('tests/resources/test_files/SampleReportScreenShot.pdf', 3225),
-    ('tests/resources/test_files/HealthCanadaOverviewFromWikipedia.pdf', 1673)
+    (test_files_path / 'SampleReportScreenShot.pdf', 3225),
+    (test_files_path / 'HealthCanadaOverviewFromWikipedia.pdf', 1673)
 ]
 
 
@@ -20,8 +23,8 @@ def test_pdf_metadata(path, ocr_text_length):
 
 
 locked_files = [
-    ('tests/resources/test_files/SampleReport_Locked.pdf'),
-    ('tests/resources/test_files/ArtificialNeuralNetworksForBeginners_Locked.pdf')
+    (test_files_path / 'SampleReport_Locked.pdf'),
+    (test_files_path / 'ArtificialNeuralNetworksForBeginners_Locked.pdf')
 ]
 
 

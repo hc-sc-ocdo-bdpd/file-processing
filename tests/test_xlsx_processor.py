@@ -2,12 +2,15 @@ import os
 from unittest.mock import patch
 import pytest
 from file_processing import File
-from file_processing.tools.errors import FileProcessingFailedError
+from file_processing.errors import FileProcessingFailedError
+from file_processing_test_data import get_test_files_path
+
+test_files_path = get_test_files_path()
 
 variable_names = "path, sheet_names, active_sheet, data, last_modified_by, creator"
 values = [
-    ('tests/resources/test_files/Test_excel_file.xlsx', ['Sheet1', 'Sheet2', 'Sheet3'], "Sheet3", 42, 'Burnett, Taylen (HC/SC)', 'Burnett, Taylen (HC/SC)'),
-    ('tests/resources/test_files/Government.xlsx', ['Health Canada', 'Government of Canada'], "Government of Canada", 49, 'Prazuch, Karolina (HC/SC)', 'Prazuch, Karolina (HC/SC)')
+    (test_files_path / 'Test_excel_file.xlsx', ['Sheet1', 'Sheet2', 'Sheet3'], "Sheet3", 42, 'Burnett, Taylen (HC/SC)', 'Burnett, Taylen (HC/SC)'),
+    (test_files_path / 'Government.xlsx', ['Health Canada', 'Government of Canada'], "Government of Canada", 49, 'Prazuch, Karolina (HC/SC)', 'Prazuch, Karolina (HC/SC)')
 ]
 
 
@@ -30,8 +33,8 @@ def test_not_opening_file(path):
 
 
 locked_files = [
-    ('tests/resources/test_files/Test_excel_file_Locked.xlsx'),
-    ('tests/resources/test_files/StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
+    (test_files_path / 'Test_excel_file_Locked.xlsx'),
+    (test_files_path / 'StructureofCanadianFederalGovFromWikipedia_Locked.xlsx')
 ]
 
 
