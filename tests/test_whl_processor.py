@@ -99,8 +99,7 @@ values = [
     'xarray>=2022.12.0 (extra: all)',
     'xlrd>=2.0.1 (extra: all)',
     'xlsxwriter>=3.0.5 (extra: all)',
-    'zstandard>=0.19.0 (extra: all)'], "The Pandas Development Team", "1"])
-]
+    'zstandard>=0.19.0 (extra: all)'], "The Pandas Development Team", "1"])]
 
 
 @pytest.fixture(params=values, ids=[str(x[0]) for x in values])
@@ -123,6 +122,7 @@ def test_whl_save(file_obj):
 @pytest.mark.parametrize(variable_names, values)
 def test_whl_metadata(path, package_name, version, python_compatibility, platform_compatibility, non_optional_dependencies, optional_dependencies, author, build_tag):
     file_obj = File(path)
+    file_obj.process()
     metadata = file_obj.metadata
 
     assert metadata['package_name'] == package_name

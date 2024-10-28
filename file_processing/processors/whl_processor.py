@@ -3,8 +3,8 @@ import zipfile
 import shutil
 from pathlib import Path
 from importlib.metadata import PathDistribution
-#from file_processing.errors import FileProcessingFailedError
-#from file_processing.file_processor_strategy import FileProcessorStrategy
+from file_processing.errors import FileProcessingFailedError
+from file_processing.file_processor_strategy import FileProcessorStrategy
 
 class WhlFileProcessor(FileProcessorStrategy):
     def __init__(self, file_path: str, open_file: bool = True) -> None:
@@ -94,4 +94,3 @@ class WhlFileProcessor(FileProcessorStrategy):
         except Exception as e:
             raise FileProcessingFailedError(
                 f"Error encountered while saving {self.file_path}: {e}")
-        
