@@ -52,11 +52,24 @@ class WhlFileProcessor(FileProcessorStrategy):
         self.metadata["package_name"] = self._extract_metadata_value(metadata_content, "Name")
         self.metadata["version"] = self._extract_metadata_value(metadata_content, "Version")
         self.metadata["python_compatibility"] = self._extract_metadata_value(metadata_content, "Requires-Python")
-        self.metadata["author"] = self._extract_metadata_value(metadata_content, "Author")
+        self.metadata["author"] = self._extract_author(metadata_content)
         self.metadata["platform_compatibility"] = self._extract_platform_compatibility(metadata_content)
         self.metadata["optional_dependencies"] = self._extract_optional_dependencies(metadata_content)
         self.metadata["non_optional_dependencies"] = self._extract_non_optional_dependencies(metadata_content)
         self.metadata["build_tag"] = self._extract_build_tag()
+
+    def _extract_author(self, content: str) -> str:
+        # Try to extract from Author field first
+        match = re.search(r"^Author: (.+)$", content, re.MULTILINE)
+        if match:
+            return match.group(1).strip()
+    
+        # If Author is not present, try Author-Email and extract only the name part
+        match = re.search(r"^Author-Email: ([^<]+)", content, re.MULTILINE)
+        if match:
+            # Capture only the name before any email (in format `Name <email>`)
+            return match.group(1).strip().split("<")[0].strip()
+        return None
 
     def _extract_metadata_value(self, content: str, key: str) -> str:
         # Extract single metadata value based on key
@@ -76,7 +89,7 @@ class WhlFileProcessor(FileProcessorStrategy):
     def _extract_optional_dependencies(self, content: str) -> list:
         # Extract Requires-Dist with extra conditions (e.g., `; extra == "test"`)
         matches = re.findall(r"^Requires-Dist: (.+); extra == \"(.+)\"", content, re.MULTILINE)
-        return [f"{dep} ({extra})" for dep, extra in matches]
+        return [f"{dep} (extra: {extra})" for dep, extra in matches]
 
     def _extract_non_optional_dependencies(self, content: str) -> list:
         non_optional_deps = []
@@ -88,7 +101,7 @@ class WhlFileProcessor(FileProcessorStrategy):
         return non_optional_deps
 
     def _extract_build_tag(self) -> str:
-        # Extract build tag from file name if possible (e.g., pandas-2.2.3-1-cp37-cp37m-manylinux1_x86_64.whl)
+        # Extract build tag from file name if possible (e.g., pandas-2.2.3-1-cp37-cp37m-manylinux1_x86_64.whl) would be 1
         file_path_str = str(self.file_path)
         match = re.search(r"-([0-9]+)-cp", file_path_str)
         return match.group(1) if match else None
