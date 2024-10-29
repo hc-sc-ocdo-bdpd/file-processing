@@ -1,19 +1,18 @@
-FROM python:3.10.12-slim
+# Use the Python 3.10.4 slim image
+FROM python:3.10.4-slim
 
 # Set working directory
 WORKDIR /workspace
 
-# Install system dependencies if needed
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     ffmpeg \
-    tesseract-ocr
+    tesseract-ocr \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip, setuptools, and wheel
-RUN pip install -U \
-    pip \
-    setuptools \
-    wheel
+# Copy requirements files and install dependencies
+COPY requirements.txt requirements-dev.txt ./
+RUN pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
 
-# Copy the requirements file and install dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Copy all application files (necessary for GitHub Actions)
+COPY . .
