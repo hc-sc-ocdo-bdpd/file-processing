@@ -63,9 +63,15 @@ class WhlFileProcessor(FileProcessorStrategy):
         match = re.search(rf"^{key}: (.+)$", content, re.MULTILINE)
         return match.group(1) if match else None
 
-    def _extract_platform_compatibility(self, content: str) -> str:
-        match = re.search(r"^Classifier: Operating System :: (.+)$", content, re.MULTILINE)
-        return match.group(1) if match else None
+    def _extract_platform_compatibility(self, content: str) -> str | list:
+        platforms = re.findall(r"^Classifier: Operating System :: (.+)$", content, re.MULTILINE)
+    
+        if not platforms:
+            return None
+        elif len(platforms) == 1:
+            return platforms[0]
+        else:
+            return platforms
 
     def _extract_optional_dependencies(self, content: str) -> list:
         # Extract Requires-Dist with extra conditions (e.g., `; extra == "test"`)
@@ -73,7 +79,6 @@ class WhlFileProcessor(FileProcessorStrategy):
         return [f"{dep} ({extra})" for dep, extra in matches]
 
     def _extract_non_optional_dependencies(self, content: str) -> list:
-        # Improved method to correctly capture non-optional dependencies
         non_optional_deps = []
         for line in content.splitlines():
             # Match 'Requires-Dist' lines without 'extra =='
@@ -84,7 +89,8 @@ class WhlFileProcessor(FileProcessorStrategy):
 
     def _extract_build_tag(self) -> str:
         # Extract build tag from file name if possible (e.g., pandas-2.2.3-1-cp37-cp37m-manylinux1_x86_64.whl)
-        match = re.search(r"-([0-9]+)-cp", self.file_path)
+        file_path_str = str(self.file_path)
+        match = re.search(r"-([0-9]+)-cp", file_path_str)
         return match.group(1) if match else None
 
     def save(self, output_path: str = None) -> None:
