@@ -1,4 +1,3 @@
-pytest
 Pillow
 pillow_heif
 python_pptx
@@ -11,4 +10,3 @@ extract_msg
 pypdf
 striprtf
 ipykernel
-file-processing-test-data @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-test-data.git@main
