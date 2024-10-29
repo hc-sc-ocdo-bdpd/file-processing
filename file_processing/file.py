@@ -42,6 +42,7 @@ class File:
         ".tiff": processors.TiffFileProcessor,
         ".heic": processors.HeicFileProcessor,
         ".heif": processors.HeicFileProcessor,
+        ".gitignore": processors.GitignoreFileProcessor,
         ".ipynb": processors.IpynbFileProcessor,
         ".gguf": processors.GgufFileProcessor
     }
