@@ -1,0 +1,4 @@
+pytest
+file-processing-test-data @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-test-data.git@main
+file-processing-ocr @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-ocr.git@main
+file-processing-transcription @ git+https://github.com/hc-sc-ocdo-bdpd/file-processing-transcription.git@main
