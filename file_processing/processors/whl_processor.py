@@ -103,7 +103,7 @@ class WhlFileProcessor(FileProcessorStrategy):
     def _extract_build_tag(self) -> str:
         # Extract build tag from file name if possible (e.g., pandas-2.2.3-1-cp37-cp37m-manylinux1_x86_64.whl) would be 1
         file_path_str = str(self.file_path)
-        match = re.search(r"-([0-9]+)-cp", file_path_str)
+        match = re.search(r"-([0-9]+)-", file_path_str)
         return match.group(1) if match else None
 
     def save(self, output_path: str = None) -> None:
