@@ -48,7 +48,6 @@ class WhlFileProcessor(FileProcessorStrategy):
                 f"Error encountered while processing {self.file_path}: {e}")
 
     def _extract_metadata(self, metadata_content: str) -> None:
-        # Parse metadata content to extract fields
         self.metadata["package_name"] = self._extract_metadata_value(metadata_content, "Name")
         self.metadata["version"] = self._extract_metadata_value(metadata_content, "Version")
         self.metadata["python_compatibility"] = self._extract_metadata_value(metadata_content, "Requires-Python")
@@ -87,14 +86,14 @@ class WhlFileProcessor(FileProcessorStrategy):
             return platforms
 
     def _extract_optional_dependencies(self, content: str) -> list:
-        # Extract Requires-Dist with extra conditions (e.g., `; extra == "test"`)
+        # Extract Requires-Dist with extra conditions, indicates optional (e.g., `; extra == "test"`)
         matches = re.findall(r"^Requires-Dist: (.+); extra == \"(.+)\"", content, re.MULTILINE)
         return [f"{dep} (extra: {extra})" for dep, extra in matches]
 
     def _extract_non_optional_dependencies(self, content: str) -> list:
         non_optional_deps = []
         for line in content.splitlines():
-            # Match 'Requires-Dist' lines without 'extra =='
+            # Match 'Requires-Dist' lines without 'extra ==': indicates non optional
             if line.startswith("Requires-Dist:") and "extra ==" not in line:
                 dep = line.replace("Requires-Dist:", "").strip()
                 non_optional_deps.append(dep)
