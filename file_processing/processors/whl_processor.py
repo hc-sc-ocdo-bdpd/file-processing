@@ -2,7 +2,7 @@ import re
 import zipfile
 import shutil
 from pathlib import Path
-from importlib.metadata import PathDistribution
+from typing import Union, List
 from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy
 
@@ -75,13 +75,10 @@ class WhlFileProcessor(FileProcessorStrategy):
         match = re.search(rf"^{key}: (.+)$", content, re.MULTILINE)
         return match.group(1) if match else None
 
-    def _extract_platform_compatibility(self, content: str) -> str | list:
+    def _extract_platform_compatibility(self, content: str) -> Union[str, List]:
         platforms = re.findall(r"^Classifier: Operating System :: (.+)$", content, re.MULTILINE)
-    
         if not platforms:
-            return None
-        elif len(platforms) == 1:
-            return platforms[0]
+            return []
         else:
             return platforms
 

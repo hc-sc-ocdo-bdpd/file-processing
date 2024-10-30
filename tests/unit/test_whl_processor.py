@@ -14,7 +14,7 @@ variable_names = "path, package_name, version, python_compatibility, platform_co
 values = [
     (test_files_path / 'numpy-2.1.2-pp310-pypy310_pp73-win_amd64.whl', "numpy", "2.1.2", ">=3.10", ["Microsoft :: Windows", "POSIX", "Unix", "MacOS"],
      [], [], "Travis E. Oliphant et al.", None),
-    (test_files_path / 'pandas-2.2.3-cp313-cp313t-musllinux_1_2_x86_64.whl', "pandas", "2.2.3", ">=3.9", "OS Independent", ['numpy>=1.22.4; python_version < "3.11"', 'numpy>=1.23.2; python_version == "3.11"',
+    (test_files_path / 'pandas-2.2.3-cp313-cp313t-musllinux_1_2_x86_64.whl', "pandas", "2.2.3", ">=3.9", ["OS Independent"], ['numpy>=1.22.4; python_version < "3.11"', 'numpy>=1.23.2; python_version == "3.11"',
     'numpy>=1.26.0; python_version >= "3.12"', 'python-dateutil>=2.8.2', 'pytz>=2020.1', 'tzdata>=2022.7'], 
       ['hypothesis>=6.46.1 (extra: test)', 'pytest>=7.3.2 (extra: test)', 'pytest-xdist>=2.2.0 (extra: test)', 'pyarrow>=10.0.1 (extra: pyarrow)', 'bottleneck>=1.3.6 (extra: performance)', 'numba>=0.56.4 (extra: performance)',
     'numexpr>=2.8.4 (extra: performance)',
