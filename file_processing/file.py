@@ -43,6 +43,7 @@ class File:
         ".heic": processors.HeicFileProcessor,
         ".heif": processors.HeicFileProcessor,
         ".gguf": processors.GgufFileProcessor,
+        ".ipynb": processors.IpynbFileProcessor,
         ".whl": processors.WhlFileProcessor
     }
 
