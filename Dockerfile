@@ -16,5 +16,8 @@ RUN pip install -U \
     wheel
 
 # Copy the requirements file and install dependencies
-COPY requirements.txt requirements-dev.txt .
+COPY requirements.txt requirements-dev.txt ./
 RUN pip install -r requirements.txt -r requirements-dev.txt
+
+# Copy the entire project directory into the container
+COPY . .
