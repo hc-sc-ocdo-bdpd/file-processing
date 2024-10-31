@@ -21,6 +21,6 @@ from .heic_processor import HeicFileProcessor
 from .ipynb_processor import IpynbFileProcessor
 from .directory_processor import DirectoryProcessor
 from .gitignore_processor import GitignoreFileProcessor
-from .directory_processor import DirectoryProcessor
 from .gguf_processor import GgufFileProcessor
 from .exe_processor import ExeFileProcessor
+from .whl_processor import WhlFileProcessor
