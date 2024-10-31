@@ -1,4 +1,5 @@
 from pypdf import PdfReader, PdfWriter
+from pypdf.errors import PdfReadError
 from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy
 
@@ -31,9 +32,12 @@ class PdfFileProcessor(FileProcessorStrategy):
             if reader:
                 metadata = reader.metadata
 
-            self.metadata.update({'text': self.extract_text_from_pdf(self.file_path, reader),
-                                  'author': str(metadata.get('/Author')),
-                                  'producer': str(metadata.get('/Producer'))})
+            # Use self.extract_text_from_pdf as an instance method
+            self.metadata.update({
+                'text': self.extract_text_from_pdf(reader),
+                'author': str(metadata.get('/Author')),
+                'producer': str(metadata.get('/Producer'))
+            })
         else:
             self.metadata['has_password'] = True
 
@@ -42,25 +46,35 @@ class PdfFileProcessor(FileProcessorStrategy):
 
         try:
             pdf_read = PdfReader(self.file_path)
-            pdf = PdfWriter(self.file_path)
-
-            for page in range(len(pdf_read.pages)):
-                # Add each page to the writer object
-                pdf.add_page(pdf_read.pages[page])
+            if pdf_read.is_encrypted:
+                raise FileProcessingFailedError(
+                    f"Cannot save encrypted PDF {self.file_path} without password."
+                )
+            pdf = PdfWriter()
+            for page in pdf_read.pages:
+                pdf.add_page(page)
 
             with open(output_path, 'wb') as output_pdf:
                 pdf.write(output_pdf)
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while saving to {output_path}: {e}")
+                f"Error encountered while saving to {output_path}: {e}"
+            )
 
-    @staticmethod
-    def extract_text_from_pdf(file_path: str, reader: PdfReader) -> str:
+    def extract_text_from_pdf(self, reader: PdfReader) -> str:
         try:
             text = ""
-            for page in reader.pages:
-                text += page.extract_text()
+            for page_number, page in enumerate(reader.pages, start=1):
+                try:
+                    page_text = page.extract_text()
+                    if page_text:
+                        text += page_text
+                except UnboundLocalError as e:
+                    # Log the error and continue with the next page
+                    print(f"Warning: Failed to extract text from page {page_number} in {self.file_path}: {e}")
+                    continue
             return text
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while extracting text from {file_path}: {e}")
+                f"Error encountered while extracting text from {self.file_path}: {e}"
+            )
