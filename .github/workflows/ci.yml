@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - dockerfile-and-gh-actions
   pull_request:
     branches:
       - main
+      - dockerfile-and-gh-actions
 
 jobs:
   test:
