@@ -66,11 +66,12 @@ print(f"Text Content: {file.metadata.get('text', 'No text extracted')}")
 
 The library supports a wide range of file types:
 
-- **Text-Based Files**: `.txt`, `.csv`, `.json`, `.xml`, `.html`, `.py`, `.ipynb`
+- **Text-Based Files**: `.txt`, `.csv`, `.json`, `.xml`, `.html`, `.py`, `.ipynb`, `.gitignore`
 - **Documents**: `.pdf`, `.docx`, `.rtf`, `.xlsx`, `.pptx`, `.msg`
 - **Images**: `.png`, `.jpg`, `.jpeg`, `.gif`, `.tif`, `.tiff`, `.heic`, `.heif`
 - **Audio/Video Files**: `.mp3`, `.wav`, `.mp4`, `.flac`, `.aiff`, `.ogg`
 - **Archives**: `.zip`
+- **Packaged Software**: `.whl`, `.exe`
 - **Model Files**: `.gguf` (used with `file-processing-models`)
 
 ---
