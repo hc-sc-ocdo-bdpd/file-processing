@@ -10,3 +10,4 @@ extract_msg
 pypdf
 striprtf
 ipykernel
+pefile

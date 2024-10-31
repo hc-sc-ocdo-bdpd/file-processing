@@ -44,7 +44,8 @@ class File:
         ".heif": processors.HeicFileProcessor,
         ".gitignore": processors.GitignoreFileProcessor,
         ".ipynb": processors.IpynbFileProcessor,
-        ".gguf": processors.GgufFileProcessor
+        ".gguf": processors.GgufFileProcessor,
+        ".exe": processors.ExeFileProcessor
     }
 
     def __init__(self, path: str, use_ocr: bool = False, ocr_path: str = None, 
