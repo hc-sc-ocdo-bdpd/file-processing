@@ -45,6 +45,7 @@ class File:
         ".gguf": processors.GgufFileProcessor,
         ".gitignore": processors.GitignoreFileProcessor,
         ".ipynb": processors.IpynbFileProcessor,
+        ".exe": processors.ExeFileProcessor,
         ".whl": processors.WhlFileProcessor
     }
 
