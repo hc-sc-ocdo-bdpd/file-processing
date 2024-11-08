@@ -9,7 +9,8 @@ on:
       - main
 
 jobs:
-  test:
+  test-file-processing:
+    name: Test file-processing
     runs-on: ubuntu-latest
 
     steps:
@@ -21,11 +22,32 @@ jobs:
       with:
         python-version: 3.10.4
 
-    - name: Set up Docker
+    - name: Build Docker image for file-processing
       run: |
         docker build -t file-processing-tests .
 
-    - name: Run tests
+    - name: Run file-processing tests
       run: |
         docker run --rm file-processing-tests pytest tests/unit
         docker run --rm file-processing-tests pytest tests/integration
+
+  test-file-processing-analytics:
+    name: Test file-processing-analytics
+    runs-on: ubuntu-latest
+    needs: test-file-processing
+
+    steps:
+    - name: Clone file-processing-analytics repository
+      uses: actions/checkout@v3
+      with:
+        repository: hc-sc-ocdo-bdpd/file-processing-analytics
+        path: file-processing-analytics
+
+    - name: Build Docker image for file-processing-analytics
+      run: |
+        cd file-processing-analytics
+        docker build -t file-processing-analytics-tests .
+
+    - name: Run tests for file-processing-analytics
+      run: |
+        docker run --rm file-processing-analytics-tests pytest tests
