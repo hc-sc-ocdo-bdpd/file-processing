@@ -11,6 +11,21 @@ from file_processing.errors import (
 
 
 class File:
+    """
+    Represents a file to be processed, with support for OCR, transcription, and various file types.
+    This class applies the Strategy Pattern to dynamically select an appropriate file processor based on
+    the file extension.
+
+    Attributes:
+        OCR_APPLICABLE_EXTENSIONS (set): File extensions suitable for OCR processing.
+        TRANSCRIPTION_APPLICABLE_EXTENSIONS (set): File extensions suitable for transcription processing.
+        PROCESSORS (dict): Mapping of file extensions to their respective processor classes.
+
+    Methods:
+        save(output_path): Saves the processed file to the specified output path.
+        process(): Processes the file using the selected processor.
+    """
+
     OCR_APPLICABLE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".gif", ".tiff", ".tif"}
     TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
@@ -51,35 +66,56 @@ class File:
 
     def __init__(self, path: str, use_ocr: bool = False, ocr_path: str = None, 
                  use_transcriber: bool = False, open_file: bool = True) -> None:
+        """
+        Initializes the File object with the specified path and optional OCR and transcription capabilities.
+
+        Args:
+            path (str): The file path to process.
+            use_ocr (bool): Flag to enable OCR processing if applicable.
+            ocr_path (str): Optional path to Tesseract OCR executable.
+            use_transcriber (bool): Flag to enable transcription if applicable.
+            open_file (bool): Indicates whether the file should be opened immediately.
+        """
         self.path = Path(path)
         self.processor = self._get_processor(use_ocr, ocr_path, use_transcriber, open_file)
         self.process()
         
     def _get_processor(self, use_ocr: bool, ocr_path: str,
-                    use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
-        # Check if the path is a directory and assign DirectoryProcessor
+                       use_transcriber: bool, open_file: bool) -> FileProcessorStrategy:
+        """
+        Determines and returns the appropriate processor for the file based on its extension.
+
+        Args:
+            use_ocr (bool): Whether to use OCR processing.
+            ocr_path (str): Path to the OCR executable.
+            use_transcriber (bool): Whether to use transcription.
+            open_file (bool): Whether to open the file immediately.
+
+        Returns:
+            FileProcessorStrategy: An instance of a file processor suitable for the file type.
+
+        Raises:
+            NotOCRApplicableError: If OCR is requested but not supported for the file type.
+            OptionalDependencyNotInstalledError: If an optional library for OCR or transcription is not installed.
+            TesseractNotFound: If Tesseract OCR is not installed or configured.
+            NotTranscriptionApplicableError: If transcription is requested but not supported for the file type.
+        """
         if self.path.is_dir():
             return processors.DirectoryProcessor(str(self.path), open_file)
 
-        # If not a directory, proceed with file processor logic
         extension = self.path.suffix
         processor_class = File.PROCESSORS.get(extension, processors.GenericFileProcessor)
         processor = processor_class(str(self.path), open_file)
 
         if use_ocr:
-            # Check if the file extension is applicable for OCR first
             if extension not in File.OCR_APPLICABLE_EXTENSIONS:
                 raise NotOCRApplicableError(f"OCR is not applicable for file type {extension}.")
-
-            # Attempt to import the OCR library only when needed and after checking applicability
             try:
                 from file_processing_ocr.ocr_decorator import OCRDecorator
                 import pytesseract
 
-                # Check for Tesseract installation
                 if ocr_path:
                     pytesseract.pytesseract.tesseract_cmd = ocr_path
-
                 pytesseract.get_tesseract_version()
             except ImportError:
                 raise OptionalDependencyNotInstalledError("OCR functionality requires the 'file-processing-ocr' library. "
@@ -90,10 +126,8 @@ class File:
             return OCRDecorator(processor, ocr_path)
 
         if use_transcriber:
-            # Attempt to import the transcription library only when needed
             try:
                 from file_processing_transcription.transcription_decorator import TranscriptionDecorator
-
                 if extension not in File.TRANSCRIPTION_APPLICABLE_EXTENSIONS:
                     raise NotTranscriptionApplicableError(
                         f"Transcription is not applicable for file type {extension}.")
@@ -105,65 +139,88 @@ class File:
 
         return processor
 
-
     def save(self, output_path: str = None) -> None:
+        """
+        Saves the processed file to the specified output path.
+
+        Args:
+            output_path (str): The destination path for saving the processed file.
+        """
         self.processor.save(output_path)
 
     def process(self) -> None:
+        """
+        Executes the processing operation on the file.
+        """
         return self.processor.process()
 
+    # Property methods with docstrings for Sphinx documentation
     @property
     def file_path(self) -> str:
+        """str: Returns the file path of the processed file."""
         return self.processor.file_path
 
     @property
     def file_name(self) -> str:
+        """str: Returns the name of the file."""
         return self.processor.file_name
 
     @property
     def extension(self) -> str:
+        """str: Returns the file extension."""
         return self.processor.extension
 
     @property
     def owner(self) -> str:
+        """str: Returns the owner of the file."""
         return self.processor.owner
 
     @property
     def size(self) -> str:
+        """str: Returns the size of the file in bytes."""
         return self.processor.size
 
     @property
     def modification_time(self) -> str:
+        """str: Returns the last modification time of the file."""
         return self.processor.modification_time
 
     @property
     def access_time(self) -> str:
+        """str: Returns the last access time of the file."""
         return self.processor.access_time
 
     @property
     def creation_time(self) -> str:
+        """str: Returns the creation time of the file."""
         return self.processor.creation_time
 
     @property
     def parent_directory(self) -> str:
+        """str: Returns the parent directory of the file."""
         return self.processor.parent_directory
 
     @property
     def permissions(self) -> str:
+        """str: Returns the file permissions."""
         return self.processor.permissions
 
     @property
     def is_file(self) -> bool:
+        """bool: Checks if the path points to a regular file."""
         return self.processor.is_file
 
     @property
     def is_symlink(self) -> bool:
+        """bool: Checks if the file is a symbolic link."""
         return self.processor.is_symlink
 
     @property
     def absolute_path(self) -> str:
+        """str: Returns the absolute path of the file."""
         return self.processor.absolute_path
 
     @property
     def metadata(self) -> dict:
+        """dict: Returns the metadata of the file."""
         return self.processor.metadata
