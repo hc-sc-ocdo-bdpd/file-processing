@@ -1,3 +1,19 @@
+"""
+Exposes various file processors as part of the file_processing.processors package.
+
+This module imports individual file processor classes to provide a unified interface
+for handling different file types within the `file_processing` library.
+
+Classes:
+    TextFileProcessor, PdfFileProcessor, DocxFileProcessor, MsgFileProcessor,
+    PngFileProcessor, XlsxFileProcessor, PptxFileProcessor, RtfFileProcessor,
+    HtmlFileProcessor, XmlFileProcessor, JpegFileProcessor, CsvFileProcessor,
+    JsonFileProcessor, ZipFileProcessor, AudioFileProcessor, GenericFileProcessor,
+    PyFileProcessor, GifFileProcessor, TiffFileProcessor, HeicFileProcessor,
+    IpynbFileProcessor, DirectoryProcessor, GitignoreFileProcessor, GgufFileProcessor,
+    ExeFileProcessor, WhlFileProcessor
+"""
+
 from .txt_processor import TextFileProcessor
 from .pdf_processor import PdfFileProcessor
 from .docx_processor import DocxFileProcessor
