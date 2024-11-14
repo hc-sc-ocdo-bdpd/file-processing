@@ -10,11 +10,39 @@ from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy
 
 class AudioFileProcessor(FileProcessorStrategy):
+    """
+    Processor for handling audio files, extracting and saving metadata for supported file types.
+
+    Attributes:
+        metadata (dict): Contains metadata fields such as 'bitrate', 'length', 'artist', 'date', 'title',
+                         and 'organization' if the file is opened and supported.
+    """
+
     def __init__(self, file_path: str, open_file: bool = True) -> None:
+        """
+        Initializes the AudioFileProcessor with the specified file path.
+
+        Args:
+            file_path (str): Path to the audio file to process.
+            open_file (bool): Indicates whether to open and process the file immediately.
+
+        Sets:
+            metadata (dict): Populated with 'message' if `open_file` is False.
+        """
         super().__init__(file_path, open_file)
         self.metadata = {'message': 'File was not opened'} if not open_file else {}
 
     def process(self) -> None:
+        """
+        Extracts metadata from the audio file if it is open and supported.
+
+        For MP3 files, uses ID3 tags for metadata extraction. Other audio types like WAVE, FLAC, OggVorbis, and MP4
+        are handled with appropriate tag formats. Metadata extracted includes bitrate, length, artist, date, title,
+        and organization.
+
+        Raises:
+            FileProcessingFailedError: If an error occurs during metadata extraction.
+        """
         if not self.open_file:
             return
 
@@ -63,14 +91,26 @@ class AudioFileProcessor(FileProcessorStrategy):
             raise FileProcessingFailedError(f"Error encountered while processing: {e}")
 
     def save(self, output_path: str = None) -> None:
+        """
+        Saves updated metadata to the audio file if the file format supports metadata updates.
+
+        Supported formats for metadata saving include MP3, MP4, FLAC, and OggVorbis. WAVE and AIFF formats
+        do not support saving metadata and will raise an error. For MP3 files, ID3 tags are used.
+
+        Args:
+            output_path (str): Path to save the file with updated metadata. If None, overwrites the original file.
+
+        Raises:
+            FileProcessingFailedError: If an error occurs while saving metadata or if the file type does not
+                                       support metadata updates.
+        """
         save_path = output_path or self.file_path
         if self.extension in [".mp3", ".mp4", ".flac", ".ogg"]:
             try:
                 # Copy the file first
                 main_file = open(self.file_path, "rb").read()
-                dest_file = open(save_path, 'wb+')
-                dest_file.write(main_file)
-                dest_file.close()
+                with open(save_path, 'wb+') as dest_file:
+                    dest_file.write(main_file)
 
                 # Update the metadata of the copied file
                 audio = File(save_path)
