@@ -7,11 +7,40 @@ from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy
 
 class WhlFileProcessor(FileProcessorStrategy):
+    """
+    Processor for handling Python Wheel (.whl) files, extracting metadata such as package name,
+    version, Python compatibility, platform compatibility, optional and non-optional dependencies,
+    author, and build tag.
+
+    Attributes:
+        metadata (dict): Contains metadata fields including 'package_name', 'version',
+                         'python_compatibility', 'platform_compatibility', 'optional_dependencies',
+                         'non_optional_dependencies', 'author', and 'build_tag'.
+    """
+
     def __init__(self, file_path: str, open_file: bool = True) -> None:
+        """
+        Initializes the WhlFileProcessor with the specified file path.
+
+        Args:
+            file_path (str): Path to the .whl file to process.
+            open_file (bool): Indicates whether to open and process the file immediately.
+
+        Sets:
+            metadata (dict): Populated with a message if `open_file` is False, otherwise initialized with default values.
+        """
         super().__init__(file_path, open_file)
         self.metadata = {'message': 'File was not opened'} if not open_file else self._default_metadata()
 
     def _default_metadata(self) -> dict:
+        """
+        Returns default metadata for an unopened .whl file.
+
+        Returns:
+            dict: Default metadata fields including 'package_name', 'version',
+                  'python_compatibility', 'platform_compatibility', 'optional_dependencies',
+                  'non_optional_dependencies', 'author', and 'build_tag'.
+        """
         return {
             "package_name": None,
             "version": None,
@@ -24,12 +53,18 @@ class WhlFileProcessor(FileProcessorStrategy):
         }
 
     def process(self) -> None:
+        """
+        Extracts metadata from the .whl file, including package name, version, Python compatibility,
+        platform compatibility, optional and non-optional dependencies, author, and build tag.
+
+        Raises:
+            FileProcessingFailedError: If the METADATA file is not found or if an error occurs while processing.
+        """
         if not self.open_file:
             return
         
         try:
             with zipfile.ZipFile(self.file_path, 'r') as whl_file:
-                # Find the .dist-info directory and access the METADATA file
                 metadata_file = None
                 for name in whl_file.namelist():
                     if name.endswith('.dist-info/METADATA'):
@@ -37,7 +72,6 @@ class WhlFileProcessor(FileProcessorStrategy):
                         break
                 
                 if metadata_file:
-                    # Extract metadata content
                     with whl_file.open(metadata_file) as meta:
                         metadata_content = meta.read().decode('utf-8')
                         self._extract_metadata(metadata_content)
@@ -45,9 +79,16 @@ class WhlFileProcessor(FileProcessorStrategy):
                     raise FileProcessingFailedError(f"METADATA file not found in {self.file_path}")
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while processing {self.file_path}: {e}")
+                f"Error encountered while processing {self.file_path}: {e}"
+            )
 
     def _extract_metadata(self, metadata_content: str) -> None:
+        """
+        Extracts specific metadata fields from the metadata content.
+
+        Args:
+            metadata_content (str): The content of the METADATA file as a string.
+        """
         self.metadata["package_name"] = self._extract_metadata_value(metadata_content, "Name")
         self.metadata["version"] = self._extract_metadata_value(metadata_content, "Version")
         self.metadata["python_compatibility"] = self._extract_metadata_value(metadata_content, "Requires-Python")
@@ -58,54 +99,106 @@ class WhlFileProcessor(FileProcessorStrategy):
         self.metadata["build_tag"] = self._extract_build_tag()
 
     def _extract_author(self, content: str) -> str:
-        # Try to extract from Author field first
+        """
+        Extracts the author name from the METADATA content.
+
+        Args:
+            content (str): The METADATA content as a string.
+
+        Returns:
+            str: Author's name, or None if not found.
+        """
         match = re.search(r"^Author: (.+)$", content, re.MULTILINE)
         if match:
             return match.group(1).strip()
     
-        # If Author is not present, try Author-Email and extract only the name part
         match = re.search(r"^Author-Email: ([^<]+)", content, re.MULTILINE)
         if match:
-            # Capture only the name before any email (in format `Name <email>`)
             return match.group(1).strip().split("<")[0].strip()
         return None
 
     def _extract_metadata_value(self, content: str, key: str) -> str:
-        # Extract single metadata value based on key
+        """
+        Extracts a specific metadata value based on the provided key.
+
+        Args:
+            content (str): The METADATA content as a string.
+            key (str): Metadata key to search for.
+
+        Returns:
+            str: Metadata value if found, else None.
+        """
         match = re.search(rf"^{key}: (.+)$", content, re.MULTILINE)
         return match.group(1) if match else None
 
     def _extract_platform_compatibility(self, content: str) -> Union[str, List]:
+        """
+        Extracts platform compatibility information from the METADATA content.
+
+        Args:
+            content (str): The METADATA content as a string.
+
+        Returns:
+            Union[str, List]: List of platform compatibility classifiers or an empty list.
+        """
         platforms = re.findall(r"^Classifier: Operating System :: (.+)$", content, re.MULTILINE)
-        if not platforms:
-            return []
-        else:
-            return platforms
+        return platforms if platforms else []
 
     def _extract_optional_dependencies(self, content: str) -> list:
-        # Extract Requires-Dist with extra conditions, indicates optional (e.g., `; extra == "test"`)
+        """
+        Extracts optional dependencies from the METADATA content.
+
+        Args:
+            content (str): The METADATA content as a string.
+
+        Returns:
+            list: List of optional dependencies with extra conditions.
+        """
         matches = re.findall(r"^Requires-Dist: (.+); extra == \"(.+)\"", content, re.MULTILINE)
         return [f"{dep} (extra: {extra})" for dep, extra in matches]
 
     def _extract_non_optional_dependencies(self, content: str) -> list:
+        """
+        Extracts non-optional dependencies from the METADATA content.
+
+        Args:
+            content (str): The METADATA content as a string.
+
+        Returns:
+            list: List of non-optional dependencies.
+        """
         non_optional_deps = []
         for line in content.splitlines():
-            # Match 'Requires-Dist' lines without 'extra ==': indicates non optional
             if line.startswith("Requires-Dist:") and "extra ==" not in line:
                 dep = line.replace("Requires-Dist:", "").strip()
                 non_optional_deps.append(dep)
         return non_optional_deps
 
     def _extract_build_tag(self) -> str:
-        # Extract build tag from file name if possible (e.g., pandas-2.2.3-1-cp37-cp37m-manylinux1_x86_64.whl) would be 1
+        """
+        Extracts the build tag from the .whl file name.
+
+        Returns:
+            str: Build tag if found, else None.
+        """
         file_path_str = str(self.file_path)
         match = re.search(r"-([0-9]+)-", file_path_str)
         return match.group(1) if match else None
 
     def save(self, output_path: str = None) -> None:
+        """
+        Saves the .whl file to the specified output path.
+
+        Args:
+            output_path (str): Path to save the .whl file. If None, overwrites the original file.
+
+        Raises:
+            FileProcessingFailedError: If an error occurs while saving the .whl file.
+        """
         try:
             output_path = output_path or str(self.file_path)
             shutil.copy2(self.file_path, output_path)
         except Exception as e:
             raise FileProcessingFailedError(
-                f"Error encountered while saving {self.file_path}: {e}")
+                f"Error encountered while saving {self.file_path}: {e}"
+            )

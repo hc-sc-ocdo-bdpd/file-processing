@@ -2,8 +2,18 @@ import struct
 from file_processing.file_processor_strategy import FileProcessorStrategy
 from file_processing.errors import FileProcessingFailedError
 
-
 class GgufFileProcessor(FileProcessorStrategy):
+    """
+    Processor for handling GGUF files, extracting metadata and tensor information.
+
+    Attributes:
+        GGUF_MAGIC_NUMBER (bytes): Magic number used to identify GGUF files.
+        VALUE_FORMATS (dict): Mapping of value types to struct formats for unpacking.
+        TENSOR_TYPES (dict): Mapping of tensor type identifiers to tensor type names.
+        metadata (dict): Extracted metadata, including key-value pairs and tensor information.
+        tensors_info (list): Information about tensors in the file.
+    """
+
     GGUF_MAGIC_NUMBER = b"GGUF"
     VALUE_FORMATS = {
         0: "B",  # UINT8
@@ -50,6 +60,13 @@ class GgufFileProcessor(FileProcessorStrategy):
     }
 
     def __init__(self, file_path: str, open_file: bool = True) -> None:
+        """
+        Initializes the GgufFileProcessor with the specified file path.
+
+        Args:
+            file_path (str): Path to the GGUF file to process.
+            open_file (bool): Indicates whether to open and process the file.
+        """
         super().__init__(file_path, open_file)
         self.magic_number = None
         self.version = None
@@ -58,6 +75,12 @@ class GgufFileProcessor(FileProcessorStrategy):
         self.alignment = None
 
     def process(self) -> None:
+        """
+        Processes the GGUF file, extracting metadata, tensor count, and tensor information.
+
+        Raises:
+            FileProcessingFailedError: If an error occurs or the file does not match expected format.
+        """
         if not self.open_file:
             return
         try:
@@ -104,19 +127,47 @@ class GgufFileProcessor(FileProcessorStrategy):
             raise FileProcessingFailedError(f"Error processing GGUF file {self.file_path}: {e}")
 
     def _read_string(self, f) -> str:
-        """Reads a string from the file."""
+        """
+        Reads a string from the GGUF file.
+
+        Args:
+            f (file object): Opened GGUF file.
+
+        Returns:
+            str: Decoded string from the file.
+        """
         length = struct.unpack("Q", f.read(8))[0]
         return f.read(length).decode("utf-8")
 
     def _read_metadata_kv(self, f):
-        """Reads a metadata key-value pair."""
+        """
+        Reads a metadata key-value pair from the GGUF file.
+
+        Args:
+            f (file object): Opened GGUF file.
+
+        Returns:
+            tuple: Key-value pair, where key is a string and value varies by type.
+        """
         key = self._read_string(f)
         value_type = struct.unpack("I", f.read(4))[0]
         value = self._read_value(f, value_type)
         return key, value
 
     def _read_value(self, f, value_type):
-        """Reads a value from the file based on its type."""
+        """
+        Reads a value from the GGUF file based on its type.
+
+        Args:
+            f (file object): Opened GGUF file.
+            value_type (int): Type identifier for the value.
+
+        Returns:
+            Any: Value read from the file, format depends on type.
+
+        Raises:
+            FileProcessingFailedError: If an unsupported value type is encountered.
+        """
         if value_type in self.VALUE_FORMATS:
             return struct.unpack(
                 self.VALUE_FORMATS[value_type],
@@ -131,7 +182,15 @@ class GgufFileProcessor(FileProcessorStrategy):
         raise FileProcessingFailedError(f"Unsupported GGUF value type: {value_type}")
 
     def _read_tensor_info(self, f) -> dict:
-        """Reads tensor information from the file."""
+        """
+        Reads tensor information from the GGUF file.
+
+        Args:
+            f (file object): Opened GGUF file.
+
+        Returns:
+            dict: Dictionary containing tensor details.
+        """
         name = self._read_string(f)
         n_dimensions = struct.unpack("I", f.read(4))[0]
         dimensions = struct.unpack(f"{n_dimensions}Q", f.read(8 * n_dimensions))
