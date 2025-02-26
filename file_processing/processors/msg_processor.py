@@ -1,5 +1,4 @@
 import extract_msg
-import os
 import re
 from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy
@@ -7,32 +6,22 @@ from file_processing.file_processor_strategy import FileProcessorStrategy
 class MsgFileProcessor(FileProcessorStrategy):
     """
     Processor for handling Outlook MSG files, extracting metadata such as message body, subject,
-    date, sender, and constructing a nested email thread.
+    date, sender, and constructing a strictly linear email thread (each email has a single reply).
     """
 
     def __init__(self, file_path: str, open_file: bool = True) -> None:
-        """
-        Initializes the MsgFileProcessor with the specified file path.
-
-        Args:
-            file_path (str): Path to the MSG file to process.
-            open_file (bool): Indicates whether to open and process the file immediately.
-        """
         super().__init__(file_path, open_file)
         self.metadata = {'message': 'File was not opened'} if not open_file else {}
 
-    def split_email_thread(self, body_text) -> list[str]:
-        """
-        Splits the full email body into parts based on lines starting with "From:".
-        Outlook typically uses "From:" to indicate the beginning of a quoted message.
-        """
+    def split_email_thread(self, body_text: str) -> list[str]:
+        # Split on lines beginning with 'From:'
         pattern = r"(?m)^(?=From:\s)"
-        parts = re.split(pattern, body_text)
+        parts = re.split(pattern, body_text or "")
         return [part.strip() for part in parts if part.strip()]
 
-    def parse_email_block(self, email_text) -> dict:
+    def parse_email_block(self, email_text: str) -> dict:
         """
-        Parses an email block, extracting metadata like sender, timestamp, recipients, and subject.
+        Return a dict with a single 'reply' child (None by default).
         """
         metadata_regex = (
             r"From:\s*(.+?)\s*\r?\n"
@@ -44,7 +33,8 @@ class MsgFileProcessor(FileProcessorStrategy):
         if match:
             sender = match.group(1).strip()
             timestamp = match.group(2).strip()
-            recipients = [r.strip() for r in match.group(3).split(";") if r.strip()]
+            recipients_raw = match.group(3).strip()
+            recipients = [r.strip() for r in re.split(r"[;,]", recipients_raw) if r.strip()]
             subject = match.group(4).strip()
             body = email_text[match.end():].strip()
         else:
@@ -53,61 +43,65 @@ class MsgFileProcessor(FileProcessorStrategy):
             recipients = []
             subject = None
             body = email_text
+
         return {
             "subject": subject,
             "sender": sender,
             "recipients": recipients,
             "timestamp": timestamp,
             "body": body,
-            "replies": []
+            "reply": None  # Single next email, if any
         }
 
-    def build_nested_thread(self, email_parts) -> dict:
+    def build_linear_chain(self, parsed_emails: list[dict]) -> dict:
         """
-        Constructs a nested email thread from a list of parsed email parts.
+        Build a strictly linear chain: each email has at most one child in 'reply'.
+        Returns the oldest email (head of the chain).
         """
-        parsed_emails = [self.parse_email_block(part) for part in email_parts]
-        chronological = list(reversed(parsed_emails))
-        root = chronological[0]
-        current = root
-        for email in chronological[1:]:
-            current["replies"] = [email]
+        if not parsed_emails:
+            return {}
+
+        head = parsed_emails[0]
+        current = head
+        for email in parsed_emails[1:]:
+            current["reply"] = email
             current = email
-        return root
+        return head
 
     def parse_msg(self) -> dict:
         """
-        Parses the .msg file and constructs the email thread.
+        Parse the .msg file and construct a strictly linear thread.
+        The newest email overrides the last parsed email's metadata.
         """
         msg = extract_msg.Message(self.file_path)
-        email_parts = self.split_email_thread(msg.body)
+        raw_body = msg.body or ""
 
-        top_email = {
-            "subject": msg.subject,
-            "sender": msg.sender,
-            "recipients": msg.to.split("; ") if msg.to else [],
-            "timestamp": msg.date.isoformat() if msg.date else None,
-            "body": email_parts[0] if email_parts else msg.body,
-            "replies": []
-        }
+        # Split body into chunks
+        email_blocks = self.split_email_thread(raw_body)
+        parsed_emails = [self.parse_email_block(block) for block in email_blocks]
 
-        if len(email_parts) > 1:
-            forwarded_chain = self.build_nested_thread(email_parts[1:])
-            forwarded_chain["replies"].append(top_email)
-            final_thread = forwarded_chain
-        else:
-            final_thread = top_email
+        if parsed_emails:
+            # The last block is actually the newest email in the chain;
+            # overwrite it with the real MSG metadata.
+            newest_email = parsed_emails[-1]
+            newest_email["subject"] = msg.subject
+            newest_email["sender"] = msg.sender
+            if msg.to:
+                newest_email["recipients"] = [r.strip() for r in msg.to.split(";")]
+            if msg.date:
+                newest_email["timestamp"] = msg.date.isoformat()
 
+        # Build the chain from oldest to newest
+        final_thread = self.build_linear_chain(parsed_emails)
+
+        msg.close()
         return final_thread
 
     def process(self) -> None:
         import logging
         logger = logging.getLogger(__name__)
         logger.info(f"Processing file: {self.file_path}")
-        """
-        Extracts metadata from the MSG file, including text content, subject, date, sender,
-        and constructs the email thread.
-        """
+
         if not self.open_file:
             return
 
@@ -118,18 +112,17 @@ class MsgFileProcessor(FileProcessorStrategy):
                 'subject': msg.subject,
                 'date': msg.date,
                 'sender': msg.sender,
-                'thread': self.parse_msg()
             })
+            # Construct the linear thread
+            self.metadata['thread'] = self.parse_msg()
             msg.close()
+
         except Exception as e:
             raise FileProcessingFailedError(
                 f"Error encountered while processing: {e}"
             )
 
     def save(self, output_path: str = None) -> None:
-        """
-        Saves the MSG file to the specified output path.
-        """
         try:
             output_path = output_path or self.file_path
             msg_file = extract_msg.Message(self.file_path)
