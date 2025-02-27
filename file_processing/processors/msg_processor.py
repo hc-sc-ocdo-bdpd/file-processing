@@ -166,6 +166,7 @@ class MsgFileProcessor(FileProcessorStrategy):
             self.metadata["subject"] = msg.subject
             self.metadata["date"] = msg.date
             self.metadata["sender"] = msg.sender
+            self.metadata["recipients"] = [r.email for r in msg.recipients if r.email]
             msg.close()
 
             # Now parse entire chain in correct chronological order
