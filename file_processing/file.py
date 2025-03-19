@@ -41,6 +41,7 @@ class File:
         ".xml": processors.XmlFileProcessor,
         ".png": processors.PngFileProcessor,
         ".xlsx": processors.XlsxFileProcessor,
+        ".java": processors.JavaFileProcessor,
         ".jpeg": processors.JpegFileProcessor,
         ".jpg": processors.JpegFileProcessor,
         ".json": processors.JsonFileProcessor,
