@@ -51,6 +51,7 @@ class File:
         ".wav": processors.AudioFileProcessor,
         ".mp4": processors.AudioFileProcessor,
         ".flac": processors.AudioFileProcessor,
+        ".rb": processors.RbFileProcessor,
         ".aiff": processors.AudioFileProcessor,
         ".ogg": processors.AudioFileProcessor,
         ".py": processors.PyFileProcessor,
