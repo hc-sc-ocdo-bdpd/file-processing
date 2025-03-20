@@ -30,6 +30,8 @@ class File:
     TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
     PROCESSORS = {
+        ".cpp": processors.CppFileProcessor,
+        ".cc": processors.CppFileProcessor,
         ".csv": processors.CsvFileProcessor,
         ".txt": processors.TextFileProcessor,
         ".pdf": processors.PdfFileProcessor,
