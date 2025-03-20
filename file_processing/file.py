@@ -34,6 +34,7 @@ class File:
         ".txt": processors.TextFileProcessor,
         ".pdf": processors.PdfFileProcessor,
         ".docx": processors.DocxFileProcessor,
+        ".go": processors.GoFileProcessor,
         ".msg": processors.MsgFileProcessor,
         ".pptx": processors.PptxFileProcessor,
         ".rtf": processors.RtfFileProcessor,
