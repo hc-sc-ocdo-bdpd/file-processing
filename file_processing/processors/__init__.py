@@ -44,3 +44,4 @@ from .java_processor import JavaFileProcessor
 from .go_processor import GoFileProcessor
 from .rb_processor import RbFileProcessor
 from .cpp_processor import CppFileProcessor
+from .js_processor import JsFileProcessor

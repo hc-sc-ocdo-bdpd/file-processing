@@ -33,6 +33,7 @@ class File:
         ".cpp": processors.CppFileProcessor,
         ".cc": processors.CppFileProcessor,
         ".csv": processors.CsvFileProcessor,
+        ".js": processors.JsFileProcessor,
         ".txt": processors.TextFileProcessor,
         ".pdf": processors.PdfFileProcessor,
         ".docx": processors.DocxFileProcessor,
