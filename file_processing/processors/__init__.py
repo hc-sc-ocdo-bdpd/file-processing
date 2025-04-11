@@ -17,6 +17,7 @@ Classes:
 from .txt_processor import TextFileProcessor
 from .pdf_processor import PdfFileProcessor
 from .docx_processor import DocxFileProcessor
+from .h_processor import HFileProcessor
 from .msg_processor import MsgFileProcessor
 from .png_processor import PngFileProcessor
 from .xlsx_processor import XlsxFileProcessor
@@ -41,3 +42,7 @@ from .gguf_processor import GgufFileProcessor
 from .exe_processor import ExeFileProcessor
 from .whl_processor import WhlFileProcessor
 from .java_processor import JavaFileProcessor
+from .go_processor import GoFileProcessor
+from .rb_processor import RbFileProcessor
+from .cpp_processor import CppFileProcessor
+from .js_processor import JsFileProcessor

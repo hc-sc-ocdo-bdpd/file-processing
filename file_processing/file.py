@@ -30,10 +30,15 @@ class File:
     TRANSCRIPTION_APPLICABLE_EXTENSIONS = {".mp3", ".wav", ".mp4", ".flac", ".aiff", ".ogg"}
 
     PROCESSORS = {
+        ".cpp": processors.CppFileProcessor,
+        ".cc": processors.CppFileProcessor,
         ".csv": processors.CsvFileProcessor,
+        ".js": processors.JsFileProcessor,
         ".txt": processors.TextFileProcessor,
         ".pdf": processors.PdfFileProcessor,
         ".docx": processors.DocxFileProcessor,
+        ".h": processors.HFileProcessor,
+        ".go": processors.GoFileProcessor,
         ".msg": processors.MsgFileProcessor,
         ".pptx": processors.PptxFileProcessor,
         ".rtf": processors.RtfFileProcessor,
@@ -50,6 +55,7 @@ class File:
         ".wav": processors.AudioFileProcessor,
         ".mp4": processors.AudioFileProcessor,
         ".flac": processors.AudioFileProcessor,
+        ".rb": processors.RbFileProcessor,
         ".aiff": processors.AudioFileProcessor,
         ".ogg": processors.AudioFileProcessor,
         ".py": processors.PyFileProcessor,
