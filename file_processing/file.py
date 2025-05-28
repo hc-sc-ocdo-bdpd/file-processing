@@ -68,7 +68,9 @@ class File:
         ".gitignore": processors.GitignoreFileProcessor,
         ".ipynb": processors.IpynbFileProcessor,
         ".exe": processors.ExeFileProcessor,
-        ".whl": processors.WhlFileProcessor
+        ".whl": processors.WhlFileProcessor,
+        ".ts": processors.TsFileProcessor,
+        ".c": processors.CFileProcessor,
     }
 
     def __init__(self, path: str, use_ocr: bool = False, ocr_path: str = None, 
