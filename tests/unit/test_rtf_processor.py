@@ -1,4 +1,5 @@
 import os
+import shutil
 from unittest.mock import patch
 import pytest
 from file_processing import File
@@ -37,3 +38,31 @@ def test_not_opening_file(path):
     with patch('builtins.open', autospec=True) as mock_open:
         File(path, open_file=False)
         mock_open.assert_not_called()
+
+
+@pytest.mark.parametrize("path", map(lambda x: x[0], values))
+@pytest.mark.parametrize("algorithm", ["md5", "sha256"])
+def test_rtf_copy_with_integrity(path, algorithm, tmp_path):
+    file_obj = File(path, open_file=False)
+    expected_hash = file_obj.processor.compute_hash(algorithm)
+
+    dest_path = tmp_path / os.path.basename(path)
+    file_obj.copy(dest_path, verify_integrity=True)
+
+    copied = File(dest_path)
+    assert copied.processor.compute_hash(algorithm) == expected_hash
+
+
+@pytest.mark.parametrize("path", map(lambda x: x[0], values))
+def test_rtf_copy_integrity_failure(path, tmp_path, monkeypatch):
+    file_obj = File(path, open_file=False)
+
+    def corrupt_copy(src, dst, *, follow_symlinks=True):
+        with open(dst, "w") as f:
+            f.write("corrupted content")
+
+    monkeypatch.setattr(shutil, "copy2", corrupt_copy)
+
+    with pytest.raises(FileProcessingFailedError) as excinfo:
+        file_obj.copy(tmp_path / os.path.basename(path), verify_integrity=True)
+    assert "Integrity check failed" in str(excinfo.value)

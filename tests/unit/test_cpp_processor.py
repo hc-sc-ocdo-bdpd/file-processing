@@ -1,5 +1,7 @@
 import os
+import shutil
 import pytest
+from pathlib import Path
 from unittest.mock import patch
 from file_processing.file import File
 from file_processing.errors import FileProcessingFailedError
@@ -45,3 +47,30 @@ def test_cpp_processor_open_file_false(file_name):
     with patch("builtins.open") as mock_open:
         File(str(cpp_file_path), open_file=False)
         mock_open.assert_not_called()
+
+@pytest.mark.parametrize("file_name", [v[0] for v in values])
+@pytest.mark.parametrize("algorithm", ["md5", "sha256"])
+def test_cpp_copy_with_integrity(file_name, algorithm, tmp_path):
+    src_path = test_files_path / file_name
+    file_obj = File(str(src_path), open_file=False)
+    original_hash = file_obj.processor.compute_hash(algorithm)
+
+    dest_path = tmp_path / file_name
+    file_obj.copy(str(dest_path), verify_integrity=True)
+
+    copied_file = File(str(dest_path))
+    assert copied_file.processor.compute_hash(algorithm) == original_hash
+
+@pytest.mark.parametrize("file_name", [v[0] for v in values])
+def test_cpp_copy_integrity_failure(file_name, tmp_path, monkeypatch):
+    file_obj = File(str(test_files_path / file_name), open_file=False)
+
+    def corrupt(src, dest, *, follow_symlinks=True):
+        with open(dest, 'w') as f:
+            f.write("CORRUPTED!")
+
+    monkeypatch.setattr(shutil, "copy2", corrupt)
+
+    with pytest.raises(FileProcessingFailedError) as excinfo:
+        file_obj.copy(str(tmp_path / file_name), verify_integrity=True)
+    assert "Integrity check failed" in str(excinfo.value)

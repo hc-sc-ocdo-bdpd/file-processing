@@ -1,4 +1,6 @@
 import os
+import shutil
+from pathlib import Path
 import pytest
 from unittest.mock import patch
 from file_processing.file import File
@@ -41,3 +43,31 @@ def test_go_processor_open_file_false(file_name):
     with patch("builtins.open") as mock_open:
         File(str(go_file_path), open_file=False)
         mock_open.assert_not_called()
+
+@pytest.mark.parametrize("file_name", [v[0] for v in values])
+@pytest.mark.parametrize("algorithm", ["md5", "sha256"])
+def test_go_copy_with_integrity(file_name, algorithm, tmp_path):
+    path = test_files_path / file_name
+    file_obj = File(str(path), open_file=False)
+    original_hash = file_obj.processor.compute_hash(algorithm)
+
+    dest_path = tmp_path / file_name
+    file_obj.copy(str(dest_path), verify_integrity=True)
+
+    copied = File(str(dest_path))
+    assert copied.processor.compute_hash(algorithm) == original_hash
+
+@pytest.mark.parametrize("file_name", [v[0] for v in values])
+def test_go_copy_integrity_failure(file_name, tmp_path, monkeypatch):
+    path = test_files_path / file_name
+    file_obj = File(str(path), open_file=False)
+
+    def corrupt(src, dest, *, follow_symlinks=True):
+        with open(dest, 'w') as f:
+            f.write("CORRUPTED!")
+
+    monkeypatch.setattr(shutil, "copy2", corrupt)
+
+    with pytest.raises(FileProcessingFailedError) as excinfo:
+        file_obj.copy(str(tmp_path / file_name), verify_integrity=True)
+    assert "Integrity check failed" in str(excinfo.value)
