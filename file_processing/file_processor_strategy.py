@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 import sys
 import importlib.util
+from hashlib import md5, sha256
 from file_processing.errors import FileProcessingFailedError
 
 class FileProcessorStrategy(ABC):
@@ -77,6 +78,47 @@ class FileProcessorStrategy(ABC):
             return f'{domain}/{name}'
         return ''
 
+    @property
+    def hash(self) -> str:
+        """
+        Computes (if necessary) and returns the hash of the file content.
+
+        Returns:
+            str: Hexadecimal hash of the file.
+        """
+        if not hasattr(self, '_hash'):
+            self._hash = self.compute_hash()
+        return self._hash
+
+    def compute_hash(self, algorithm: str = 'sha256') -> str:
+        """
+        Computes the hash of the file using the specified algorithm.
+
+        Args:
+            algorithm (str, optional): The hashing algorithm to use ('sha256' or 'md5'). Defaults to 'sha256'.
+
+        Returns:
+            str: Hexadecimal hash of the file.
+
+        Raises:
+            ValueError: If an unsupported algorithm is specified.
+            FileProcessingFailedError: If file hashing fails.
+        """
+        hash_func = {'md5': md5, 'sha256': sha256}.get(algorithm)
+        if not hash_func:
+            raise ValueError(f"Unsupported hash algorithm: {algorithm}")
+
+        hasher = hash_func()
+        try:
+            with open(self.file_path, 'rb') as f:
+                for chunk in iter(lambda: f.read(8192), b''):
+                    hasher.update(chunk)
+            return hasher.hexdigest()
+        except Exception as e:
+            raise FileProcessingFailedError(
+                f"Error computing hash for {self.file_path}: {e}"
+            )
+
     @abstractmethod
     def process(self) -> None:
         """
@@ -96,3 +138,4 @@ class FileProcessorStrategy(ABC):
         Saves the processed file after any metadata or content modifications.
         This method must be implemented by subclasses to define save behavior.
         """
+        pass
