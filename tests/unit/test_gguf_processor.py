@@ -1,7 +1,10 @@
 import pytest
 import os
+import shutil
+from pathlib import Path
 from file_processing import File
 from file_processing.processors.gguf_processor import GgufFileProcessor
+from file_processing.errors import FileProcessingFailedError
 from file_processing_test_data import get_test_files_path
 
 test_files_path = get_test_files_path()
@@ -85,3 +88,31 @@ def test_gguf_metadata(file_path, expected_metadata):
                 assert actual_value == expected_value, f"Value mismatch for key: {key}"
         else:  # Check actual value for smaller attributes
             assert str(actual_value) == str(expected_value), f"Value mismatch for key: {key}"
+
+
+@pytest.mark.parametrize("file_path", [v[0] for v in gguf_test_data])
+@pytest.mark.parametrize("algorithm", ["md5", "sha256"])
+def test_gguf_copy_with_integrity(file_path, algorithm, tmp_path):
+    file_obj = File(file_path, open_file=False)
+    original_hash = file_obj.processor.compute_hash(algorithm)
+
+    dest_path = tmp_path / Path(file_path).name
+    file_obj.copy(str(dest_path), verify_integrity=True)
+
+    copied = File(str(dest_path))
+    assert copied.processor.compute_hash(algorithm) == original_hash
+
+
+@pytest.mark.parametrize("file_path", [v[0] for v in gguf_test_data])
+def test_gguf_copy_integrity_failure(file_path, tmp_path, monkeypatch):
+    file_obj = File(file_path, open_file=False)
+
+    def corrupt(src, dest, *, follow_symlinks=True):
+        with open(dest, 'w') as f:
+            f.write("CORRUPTED!")
+
+    monkeypatch.setattr(shutil, "copy2", corrupt)
+
+    with pytest.raises(FileProcessingFailedError) as excinfo:
+        file_obj.copy(str(tmp_path / Path(file_path).name), verify_integrity=True)
+    assert "Integrity check failed" in str(excinfo.value)

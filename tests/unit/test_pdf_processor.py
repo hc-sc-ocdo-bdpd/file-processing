@@ -1,6 +1,8 @@
 import os
-from unittest.mock import patch
+import shutil
 import pytest
+from unittest.mock import patch
+from pathlib import Path
 from file_processing import File
 from file_processing.errors import FileProcessingFailedError
 from file_processing_test_data import get_test_files_path
@@ -65,7 +67,6 @@ def test_save_pdf_metadata(
     if expect_exception_on_process:
         with pytest.raises(FileProcessingFailedError):
             file_obj = File(str(path))
-            # Cannot proceed to save
     else:
         file_obj = File(str(path))
         save_path = tmp_path / os.path.basename(path)
@@ -73,9 +74,7 @@ def test_save_pdf_metadata(
             with pytest.raises(FileProcessingFailedError):
                 file_obj.save(str(save_path))
         else:
-            # Save to a new path
             file_obj.save(str(save_path))
-            # Now read the saved file and check if it can be processed again
             file_obj_saved = File(str(save_path))
             metadata = file_obj_saved.metadata
             assert metadata['has_password'] == has_password
@@ -92,7 +91,7 @@ def test_save_pdf_metadata(
 
 @pytest.mark.parametrize("valid_path", [path for path, *_ in values])
 def test_pdf_invalid_save_location(valid_path):
-    file_obj = File(str(valid_path), open_file=False)  # Do not process the file
+    file_obj = File(str(valid_path), open_file=False)
     invalid_save_path = '/non_existent_folder/' + os.path.basename(str(valid_path))
     with pytest.raises(FileProcessingFailedError):
         file_obj.save(invalid_save_path)
@@ -103,3 +102,31 @@ def test_not_opening_pdf(path):
     file_obj = File(str(path), open_file=False)
     metadata = file_obj.metadata
     assert metadata == {'message': 'File was not opened'}
+
+
+@pytest.mark.parametrize("path", [path for path, *rest in values if not rest[-2]])  # Only non-corrupt
+@pytest.mark.parametrize("algorithm", ["md5", "sha256"])
+def test_pdf_copy_with_integrity(path, algorithm, tmp_path):
+    file_obj = File(str(path), open_file=False)
+    expected_hash = file_obj.processor.compute_hash(algorithm)
+
+    dest_path = tmp_path / Path(path).name
+    file_obj.copy(dest_path, verify_integrity=True)
+
+    copied = File(dest_path)
+    assert copied.processor.compute_hash(algorithm) == expected_hash
+
+
+@pytest.mark.parametrize("path", [path for path, *rest in values if not rest[-2]])  # Only non-corrupt
+def test_pdf_copy_integrity_failure(path, tmp_path, monkeypatch):
+    file_obj = File(str(path), open_file=False)
+
+    def corrupt(src, dst, *, follow_symlinks=True):
+        with open(dst, 'w') as f:
+            f.write("INVALID PDF FILE")
+
+    monkeypatch.setattr(shutil, "copy2", corrupt)
+
+    with pytest.raises(FileProcessingFailedError) as excinfo:
+        file_obj.copy(tmp_path / Path(path).name, verify_integrity=True)
+    assert "Integrity check failed" in str(excinfo.value)

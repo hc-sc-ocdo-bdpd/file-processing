@@ -8,6 +8,7 @@ from file_processing.errors import (
     NotTranscriptionApplicableError,
     OptionalDependencyNotInstalledError
 )
+import shutil
 
 
 class File:
@@ -151,9 +152,29 @@ class File:
         Saves the processed file to the specified output path.
 
         Args:
-            output_path (str): The destination path for saving the processed file.
+            output_path (str): Destination path (defaults to original file path).
         """
         self.processor.save(output_path)
+
+    def copy(self, output_path: str, verify_integrity: bool = False) -> None:
+        """
+        Copies the original file bit-for-bit.
+
+        Args:
+            output_path (str): Destination path (defaults to original file path).
+            verify_integrity (bool): If True, re-compute and compare hash after copy.
+        """
+        original_hash = self.hash if verify_integrity else None
+        src = self.processor.file_path
+        shutil.copy2(str(src), str(output_path))
+
+        if verify_integrity:
+            copied = File(str(output_path), open_file=False)
+            if original_hash != copied.hash:
+                raise FileProcessingFailedError(
+                    f"Integrity check failed on copy: {output_path} hash changed "
+                    f"({original_hash} → {copied.hash})"
+                )
 
     def process(self) -> None:
         """
@@ -183,23 +204,23 @@ class File:
         return self.processor.owner
 
     @property
-    def size(self) -> str:
-        """str: Returns the size of the file in bytes."""
+    def size(self) -> int:
+        """int: Returns the size of the file in bytes."""
         return self.processor.size
 
     @property
-    def modification_time(self) -> str:
-        """str: Returns the last modification time of the file."""
+    def modification_time(self) -> float:
+        """float: Returns the last modification time of the file."""
         return self.processor.modification_time
 
     @property
-    def access_time(self) -> str:
-        """str: Returns the last access time of the file."""
+    def access_time(self) -> float:
+        """float: Returns the last access time of the file."""
         return self.processor.access_time
 
     @property
-    def creation_time(self) -> str:
-        """str: Returns the creation time of the file."""
+    def creation_time(self) -> float:
+        """float: Returns the creation time of the file."""
         return self.processor.creation_time
 
     @property
@@ -226,6 +247,11 @@ class File:
     def absolute_path(self) -> str:
         """str: Returns the absolute path of the file."""
         return self.processor.absolute_path
+    
+    @property
+    def hash(self) -> str:
+        """str: Hex digest of this file's content (default SHA256)."""
+        return self.processor.hash
 
     @property
     def metadata(self) -> dict:

@@ -1,5 +1,6 @@
 from unittest.mock import patch
 from pathlib import Path
+import shutil
 import pytest
 from mutagen import File as MutagenFile
 from mutagen.easyid3 import EasyID3
@@ -68,7 +69,6 @@ def test_save_audio_metadata(copy_file, bitrate, length):
 def test_change_audio_artist_title_date(copy_file, bitrate, length):
     audio_file = MutagenFile(copy_file)
     if isinstance(audio_file, (MP3, FLAC, OggVorbis, MP4)):
-        # Change metadata via Document object
         audio_file = MutagenFile(copy_file)
         if isinstance(audio_file, MP3):
             audio_file = EasyID3(copy_file)
@@ -86,7 +86,6 @@ def test_change_audio_artist_title_date(copy_file, bitrate, length):
             audio_file.tags['\xa9day'] = "2023-11-22"
             audio_file.tags['\xa9nam'] = "New Title"
             audio_file.tags['\xa9wrk'] = "Health Canada"
-        # Save the file
         audio_file.save()
         test_audio_metadata(copy_file, bitrate, length, 'New Artist',
                             '2023-11-22', 'New Title', 'Health Canada')
@@ -100,6 +99,7 @@ def test_not_opening_file(path, bitrate, length, artist, date, title, organizati
     with patch('builtins.open', autospec=True) as mock_open:
         File(path, open_file=False)
         mock_open.assert_not_called()
+
 
 invalid_save_locations = [
     (test_files_path / 'sample_speech.mp3', '/non_existent_folder/sample_speech.mp3')
@@ -122,3 +122,31 @@ corrupted_files = [
 def test_audio_corrupted_file_processing(path):
     with pytest.raises(FileProcessingFailedError):
         File(path)
+
+
+@pytest.mark.parametrize("path", [v[0] for v in values])
+@pytest.mark.parametrize("algorithm", ["md5", "sha256"])
+def test_audio_copy_with_integrity(path, algorithm, tmp_path):
+    file_obj = File(path, open_file=False)
+    original_hash = file_obj.processor.compute_hash(algorithm)
+
+    dest_path = tmp_path / Path(path).name
+    file_obj.copy(str(dest_path), verify_integrity=True)
+
+    copied = File(str(dest_path))
+    assert copied.processor.compute_hash(algorithm) == original_hash
+
+
+@pytest.mark.parametrize("path", [v[0] for v in values])
+def test_audio_copy_integrity_failure(path, tmp_path, monkeypatch):
+    file_obj = File(path, open_file=False)
+
+    def corrupt(src, dest, *, follow_symlinks=True):
+        with open(dest, 'w') as f:
+            f.write("CORRUPTED!")
+
+    monkeypatch.setattr(shutil, "copy2", corrupt)
+
+    with pytest.raises(FileProcessingFailedError) as excinfo:
+        file_obj.copy(str(tmp_path / Path(path).name), verify_integrity=True)
+    assert "Integrity check failed" in str(excinfo.value)
