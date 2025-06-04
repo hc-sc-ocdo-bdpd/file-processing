@@ -135,15 +135,22 @@ def test_audio_corrupted_file_processing(path, caplog):
         for record in caplog.records
     )
 
-@pytest.mark.parametrize("path", [v[0] for v in values])
+@pytest.mark.parametrize("file_name", [v[0] for v in values])
 @pytest.mark.parametrize("algorithm", ["md5", "sha256"])
-def test_audio_copy_with_integrity(path, algorithm, tmp_path):
-    file_obj = File(path, open_file=False)
+def test_audio_copy_with_integrity(file_name, algorithm, tmp_path, caplog):
+    caplog.set_level(logging.DEBUG)
+    path = test_files_path / file_name
+    file_obj = File(str(path), open_file=False)
     original_hash = file_obj.processor.compute_hash(algorithm)
-    dest_path = tmp_path / Path(path).name
+
+    dest_path = tmp_path / Path(file_name).name  # ✅ use just the name
     file_obj.copy(str(dest_path), verify_integrity=True)
+
     copied = File(str(dest_path))
     assert copied.processor.compute_hash(algorithm) == original_hash
+
+    assert f"Copying file from '{file_obj.file_path}' to '{dest_path}' with integrity verification=True." in caplog.text
+    assert f"Integrity verification passed for '{dest_path}'." in caplog.text
 
 @pytest.mark.parametrize("path", [v[0] for v in values])
 def test_audio_copy_integrity_failure(path, tmp_path, monkeypatch):

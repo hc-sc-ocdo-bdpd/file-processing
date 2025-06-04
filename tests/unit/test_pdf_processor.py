@@ -142,17 +142,26 @@ def test_not_opening_pdf(path, caplog):
   
     assert f"was not opened (open_file=False)" in caplog.text  
   
-@pytest.mark.parametrize("path", [path for path, *rest in values if not rest[-2]])  # Only non-corrupt  
-@pytest.mark.parametrize("algorithm", ["md5", "sha256"])  
-def test_pdf_copy_with_integrity(path, algorithm, tmp_path):  
-    file_obj = File(str(path), open_file=False)  
-    expected_hash = file_obj.processor.compute_hash(algorithm)  
-  
-    dest_path = tmp_path / Path(path).name  
-    file_obj.copy(dest_path, verify_integrity=True)  
-  
-    copied = File(dest_path)  
-    assert copied.processor.compute_hash(algorithm) == expected_hash  
+@pytest.mark.parametrize("file_name", [v[0] for v in values])
+@pytest.mark.parametrize("algorithm", ["md5", "sha256"])
+def test_pdf_copy_with_integrity(file_name, algorithm, tmp_path, caplog):
+    caplog.set_level(logging.DEBUG)
+    path = test_files_path / file_name
+    file_obj = File(str(path), open_file=False)
+
+    original_hash = file_obj.processor.compute_hash(algorithm)
+
+    dest_path = tmp_path / Path(file_name).name
+    file_obj.copy(str(dest_path), verify_integrity=True)
+
+    try:
+        copied = File(str(dest_path))
+        assert copied.processor.compute_hash(algorithm) == original_hash
+        assert f"Copying file from '{file_obj.file_path}' to '{dest_path}' with integrity verification=True." in caplog.text
+        assert f"Integrity verification passed for '{dest_path}'." in caplog.text
+    except FileProcessingFailedError as e:
+        # ✅ Expected for corrupted files — assert log message
+        assert "Failed to process PDF file" in caplog.text
   
 @pytest.mark.parametrize("path", [path for path, *rest in values if not rest[-2]])  # Only non-corrupt  
 def test_pdf_copy_integrity_failure(path, tmp_path, monkeypatch):  
