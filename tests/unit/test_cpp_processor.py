@@ -1,8 +1,6 @@
-import os
 import shutil
 import logging
 import pytest
-from pathlib import Path
 from unittest.mock import patch
 from file_processing.file import File
 from file_processing.errors import FileProcessingFailedError

@@ -1,10 +1,8 @@
 import pytest
-import os
 import shutil
 import logging
 from pathlib import Path
 from file_processing import File
-from file_processing.processors.gguf_processor import GgufFileProcessor
 from file_processing.errors import FileProcessingFailedError
 from file_processing_test_data import get_test_files_path
 

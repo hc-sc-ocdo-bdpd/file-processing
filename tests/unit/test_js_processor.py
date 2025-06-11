@@ -1,4 +1,3 @@
-import os
 import shutil
 import logging
 from unittest.mock import patch

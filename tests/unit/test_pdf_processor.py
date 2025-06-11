@@ -2,7 +2,6 @@ import os
 import shutil  
 import pytest  
 import logging  
-from unittest.mock import patch  
 from pathlib import Path  
 from file_processing import File  
 from file_processing.errors import FileProcessingFailedError  
@@ -140,7 +139,7 @@ def test_not_opening_pdf(path, caplog):
     metadata = file_obj.metadata  
     assert metadata == {'message': 'File was not opened'}  
   
-    assert f"was not opened (open_file=False)" in caplog.text  
+    assert "was not opened (open_file=False)" in caplog.text  
   
 @pytest.mark.parametrize("file_name", [v[0] for v in values])
 @pytest.mark.parametrize("algorithm", ["md5", "sha256"])
@@ -159,7 +158,7 @@ def test_pdf_copy_with_integrity(file_name, algorithm, tmp_path, caplog):
         assert copied.processor.compute_hash(algorithm) == original_hash
         assert f"Copying file from '{file_obj.file_path}' to '{dest_path}' with integrity verification=True." in caplog.text
         assert f"Integrity verification passed for '{dest_path}'." in caplog.text
-    except FileProcessingFailedError as e:
+    except FileProcessingFailedError:
         # ✅ Expected for corrupted files — assert log message
         assert "Failed to process PDF file" in caplog.text
   

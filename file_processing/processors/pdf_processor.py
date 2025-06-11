@@ -1,5 +1,4 @@
 from pypdf import PdfReader, PdfWriter
-from pypdf.errors import PdfReadError
 from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy
 import logging

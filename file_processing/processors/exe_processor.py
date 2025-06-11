@@ -1,5 +1,4 @@
 import pefile
-from pathlib import Path
 import shutil
 from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy

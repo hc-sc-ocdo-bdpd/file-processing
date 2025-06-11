@@ -2,7 +2,6 @@ import re
 import zipfile
 import shutil
 import logging
-from pathlib import Path
 from typing import Union, List
 from file_processing.errors import FileProcessingFailedError
 from file_processing.file_processor_strategy import FileProcessorStrategy

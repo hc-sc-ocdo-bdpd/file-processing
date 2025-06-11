@@ -1,7 +1,5 @@
-import os
 import shutil
 import logging
-from pathlib import Path
 import pytest
 from unittest.mock import patch
 from file_processing.file import File

@@ -3,7 +3,6 @@ import shutil
 import tempfile
 import zipfile
 import logging
-from unittest.mock import patch
 import pytest
 from pathlib import Path
 from file_processing import File
