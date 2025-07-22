@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
 # Upgrade pip, setuptools, and wheel
 RUN pip install -U \
     pip \
+    setuptools \
     wheel
 
 # Copy the requirements file and install dependencies
